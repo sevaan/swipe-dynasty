@@ -1,16 +1,16 @@
 id,name,portrait,per life,notes
-narrator,,✨,,Scene cards with no speaker
-tutorial-guy,A guy with a rock,🪨,,The tutorial. Dies on card 3 and is worshipped for the rest of the game.
-mother,Your mother,👵,1,"Every era, same question: are you eating?"
-naysayer,The Naysayer,🙄,2,It'll never catch on. Right exactly once in the whole game.
-advisor,A stranger,🥸,1,Clearly from the future. Only at his three appointments.
-animal,,🪿,1,"No text, never explained. (Priya insists it's a goose.)"
-elder,The elder,🧓,,
-cousin,Your cousin,🧑,,Every era has a cousin. It's never the same cousin.
-shaman,The shaman,🪶,,
-kid,A kid,🧒,,
-mammoths,The mammoths,🦣,,Stampede scene
-neighbours,The neighbours,👀,,Another tribe already did the thing. Everyone is looking at you.
-farmer,A farmer,🧑‍🌾,,
-priest,A priest,📿,,
-ox,An ox,🐂,,
+narrator,,narrator,,Scene cards with no speaker
+tutorial-guy,A guy with a rock,tutorial-guy,,The tutorial. Dies on card 3 and is worshipped for the rest of the game.
+mother,Your mother,mother,1,"Every era, same question: are you eating?"
+naysayer,The Naysayer,naysayer,2,It'll never catch on. Right exactly once in the whole game.
+advisor,A stranger,advisor,1,Clearly from the future. Only at his three appointments.
+animal,,animal,1,"No text, never explained. (Priya insists it's a goose.)"
+elder,The elder,elder,,
+cousin,Your cousin,cousin,,Every era has a cousin. It's never the same cousin.
+shaman,The shaman,shaman,,
+kid,A kid,kid,,
+mammoths,The mammoths,mammoths,,Stampede scene
+neighbours,The neighbours,neighbours,,Another tribe already did the thing. Everyone is looking at you.
+farmer,A farmer,farmer,,
+priest,A priest,priest,,
+ox,An ox,ox,,

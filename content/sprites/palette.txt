@@ -1,0 +1,32 @@
+# The shared palette. Every sprite uses these one-character colour names.
+# "." is always transparent. Keep each sprite to a handful of colours so it
+# stays 8-bit.
+
+== palette ==
+k #1c130f outline
+K #3d2b22 soft shadow
+w #fff5e6 white
+c #efe2c2 cream
+s #f5cfa3 light skin
+S #d9a172 light skin shadow
+t #c18554 tan skin
+T #935d38 tan skin shadow
+h #5b3a21 brown hair
+H #cfc7ba grey hair
+y #f2c94c yellow
+Y #c9962a dark yellow
+o #f08a2e orange
+r #d9442e red
+R #8e2a22 dark red
+n #eb8a8a pink
+g #62a843 green
+G #2f6b2d dark green
+b #8f5b33 brown
+B #5e3b1f dark brown
+e #9b958d grey
+E #635d57 dark grey
+l #d2ccc2 light grey
+u #4c8ad6 blue
+U #294c80 dark blue
+p #8e5cad purple
+P #583670 dark purple

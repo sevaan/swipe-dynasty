@@ -4,15 +4,19 @@
 
 import { tableFromCSV } from './csv.js';
 import { normId, parseConditions, parseEffects, parseTrigger, splitList } from './syntax.js';
+import { parseSprites } from './sprites.js';
 
 export const ROLES = ['people', 'resources', 'belief', 'power'];
 const INVENTION_TYPES = { keystone: 'keystone', 'stepping-stone': 'stepping', stepping: 'stepping', 'bad-idea': 'bad', bad: 'bad' };
 const SCOPES = ['life', 'timeline', 'forever'];
+// Sprites the interface itself draws with (see content/sprites/ui.txt).
+export const UI_SPRITES = ['ui-menu', 'ui-close', 'ui-hand', 'ui-grave', 'ui-door', 'ui-unknown', 'ui-arrow-left', 'ui-arrow-right'];
+const EMOJI = /\p{Extended_Pictographic}/u;
 
 const COLUMNS = {
-  characters: { required: ['id', 'name', 'portrait'], optional: ['per life', 'notes'] },
+  characters: { required: ['id', 'name'], optional: ['portrait', 'per life', 'notes'] },
   flags: { required: ['id', 'scope'], optional: ['default', 'notes'] },
-  inventions: { required: ['id', 'era', 'type', 'name'], optional: ['requires', 'threshold', 'related', 'museum', 'hint', 'notes'] },
+  inventions: { required: ['id', 'era', 'type', 'name'], optional: ['requires', 'threshold', 'related', 'icon', 'museum', 'hint', 'notes'] },
   deaths: { required: ['id', 'era', 'text', 'epitaph'], optional: ['meter', 'end', 'notes'] },
   cards: {
     required: ['id', 'era', 'speaker', 'text', 'left answer', 'right answer'],
@@ -69,7 +73,7 @@ export function compileContent(files) {
     for (const role of ROLES) {
       const m = raw.meters?.[role];
       if (!m?.label) err('world.json', 0, `eras.${id}.meters`, `Era "${id}" needs a ${role} meter label`);
-      meters[role] = { label: m?.label || role, icon: m?.icon || '?' };
+      meters[role] = { label: m?.label || role, icon: normId(m?.icon || '') };
     }
     const meterNames = new Map();
     for (const role of ROLES) {
@@ -113,10 +117,10 @@ export function compileContent(files) {
     if (content.characters[id]) { err(paths.characters, line, 'id', `Duplicate character "${id}"`); continue; }
     const perLife = v['per life'] ? Number(v['per life']) : null;
     if (v['per life'] && !Number.isInteger(perLife)) err(paths.characters, line, 'per life', `"${v['per life']}" should be a whole number`);
-    content.characters[id] = { id, name: v.name, portrait: v.portrait, perLife };
+    content.characters[id] = { id, name: v.name, portrait: normId(v.portrait || id), perLife, line };
   }
   if (!content.characters.narrator) {
-    content.characters.narrator = { id: 'narrator', name: '', portrait: '✨', perLife: null };
+    content.characters.narrator = { id: 'narrator', name: '', portrait: 'narrator', perLife: null, line: 0 };
   }
 
   // Flags
@@ -145,7 +149,7 @@ export function compileContent(files) {
     content.inventions[id] = {
       id, era, type: type || 'bad', name: v.name,
       requires: splitList(v.requires), related: splitList(v.related),
-      threshold, museum: v.museum || '', hint: v.hint || '', line,
+      threshold, icon: normId(v.icon || id), museum: v.museum || '', hint: v.hint || '', line,
     };
     content.inventionOrder.push(id);
   }
@@ -283,6 +287,33 @@ export function compileContent(files) {
     if (!flagReads.has(f)) warn(paths.flags, 0, 'id', `Flag "${f}" is never checked by any card (fine if it's for later)`);
   }
 
+  // Sprites: every picture in the game is pixel art from content/sprites.
+  const { palette, sprites } = parseSprites(paths.sprites || [], files, err);
+  content.palette = palette;
+  content.sprites = sprites;
+  const charPath = paths.characters || 'characters.csv';
+  for (const ch of Object.values(content.characters)) {
+    if (!sprites[ch.portrait]) err(charPath, ch.line, 'portrait', `No sprite "${ch.portrait}" for ${ch.id} (add one to content/sprites)`);
+  }
+  for (const era of Object.values(content.eras)) {
+    for (const role of ROLES) {
+      const icon = era.meters[role].icon;
+      if (!sprites[icon]) err('world.json', 0, `eras.${era.id}.meters.${role}.icon`, `No sprite "${icon}" for the ${era.meters[role].label} meter`);
+    }
+  }
+  for (const inv of Object.values(content.inventions)) {
+    if (!sprites[inv.icon]) warn(invPath, inv.line, 'icon', `No sprite "${inv.icon}" for ${inv.id}; the Museum shows a question mark`);
+  }
+  for (const id of UI_SPRITES) if (!sprites[id]) err('sprites', 0, '', `The interface needs a sprite called "${id}"`);
+
+  // No emoji anywhere: pictures are drawn as sprites.
+  for (const [path, text] of Object.entries(files)) {
+    String(text).split('\n').forEach((lineText, i) => {
+      const m = EMOJI.exec(lineText);
+      if (m) err(path, i + 1, '', `No emoji ("${m[0]}"): draw it as a pixel sprite in content/sprites instead`);
+    });
+  }
+
   const hashParts = Object.keys(files).sort().map((k) => k + '\n' + files[k]);
   content.hash = hashText(hashParts);
   return { content, errors, warnings };
@@ -291,5 +322,5 @@ export function compileContent(files) {
 export function contentFileList(worldText) {
   const world = JSON.parse(worldText);
   const f = world.files || {};
-  return [f.characters, f.flags, f.inventions, f.deaths, ...(f.cards || [])].filter(Boolean);
+  return [f.characters, f.flags, f.inventions, f.deaths, ...(f.cards || []), ...(f.sprites || [])].filter(Boolean);
 }

@@ -84,6 +84,7 @@ For scale: the original Reigns shipped with 700+ cards. The Stone Age sample run
 - **Controls:** swiping left and right are the only playable actions. No third choice, no dragging.
 - **Knock-on (confirmed):** ancestors' inventions can't be dragged, so they appear inside cards instead. A card offers the invention as one of its two answers ("Show him the cave drawing" / "Send him away").
 - **Art:** 8-bit pixel art, kept flat and minimal like Reigns.
+- **No emoji (Sep 26, Sevaan):** everything on screen is drawn as 8-bit pixel art: portraits, meter icons, inventions and interface pieces. Text stays in a readable font.
 
 ### Decision: era progression (keystones)
 
@@ -495,4 +496,4 @@ These are the defaults the first build uses where the Decisions above are silent
 - **Content:** CSV files in `content/`, one row per card, per the authoring Decision. The browser parses them at load time with the same code the checker uses. The syntax is in `content/README.md`.
 - **Engine:** `src/engine/` has no page code, so the game, the tests and the simulation bot all run the same rules. Each swipe resolves in one atomic step, then autosaves.
 - **Tuning values:** the trigger window, minimum cards before a breakthrough, dot sizes and character caps live in `content/world.json`, not in code.
-- **Placeholder art:** emoji portraits and meter icons until the pixel art exists. There's no sound yet.
+- **Art:** every picture is a text sprite in `content/sprites/`, one character per pixel from a shared palette, so art can be edited like cards. The checker rejects emoji anywhere in the content. The Museum draws an unfound invention as its icon's silhouette. First-draft sprites; there's no sound yet.

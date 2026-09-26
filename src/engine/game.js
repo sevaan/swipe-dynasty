@@ -310,7 +310,7 @@ export function view(state, content) {
     out.transition = {
       from: eraView(content, state.transition.from),
       to: eraView(content, state.transition.to),
-      carried: state.timeline.history.map((id) => inventionName(content, id)),
+      carried: state.timeline.history.map((id) => ({ id, name: inventionName(content, id), icon: content.inventions[id]?.icon || id })),
     };
   }
   return out;
