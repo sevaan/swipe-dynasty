@@ -1,0 +1,8 @@
+id,scope,default,notes
+kept_naysayer,timeline,0,You let the Naysayer stay. He's in every era now.
+naysayer_banished,timeline,0,You banished him. A worse one arrives next era.
+blamed_animal,timeline,0,You blamed the unexplained animal for the fire. It remembers.
+worshipped_rock_guy,timeline,0,The tutorial guy has a temple. It grows every era.
+met_advisor,timeline,0,The advisor's first appointment happened (Stone Age).
+refused_wheel,timeline,0,Times you called the wheel a fad. The pottery ending will count these.
+stole_fire,life,0,You stole fire from the neighbours this life.

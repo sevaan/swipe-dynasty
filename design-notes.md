@@ -1,0 +1,498 @@
+# Untitled Swipe Game — Writers' Room Notes
+
+Sep 25, 2026 · @Sevaan Franks
+
+_Synced from the Claude Doc (rev 49) on Sep 25, 2026, replacing an earlier, out-of-date export. This file is the source of truth for the build: record new decisions here, and move dropped ideas to the Graveyard instead of deleting them. If brainstorming continues in the Claude Doc, re-sync this file before building on it._
+
+## The pitch
+
+Reigns, but the dynasty is the history of technology. You start banging rocks together and end up in genetic engineering, time travel or other planets, one swipe at a time.
+
+Each run is one inventor in one era, swiping left or right on the people and problems in front of them. Each life adds one invention to history, and an era ends when someone invents its keystone. The tone is comedy: the same small human problems, in every era, getting weirder.
+
+## Core structure
+
+The swipe is the whole interface: left or right only. Four core meters every era, renamed to fit it (see the meters decision).
+
+- **Runs are lives.** One inventor per life; an era spans several lives (see keystones). Death ends the life, not the game.
+- **The tech tree is the meta-progression.** Each era's keystone unlocks the next era for good. You can't reach genetic engineering until someone figured out agriculture, and probably died doing it.
+- **The timeline branches.** Go hard into biology and you never get proper computing, just wet, grown machines. Go hard into metal and you get the chrome future. Choosing a branch locks you out of others, so nobody sees it all in one playthrough.
+- **Tech debt is literal.** Something you built ten eras ago breaks, and you have to deal with it while inventing space travel.
+- **Meters drift.** Example: a Religion meter slowly turns into a Marketing meter, and nobody notices when it happens.
+- **Secret ending:** one branch where everyone just got really good at pottery and was fine.
+
+### Decision: one invention per life
+
+Each life adds exactly one invention to history. You don't pick it from a menu; your choices over the run add up to it, and sometimes it isn't what you were aiming for (you wanted the plough, you invented gossip).
+
+- **The loop:** use the past, add one thing, die.
+- **The inventory is your ancestors' work.** Every invention from past lives is available, offered as answers on cards; you only ever add one. This replaces the earlier idea of limited item slots.
+- **The death card doubles as the epitaph:** "Invented the wheel. Chased it."
+
+### Decision: how the invention is decided
+
+Hidden leanings shape what you can invent, an ordinary-looking card triggers it, and the death card reveals it.
+
+- **Hidden leanings:** cards quietly nudge you toward a few possible inventions over the run.
+- **Secret trigger:** the breakthrough looks like any other card. You find out which one it was in your epitaph ("Invented art, by accident, while scolding a child").
+- **Occasional tell:** sometimes a small shimmer or sound hints the moment just happened. Not every time.
+- **Why:** players can't tell which cards matter, so every card might, and replays reward spotting the ordinary cards that were secretly big.
+
+### Decision: meters (room's call)
+
+Four core meters every era, renamed to fit the era. Players learn the system once; each era still feels different.
+
+| Core role | Stone Age | Farming | Later eras (examples) |
+|---|---|---|---|
+| People | Tribe | Village | Citizens, then Users |
+| Resources | Food | Harvest | Money, then Data |
+| Belief | Gods | Priests | Religion, drifting into Marketing |
+| Power | Fire | The Neighbours | Army, then Investors |
+
+- The Religion-to-Marketing drift gag falls out of this for free.
+- Detours may add one temporary fifth meter for their run.
+
+### Decision: first playable version
+
+The first build goes end to end, Stone Age to the far future, with fewer branches and detours. The full timeline has to be playable before it gets wide.
+
+- One route through every shared era, plus at least one late path to an ending.
+- A handful of detours and endings to prove the systems; the rest come in later waves.
+
+**The route (locked):** Stone Age → Farming → Bronze → Classical → Medieval → Renaissance → Industrial → Electric → Computing → Robots and AI → Space colonies → Time travel ending. 11 eras on one path.
+
+- **Metal path first:** most familiar to players and most jokes already written. Bio comes in wave 2.
+- **The fork still exists:** at Industrial, the bio side is a scientist with a jar of glowing goo who gets politely shown out.
+- **Also in the first build:** the pottery ending, the Graveyard of Bad Ideas detour, and the goose dimension.
+- **Simulation reveal waits** until both paths exist.
+- **Alternatives considered:** bio path first (more original, harder jokes); seven bigger eras (faster, loses specifics like the Renaissance); both paths thin (tests the time-travel bridge early, both halves shallow).
+
+**Card budget (for now; can expand later):** about 55 cards per era, about 650 for the first build.
+
+| Card type | Per era | Why |
+|---|---|---|
+| Deaths | 8 | 4 meters, each can empty or fill |
+| Recurring characters | ~10 | Naysayer, your mother, the advisor, the unexplained animal; 2–3 each |
+| Era-specific | ~30 | What makes the era itself; fewer and it repeats within one life |
+| Callbacks | ~8 | Ancestors' inventions offered as an answer |
+| **Total** | **~55** | × 11 eras ≈ 600, plus ~15 per detour and ~5 per ending ≈ 650 |
+
+For scale: the original Reigns shipped with 700+ cards. The Stone Age sample run so far is about 15.
+
+### Decision: controls and art
+
+- **Controls:** swiping left and right are the only playable actions. No third choice, no dragging.
+- **Knock-on (confirmed):** ancestors' inventions can't be dragged, so they appear inside cards instead. A card offers the invention as one of its two answers ("Show him the cave drawing" / "Send him away").
+- **Art:** 8-bit pixel art, kept flat and minimal like Reigns.
+
+### Decision: era progression (keystones)
+
+Each era ends only when someone invents its keystone. Most lives invent something smaller, and those smaller inventions are the stepping stones to it.
+
+- **Keystones:** one per era, e.g. Stone Age: fire; Farming: the plough; Renaissance: the printing press.
+- **Stepping stones:** the keystone needs two or three smaller inventions first (no plough before sharp tools and a tamed animal). Small inventions become ancestors' inventions for the rest of the era.
+- **Pacing:** about 3–6 lives per era, so 40–60 lives to reach the ending.
+- **Safety net:** if a player is stuck in an era too long, the keystone's odds quietly rise.
+- **Transition:** when the keystone lands, a "Centuries pass" card, then your mother's next message in the new era's tech.
+
+### Decision: onboarding, legibility, collections
+
+**Onboarding: the first life is the tutorial.** Scripted, about 8 cards, no tutorial screens.
+
+- Card 1, the guy with the rock, wiggles with a hand hint to teach swiping.
+- Each meter lights up the first time it moves, so meters are learned one at a time.
+- The tutorial guy dies on card 3 (people die). You die on card 8, guaranteed and funny (meters kill you; death isn't the end).
+- Guaranteed first epitaph: "Invented sparks," a stepping stone toward fire. The first death teaches the whole loop. Life 2 is unscripted.
+
+**Legibility:** while dragging a card, dots appear over affected meters. Dot size shows how big the change is, not its direction.
+
+**Collection screens:**
+
+- **The Museum:** every invention. Found ones in full; unfound ones as silhouettes with a hint written by the Naysayer ("Some fool will try to tame a cow. Won't work."). Endings sit behind a locked door: you see how many, not what.
+- **The Graveyard:** every death with its epitaph.
+- **The Family Tree:** all your lives as one line across history, scrollable back through the dynasty.
+
+### Decision: the advisor's appointments (mid-game hook)
+
+The advisor names three moments, not years, so players always know roughly when he returns and push toward it.
+
+| Where he says it | His line | Where he shows up next |
+|---|---|---|
+| Stone Age | "I'll see you when someone writes something down." | Bronze Age, once writing exists |
+| Bronze Age | "Next time: when the lights come on." | Electric |
+| Electric | "Last time: when someone builds a machine to go back." | Time travel ending |
+
+- **He knows your playthrough:** each visit he references things you did, like an invention from three eras ago, or a name for the unexplained animal.
+- **He's slightly wrong each time:** wrong name, wrong era, a detail off. It's because he's you, much older, misremembering.
+- **Payoff:** in the time travel ending you become him and must say his lines, chosen by swipe. Right lines close the loop cleanly.
+- **Paradox ending (new):** scramble his lines and the timeline rewrites itself. Attentive players get the clean loop; everyone else gets the funnier ending.
+
+### Decision: accessibility, cultural care, deeds, sound
+
+- **Accessibility:** autosave after every swipe (interruptions cost nothing); adjustable text size; every meter has an icon and shape, not just a colour; reduced-motion setting; fully one-handed.
+- **Cultural care:** on the Polynesian, Chinese, Islamic golden age and Maya routes, jokes target the inventor and the invention, never the culture. A historian or sensitivity reader from each background reviews those cards before they ship (they're a later wave).
+- **Era deeds:** three per era: the keystone, a weird side goal ("invent something nobody asked for"), and a secret one. Completing deeds unlocks new cards.
+- **Sound:** chiptune that evolves by era: bone flute and drums in the Stone Age, lutes by Medieval, synths by Computing. Your mother has a musical sting that plays every time she appears, in each era's instruments.
+
+### Decision: invention system spec (Kofi)
+
+- **Per era:** 6–8 possible inventions: 1 keystone, 3–4 stepping stones, 2–3 bad ideas (feed the Graveyard of Bad Ideas).
+- **Hidden points:** each card answer can add points toward 1–2 inventions. Players never see numbers; Museum silhouettes may glow faintly for inventions they're close to.
+- **Tree:** the keystone requires 2–3 stepping stones invented in earlier lives this era; some stepping stones require others.
+- **Breakthrough:** certain cards are tagged as the trigger for one invention (the rock guy for sparks). After at least 6 cards in a life, once an invention's points pass its threshold, its trigger becomes eligible. Swipe the matching answer and that's this life's invention.
+- **No breakthrough before death:** you invent something anyway, badly. Low points yields a bad idea. Every life ends with an epitaph ("Invented the square wheel").
+- **Safety net:** the keystone's threshold drops each life a player is stuck in an era.
+
+### Decision: content authoring format
+
+Writers work in a spreadsheet, one row per card. A script converts it to game data; the content checker runs on the result.
+
+| Column | Holds |
+|---|---|
+| id, era | Unique card id and its era or detour |
+| speaker | Who's asking |
+| text | The card's question |
+| left answer, right answer | The two answer labels |
+| left effects, right effects | Meter changes, flags set, invention points |
+| conditions | When it can appear (meters, flags, inventions known, cooldown) |
+| weight | How likely it is when eligible |
+| trigger for | The invention this card can trigger, if any |
+
+### Decision: house style and tone (Lena)
+
+**Tone: dark comedy, like Reigns.** Deaths can be grim; the joke is always in how absurd or ironic they are.
+
+- **Length:** questions of 25 words or fewer; answers of 5 words or fewer. Readable in one glance on a phone.
+- **Real choices:** answers are never "Yes" and "Also yes."
+- **One joke per card:** in the question or the consequence, not both.
+- **Frequency caps:** your mother at most once per life; the Naysayer at most twice; the advisor only at his appointments; the unexplained animal rare enough to screenshot.
+
+### Era map (working draft)
+
+Stone Age → Farming → Bronze → Classical → Medieval → Industrial, then a hard fork:
+
+- **Metal path:** Electric → Computing → Robots and AI → Space colonies → Time travel.
+- **Bio path:** Grown machines → Genetic engineering → Living cities → Time travel.
+- **Endings:** time travel leads to the simulation reveal, the true ending. The secret pottery ending branches off Farming (refuse the wheel).
+- **Detours** branch off the late eras (table below).
+
+The locked route in "Decision: first playable version" adds the Renaissance between Medieval and Industrial.
+
+Working draft uses the late hard fork: six shared eras, then Industrial locks you onto the metal or bio path. Early choices only flavour eras (soft forks), except the secret pottery ending off Farming. Both paths end at time travel, which bridges them; the simulation reveal sits above it as the true ending. Detours branch off the late eras (table under the brainstorm).
+
+### Future tech brainstorm
+
+Everything the room pitched for the late game. Sorted into full eras, single-run detours and endings in the table below; the map above shows the eras and endings.
+
+**Metal path**
+
+- Robots, then robots that unionize
+- AI that runs the government
+- Nanotech, space elevators, Dyson spheres
+- Mind uploading, where the computer turns out to have ads
+- Space travel, then colonies, then aliens
+- Aliens who've been watching the whole game and have opinions about your choices
+
+**Bio path**
+
+- Genetic engineering
+- Cloning (you finally meet the Naysayer's clones)
+- Engineered animals; pets that talk back
+- Living cities grown from coral
+- Immortality, as a trap ending, since it breaks the reincarnation premise
+
+**Weird and cross-path**
+
+- Interdimensional travel: a portal to a version of Farming where everyone kept the mammoth drawing
+- Parallel universes where a past run went differently
+- A dimension made entirely of geese
+- Weather control, dream tech (inventing in your sleep), teleportation (is it still you?), shrinking tech, gravity manipulation
+- Mind-reading, as a social-disaster era
+- Invisibility
+- Emotional engineering: remove feelings, and the Religion-to-Marketing meter finishes becoming something horrifying
+
+**Endings**
+
+- Time travel as the bridge between metal and bio paths, and the source of the advisor (a future you)
+- The simulation reveal: someone builds a computer that can simulate the world and finds out they're in one. It's a card game. Pitched as the true ending, above time travel.
+- Pottery ending (secret, from Farming)
+
+**Priority, by vote:** finish the map first (3 votes), meters second (1), name third (1; Priya gets 30 seconds).
+
+### Sorted: eras, detours, endings (Tamsin's draft)
+
+Full eras get a whole deck and meters. Detours are single-run side trips that can branch off a late era. Endings close the game.
+
+| Idea | Bucket | Where it sits |
+|---|---|---|
+| Electric | Full era | Metal path |
+| Computing | Full era | Metal path |
+| Robots and AI (robots unionize, AI runs the government) | Full era | Metal path |
+| Space colonies (space elevators, Dyson spheres, aliens watching you) | Full era | Metal path, last era |
+| Grown machines | Full era | Bio path |
+| Genetic engineering (engineered animals, talking pets) | Full era | Bio path |
+| Living cities (coral cities) | Full era | Bio path, last era |
+| Nanotech | Detour | Metal |
+| Mind uploading (the computer has ads) | Detour | Metal |
+| Teleportation | Detour | Metal |
+| Cloning (the Naysayer's clones) | Detour | Bio |
+| Emotional engineering | Detour | Bio |
+| Interdimensional travel and parallel universes | Detour | Either path, late |
+| Weather control | Detour | Either path |
+| Dream tech | Detour | Either path |
+| Shrinking tech, gravity manipulation | Detour | Either path |
+| Mind-reading (social disaster) | Detour | Either path |
+| Invisibility | Detour | Either path |
+| Goose dimension | Secret detour | Off interdimensional travel |
+| Time travel | Ending | Bridge at the end of both paths |
+| Simulation reveal | True ending | Above time travel |
+| Immortality | Trap ending | Bio path |
+| Pottery | Secret ending | Off Farming |
+| Paradox (scramble the advisor's lines) | Ending | Alternative to the clean time travel loop |
+
+### Round 2 brainstorm (not yet on the map)
+
+Joon's note: every detour above was late-game, so this round fills the early and middle eras.
+
+| Idea | Bucket | Where it sits |
+|---|---|---|
+| Writing | Full era, or folded into Bronze | Shared spine, early |
+| Printing press | Full era | Shared spine, between Medieval and Industrial |
+| Gunpowder | Full era, or folded into Medieval | Shared spine |
+| Navigation and exploration | Full era | Shared spine, middle |
+| Renaissance (one guy invents twelve things; the one-invention rule makes him furious) | Full era | Shared spine, middle |
+| Steam and trains | Full era | Industrial or early metal path |
+| Atomic age | Full era | Metal path |
+| Internet, then social media (the Stone Age Tribe meter returns, unchanged) | Full era | Metal path |
+| Alchemy | Detour | Early to middle |
+| Astrology as a science that almost works | Detour | Early to middle |
+| Clockwork automatons in Classical Greece | Detour | Classical |
+| Zeppelins, far too early | Detour | Middle |
+| Roman steam engine used as a toy | Detour | Classical |
+| Magic actually works; nobody invents anything for three centuries | Detour | Any era |
+| Cryptocurrency (the Neighbours card returns) | Detour | Computing |
+| Cryogenics: freeze yourself, wake in a random later era | Detour | Late, either path |
+| Hive minds | Detour | Late, bio |
+| Terraforming | Detour | Late, metal |
+| Artificial suns | Detour | Late, metal |
+| Memory editing (so your mother stops asking) | Detour | Late, either path |
+| Singularity | Ending | Metal path |
+| Heat death: you invent the last thing | Ending | Very late, either path |
+| Ark: everyone leaves Earth, the Naysayer stays | Ending | Space colonies |
+| The Naysayer was right | Ending | Any; his one correct prediction ends the game |
+| Collapse: everyone forgets, back to rocks; credits over the tutorial guy's temple | Ending | Any |
+
+### Round 3 brainstorm: inventions nobody puts in a museum
+
+Deb's rule for this round: no big sci-fi. Joon's key point: the spine is basically European, and other histories could give the middle eras real branches.
+
+| Idea | Bucket | Where it sits |
+|---|---|---|
+| Soap, the chair, the sandwich | Everyday inventions (cards or small runs) | Any era |
+| The calendar (the first argument about what day it is) | Everyday invention | Farming or Bronze |
+| The joke (the Naysayer doesn't get it) | Everyday invention | Stone Age or Farming |
+| Money | Social invention | Bronze |
+| Laws | Social invention | Bronze or Classical |
+| Marriage | Social invention | Farming |
+| Democracy (the meters literally vote) | Social invention | Classical |
+| Paperwork (outlives every civilization) | Social invention, recurring | Every era after Farming |
+| Graveyard of Bad Ideas: square wheel, chocolate teapot, flying machines that need a cliff | Detour | Any era; a failed invention still counts as your one thing |
+| Chinese paper and gunpowder | Alternate route | Middle eras |
+| Islamic golden age: astronomy and algebra | Alternate route | Middle eras |
+| Polynesian wayfinding across open ocean | Alternate route | Middle eras |
+| Maya calendar | Alternate route | Middle eras |
+| Bureaucracy ending: paperwork becomes sentient and takes over | Ending | Any, late |
+| Sandwich ending: the perfect sandwich, and progress stops | Ending | Any |
+| Joke ending: someone finally makes the Naysayer laugh | Ending | Any |
+
+## Research: what makes Reigns deep
+
+Reigns gets its depth from a smart deck, not from the swipe. The original shipped 700+ cards, 45 royal deeds and 29 collectible deaths; the sequels layered on items, astrology and card combat.
+
+| Reigns mechanic | How it works | What we take |
+|---|---|---|
+| Weighted "bag" deck | Before each card, cards that don't fit the current state are removed, recently seen cards are removed, and the rest are weighted. Active events (a war) add heavy cards that crowd out filler. | Each era has its own bag. Inventions, flags and meters filter and weight what you see. |
+| Sub-systems | Dungeons and duels lock play into a tiny bag of a few cards; a single-card chain makes a linear scene. | Set pieces: a flood, a plague, a first flight. Same swipe, locked mini-deck. |
+| Authored among random | A minority of cards react to past choices, so players read meaning into all of them and invent stories between unrelated cards. | Keep plenty of simple one-shot cards; hide a few callbacks among them. |
+| Layered writing | Alliot wrote one-shots first, then short storylines, then add-on characters that permanently add cards, then the Devil meta-story. | Same order for our card-writing pipeline. |
+| Royal deeds | 45 objectives; completing them unlocks new cards, and some effects span several reigns. | Era deeds ("invent the wheel without dying") that unlock cards and future eras. |
+| Collectible deaths | 29 distinct deaths, tracked in a gallery. | A death gallery per era; death cards are our biggest jokes. |
+| Meta-story explains the loop | The Devil plot was added late to justify repeating dialogue and endless new kings. | Our time-traveling advisor (a future you) does this job. |
+| Card writing rule | Short direct question, snappy answer, dire consequences; Oulipo-style constraints. | Adopt as house style. |
+| Items (Her Majesty) | Five inventory items dragged onto cards; they can bypass the two choices or open new ones, upgrade over time, and are penalized when used randomly. | Ancestors' inventions appear as one of a card's two answers (no dragging; see controls). |
+| Reign sign (Her Majesty) | Each monarch gets an astrological sign that unlocks sign-specific events. | Each inventor gets a trait or season that unlocks cards. |
+| Card combat (Three Kingdoms) | Characters recruited in runs become units in a four-card battle ring you rotate left or right. | Possible later: wars between civilizations, fought with people you met. |
+
+What critics flagged: repetition over long play, binary choices limiting depth, and meters that felt vestigial once items took over. Changing eras is our built-in answer to repetition.
+
+Sources: [Alliot, Game Developer deep dive](https://www.gamedeveloper.com/design/game-design-deep-dive-creating-an-adaptive-narrative-in-i-reigns-i-) · [Wikipedia: Reigns](https://en.wikipedia.org/wiki/Reigns_(video_game)) · [Reigns Wiki: Royal Deeds](https://reigns.fandom.com/wiki/Royal_Deeds) · [Reigns Wiki: Deaths](https://reigns.fandom.com/wiki/Deaths) · [AppSamurai](https://appsamurai.com/blog/mobile-app-success-story-how-reigns-did-it/) · [GamesBeat: Her Majesty](https://gamesbeat.com/reigns-her-majesty-review-its-a-royal-ball/) · [Gamer Escape: Three Kingdoms](https://gamerescape.com/2024/01/11/review-reigns-three-kingdoms/)
+
+## Engine: build the grammar, then pour in content
+
+The engine knows nothing about cavemen or robots. It knows a small set of building blocks, and every era, detour and ending is data made from them. Adding the goose dimension later means writing a file, not code.
+
+| Building block | What it holds | Example |
+|---|---|---|
+| Card | Text, speaker, two choices, the effects of each choice | The Naysayer: "Cooking meat? Raw was fine for my father." |
+| Condition | When a card may appear: meter ranges, flags, era, inventions known, cooldown | Only if the fire went out |
+| Weight | How likely a card is when eligible; active events add heavy cards | War cards crowd out filler until the war ends |
+| Meter | Defined per era, not hard-coded; death at empty or full | Stone Age: Tribe, Food, Fire, Gods |
+| Flag | A choice remembered across lives | Kept the Naysayer; refused the wheel (count) |
+| Invention | Hidden leanings that build over a run; the triggering card; the epitaph; what it unlocks | Art, triggered by scolding the cave-drawing kid |
+| Item use | An ancestor's invention offered as one of a card's two answers (no dragging) | The cave drawing dragged onto the farmer |
+| Sub-deck | A small locked deck for set pieces and linear scenes | A flood, a first flight |
+| Era / detour | Its meters, card pool, entry conditions and exits | Farming unlocks after any Stone Age invention |
+| Ending | The conditions that end the whole game, and its final cards | Pottery: refuse the wheel repeatedly |
+
+**Deck selection (from Reigns):** before each card, drop ineligible and recently seen cards, then pick by weight.
+
+**Tooling alongside the engine:**
+
+- **Content checker:** flags broken data, like a card that can never appear or a flag nothing sets.
+- **Simulation bot:** plays thousands of runs to show if an era is too easy or deadly, and whether every ending is reachable.
+
+**Build order for the Claude Code handoff:** engine and tooling first, then the Stone Age and Farming content as the first test.
+
+## Recurring characters and running gags
+
+- **The Naysayer.** Shows up in every era to say it'll never catch on. Exactly once in the whole game, he's right.
+- **The time-traveling advisor.** Clearly from the future, keeps almost warning you. "Don't do the thing with the... ah, do it. It's funnier."
+- **Your mother.** In every era, asking if you're eating.
+- **The tutorial guy.** Dies in the first era and is worshipped for the rest of the game.
+- **The unexplained animal.** A card with no text, just an animal. You swipe, something happens, it's never explained, in any era.
+- **The neighbours.** Another civilization already did the thing, and now everyone is looking at you.
+
+### Arcs across the timeline
+
+Some characters appear every era; others skip eras so their return is an event.
+
+| Character | Appears | Arc |
+|---|---|---|
+| Your mother | Every era | Same question, new tech: shouted across the cave, then a letter, telegram, phone call, text, and a hologram to your space colony. "Are you eating?" |
+| The advisor | Every era, rarer early | Vague and rare at first, more frequent and oddly specific late. In the time travel ending you go back and become him, saying his lines. |
+| The tutorial guy | Every era | His shrine grows: temple, cathedral, museum, theme park, statue on Mars. Nobody remembers what he did. |
+| The Naysayer | Every era (if kept) | Doubts every era's invention. His one correct prediction is in the Renaissance: the flying machine really doesn't work. |
+| The unexplained animal | Every era | The one thing even time travel can't explain. Never revealed. (Priya insists it's a goose.) |
+| The Sleeper | Every other era | Keeps napping and waking up centuries later: "What did I miss?" Brief him wrong and he spreads it. |
+| The Credit Thief | Every other era | Shows up after your breakthrough; history remembers his name, not yours. Your epitaph notes it. |
+| The bartender | Every other era | Same tavern, rebuilt each time (revived from the graveyard bar idea). Knows every past life. Never says how. |
+| The comet | Every third era | Returns like clockwork. Each era reads it as a different omen, and the Belief meter swings. |
+| The lost invention | Every few eras | Something invented, forgotten, and rediscovered: the Roman steam toy returns as the real steam engine. |
+
+## Cards and death cards
+
+Death cards should carry the biggest jokes, since they end the run.
+
+- "You invented the wheel. It rolled away. You chased it."
+- Peer-pressure cards: a rival civilization already has it, and your people want to know why you don't.
+- Tech-debt cards: an old invention breaks at the worst moment.
+- Same four questions, every era: the joke is that someone uploading a consciousness is still swiping on basically what the caveman was.
+
+## Sample run: Stone Age
+
+About 15 cards. Meters: Tribe, Food, Fire, Gods. Each death leaves one invention behind, and the next inventor finds it and gets it slightly wrong.
+
+1. A guy in a pelt holds up a rock: "If I hit this other rock with it, something happens." Left: send him away. Right: he loses a finger and invents sparks.
+2. He's the tutorial guy. He dies on card 3 and the tribe builds temples to him for 10,000 years.
+3. Card 4, your mother: "You're up all night staring at that fire. Are you eating?" Left: ignore her, Food drops. Right: you eat, the fire goes out.
+4. The tribe asks who let the fire die. You can blame the unexplained animal.
+5. Card 6, the Naysayer's debut: "Cooking meat? Raw was fine for my father." Left: banish him, Tribe drops (he's somebody's uncle), and a worse Naysayer arrives next era. Right: he stays, in every era, forever.
+6. Card 9, a shaman says the Gods want the sparkly rock. Right: Gods up, but you've given away the flint.
+7. Card 12, a kid draws a mammoth on the cave wall. Left: scold him. Right: you've invented art and recordkeeping, and Gods spikes because everyone thinks it's magic.
+8. Death: Gods maxes out, the tribe decides you're a god and gives you to the volcano. Death card: "Promoted."
+9. Carries forward: the cave drawing. Next era, someone finds it and thinks it's instructions.
+
+## Sample run: Farming era
+
+Meters: Harvest, Village, Priests, The Neighbours.
+
+1. A farmer finds the mammoth drawing and decides it's a planting guide. He plants his field in the shape of a mammoth. Left: burn the drawing. Right: it works, nobody knows why, Priests shoots up.
+2. The tutorial guy's temple is now enormous and the priests want it bigger. Right: bigger temple, Harvest drops (the builders were your farmers).
+3. If you kept the Naysayer: "Staying in one place? What if the food moves?"
+4. Your mother: "All this food and you're still so thin."
+5. The Neighbours: the village over has something round they keep rolling around, and everyone's looking at you. Left: wheels are a fad. Right: invent one by Thursday.
+6. Someone invents counting to track grain. Right: you've also invented the tax collector, Village drops.
+7. Death: you invent the wheel, it rolls away, you chase it downhill into the river.
+8. Carries forward: the tax records. Nobody next era knows what they're for, but everyone keeps paying.
+
+## Graveyard
+
+Discarded, but kept in case something here comes back.
+
+**Peterborough, Ontario (the original starting point)**
+
+- 8-bit canoe up the Otonabee; Peterborough Lift Lock as a vertical level.
+- Turn-based RPG: overworld of downtown, the Trent canal, Little Lake, the university. Bosses at the Lift Lock, Jackson Park, a Quaker Oats factory level.
+- Aliens in Jackson Park; the little park train possessed.
+- Swim out to the Little Lake fountain and ride the jet to grab an artifact bouncing on top.
+- Roguelike tactics version: city summer student, each run a shift, rehired Monday; geese as a unionized faction. (Rejected.)
+- The Lift Lock has been going up for three weeks and nobody has mentioned it.
+- X-Files meets Peterborough: two investigators, one believer, one local who just says "yeah, the lights do that." Each run a case file.
+- Reigns version: meters Town Trust, Bureau Funding, Weirdness, Cover-up. Death card: "You explained it too well."
+
+**Other swipe concepts**
+
+- Haunted house: families tour you; scare or behave. Meters: Reputation, Structural Integrity, ghost loyalty.
+- No meters: swipe to keep or discard cards, building a life out of what you didn't throw away.
+- Meters as one body: sleep, money, love, dread.
+- Lighthouse keepers: one keeper per run, the ocean playing a longer game.
+- A bar: new owner each run, one regular who's always there.
+- Tiny ER doctor: treat or send home; the wrong ones come back.
+- Border agent: every swipe is a person. Possibly too heavy.
+- Cult leader: keep four followers' delusions balanced or it schisms.
+- Founder with the idea itself reincarnated across decades, getting closer to real. Bad ending: it works.
+
+**Student-to-founder life sim (dropped from the main game)**
+
+- Start as a student swiping on classes, a friend's project, an internship; choices open doors (found a company, join a startup, take a job).
+- Founder meters: Runway, Morale, Investor Faith, Hype (rises for free, makes everything else fall harder), plus a hidden "does the product work" meter.
+- The dorm guy in every run, as co-founder or acquirer; dead startups persist in the world; one industry figure who never ages.
+
+## Fresh-eyes review
+
+A new room (Nadia, mobile UX; Theo, systems and balance; Iris, playtester; Sam, producer) read the plan cold. Biggest gap: when the era changes.
+
+- [x] **Era progression (Theo):** as written, each death opens the next era, so 11 eras = 11 lives. Solved: see the keystones decision.
+- [x] **Legibility (Iris):** show Reigns-style dots hinting how much each meter will move, so hidden systems don't feel random.
+- [x] **Collection screens (Iris):** a museum of inventions found, with silhouettes and hints for the rest; also a death gallery and endings list.
+- [x] **Onboarding (Nadia):** the first minute teaches swiping, meters and death with no tutorial. The tutorial guy should literally be the tutorial.
+- [x] **Accessibility and mobile (Nadia):** text size, colour-blind-safe meters in 8-bit, resuming after an interruption.
+- [x] **Mid-game hook (Sam):** the advisor names a date ("I'll see you in 1969") so players have something to chase, like the Devil's visits in Reigns.
+- [x] **Cultural care (Sam):** on the Polynesian, Chinese, Islamic golden age and Maya routes, jokes are about inventing, never about the cultures.
+- [ ] **Not designed yet (Theo):** era deeds and sound are now decided; business model is undecided for now (options: premium like Reigns, free demo with unlock, free with ads).
+
+**Keep as is (Iris):** one invention per life, the epitaph reveal, your mother's hologram.
+
+## Open questions
+
+- [ ] Name for the game ("Untitled Swipe Game" for now; shortlist: It'll Never Catch On, One Good Idea, Epitaph).
+- [x] Which meters, and how many per era?
+- [x] Does the student-to-founder idea become the modern era of the main game, or stay separate?
+- [x] What are the extra options beyond left and right, and when do they appear?
+- [x] Art style: 8-bit pixel, or something else?
+
+## Pending proposals
+
+These are the defaults the first build uses where the Decisions above are silent. They come from the Sep 25 plan review (`swipe-game-plan-proposed.md`) and are not approved Decisions yet. Confirm or change each one, or move it to the Graveyard.
+
+- **Dying without a breakthrough (P1):** you get a bad idea related to what your choices leaned toward, never a free stepping stone or keystone. Once all of an era's bad ideas have been used in this timeline, a life can "reinvent" one ("Invented the rock pillow, again"). Reinventions add no Museum entry and count toward nothing.
+- **Reveal (P2):** a breakthrough is committed silently. The epitaph reveals it, and only then does it join history for later lives.
+- **After the breakthrough (P3):** the life goes on. Points stop counting, trigger cards stop appearing, and a few aftermath cards react to what you made. Dying on purpose after a breakthrough is fine.
+- **Fatal breakthrough (P4):** a breakthrough on the swipe that kills you still counts.
+- **Era change (P5):** the keystone is revealed at the epitaph, then "Centuries pass", then the next era starts. A keystone needs its named stepping stones from earlier lives in the era, and one life can't supply both.
+- **Trigger delivery (P6):** a trigger becomes eligible after 6 or more cards in a life, once an invention's points pass its threshold and its prerequisites are met. It then appears within the next 3 draws. Only one is queued at a time, and the one closest to its threshold goes first. Picking the other answer rules that invention out for the rest of that life.
+- **Later:** help for stuck players (P7: better odds toward a missing stepping stone, then a keystone threshold that drops 10% per stuck life, to a 60% floor) and the rules for endings and new timelines (P8).
+
+**Not adopted from the review:**
+
+- Optional on-screen answer buttons. The controls Decision says swipe only; arrow keys work on desktop, for testing.
+- A tutorial branch that ends without sparks. The onboarding Decision guarantees sparks.
+- A 20–45-word card budget. House style says 25 words per question and 5 per answer.
+
+## Implementation notes
+
+- **Stack:** plain HTML, CSS and JavaScript modules with no build step. GitHub Pages serves `main` at https://sevaan.github.io/swipe-dynasty/.
+- **Content:** CSV files in `content/`, one row per card, per the authoring Decision. The browser parses them at load time with the same code the checker uses. The syntax is in `content/README.md`.
+- **Engine:** `src/engine/` has no page code, so the game, the tests and the simulation bot all run the same rules. Each swipe resolves in one atomic step, then autosaves.
+- **Tuning values:** the trigger window, minimum cards before a breakthrough, dot sizes and character caps live in `content/world.json`, not in code.
+- **Placeholder art:** emoji portraits and meter icons until the pixel art exists. There's no sound yet.

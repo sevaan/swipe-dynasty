@@ -1,0 +1,49 @@
+id,era,type,speaker,text,left answer,left effects,right answer,right effects,conditions,weight,trigger for,epitaph,notes
+# Era opener: your mother, in the new era's tech (shouting across fields),,,,,,,,,,,,,
+fa-open,farming,script,mother,"Your mother, shouting across three fields: all this food and you're still so thin!",I'm farming!,Village -5; Harvest +10,Pass the bread,Harvest -10; Village +10,,,,,From the sample run. Shown on the first Farming life.
+# Callbacks to the Stone Age,,,,,,,,,,,,,
+fa-mammoth-field,farming,,farmer,A farmer found an old mammoth drawing. He's sure it's a planting guide.,Burn the drawing,Priests -15; Village +5,Plant a mammoth,use cave-art; Harvest +15; Priests +15,has cave-art,5,,,"From the sample run: it works, nobody knows why."
+fa-temple,farming,,priest,The rock guy's temple is enormous now. The priests want it bigger.,It's big enough,Priests -15; Harvest +10,Bigger,Priests +15; Harvest -15,worshipped_rock_guy,2,,,The tutorial guy's shrine grows every era.
+fa-old-fire,farming,,cousin,The fire's out. Your cousin says the old way takes too long.,Borrow the neighbours',The Neighbours -10; Village +5,Do it the old way,use firemaking; Village +10; Harvest -10,has firemaking,,,,The Stone Age keystone as an answer.
+fa-worse-naysayer,farming,,naysayer,"I'm the old Naysayer's nephew. He was far too positive. Farming? Dirt?",Banish him too,Village -10; Priests +5,He can stay,Priests -10; Village +5; set kept_naysayer; clear naysayer_banished,naysayer_banished; once,4,,,The worse Naysayer you earned by banishing the first.
+# Leanings: sharp tools,,,,,,,,,,,,,
+fa-hard-ground,farming,,farmer,The ground is too hard to plant. Your cousin is attacking it with his hands.,Wait for rain,Harvest -10; Priests +10,Give him a stick,Harvest +15; Village -10; sharp-tools +2,,,,,
+fa-dig,farming,,cousin,Your cousin dug half a row with a pointed stick and fell asleep in it.,Wake him,Village -5; Priests +10,Finish the row,Harvest +15; Village -10; sharp-tools +1; plough +2,,,,,
+fa-sharp-trigger,farming,,farmer,Your cousin sharpened his stick on a rock. Now he wants to sharpen everything.,Hide the rock,Village +10; Harvest -10,Let him,Harvest +15; Village -15,,,sharp-tools right,"Invented sharp tools, and new ways to lose a finger.",
+# Leanings: the tame ox,,,,,,,,,,,,,
+fa-ox,farming,,farmer,A wild ox keeps eating your crops. It seems to like you.,Chase it off,Harvest +10; Village -10,Feed it more,Harvest -15; Village +10; tame-ox +2,,,,,
+fa-naysayer-food,farming,,naysayer,Staying in one place? What if the food moves?,Food doesn't move,Village +10; Priests -10,Fence it in,Harvest +10; Village -10; tame-ox +2,kept_naysayer,,,,From the sample run.
+fa-heavy-sacks,farming,,farmer,The grain sacks are too heavy to carry to the barn.,Carry them anyway,Village -15; Harvest +10,Make the ox do it,use tame-ox; Harvest +10; Village +5; plough +2,has tame-ox,,,,
+fa-ox-trigger,farming,,ox,"The ox followed you home. It's standing in the house, chewing.",Out!,Village +10; Harvest -10,Put it to work,Harvest +15; Village -10,,,tame-ox right,Invented the tame ox. It was already tame. You just asked.,
+# Leanings: counting,,,,,,,,,,,,,
+fa-grain-marks,farming,,farmer,Your neighbour swears you have fewer sheep than yesterday. Neither of you can prove it.,Trust him,Harvest -15; The Neighbours +10,Line them up,The Neighbours -15; Harvest +10; counting +2,,,,,
+fa-priests-rain,farming,,priest,The priests say the rain stopped because you're counting things.,Stop counting,Priests +10; Harvest -10,Count the priests,Priests -15; Village +10; counting +1,,,,,
+fa-naysayer-count,farming,,naysayer,"Counting? You'll never run out of numbers, so what's the point?",Keep counting,Village -10; Harvest +10; counting +2,He has a point,Harvest -10; Priests +10,kept_naysayer,,,,
+fa-counting-trigger,farming,,priest,Someone scratched marks to track the grain. The priests want to know what they mean.,They mean mine,Harvest +15; Village -15,Wipe them off,Priests +10; Harvest -10,,,counting left,"Invented counting, and with it, the tax collector.",From the sample run.
+# Leanings: the wheel (its breakthrough kills you and still counts),,,,,,,,,,,,,
+fa-neighbours-wheel,farming,,neighbours,The village over has something round they keep rolling around. Everyone's looking at you.,Wheels are a fad,The Neighbours -15; Village +5; refused_wheel +1,Invent one by Thursday,The Neighbours +10; Village -10; wheel +3,,,,,"From the sample run. Refusing counts toward the pottery ending, later."
+fa-square,farming,,cousin,"Your cousin made a wheel, but square. It doesn't roll away. He considers this a win.",Tell him the truth,Village -10; The Neighbours +5; wheel +2,Make more,Village +10; The Neighbours -15; square-wheel +3,,,,,Feeds the square wheel bad idea.
+fa-wheel-trigger,farming,,narrator,You carved something round. It's sitting at the top of a hill. It wants to go.,Hold on to it,The Neighbours -10; Village +5,Let it go,The Neighbours +10; die fa-wheel-chase,,,wheel right,,"Invented the wheel. Chased it."
+# The plough (keystone: needs sharp tools and the tame ox from earlier lives),,,,,,,,,,,,,
+fa-furrows,farming,,priest,Your furrows are crooked. The priests say crooked rows anger the Gods.,Straighten them by hand,Village -10; Priests +10; plough +2,Crooked is fine,Priests -15; Harvest +10,has sharp-tools,,,,
+fa-plough-trigger,farming,,farmer,"What if the ox dragged the sharp stick, and we just walked behind it?",Sounds like work,Harvest -10; Village +10,Tie them together,use sharp-tools; use tame-ox; Harvest +20; Village +10,has sharp-tools; has tame-ox,,plough right,Invented the plough. The ox did most of it.,The Farming keystone.
+# Everyday trouble,,,,,,,,,,,,,
+fa-grain-hat,farming,,kid,A kid wove a hat out of grain. The birds are following him.,Take it off him,Village -10; Harvest +10,Hats for everyone,Harvest -15; Village +15; grain-hat +3,,,,,Feeds the grain hat bad idea.
+fa-fence,farming,,neighbours,The neighbours built a fence. It's on your side of the stream.,Move it back,The Neighbours -15; Village +10,Let it go,The Neighbours +10; Harvest -15,,,,,
+fa-feast,farming,,neighbours,"The village over is having a harvest feast. You're not invited, but you can hear it.",Throw a bigger one,Harvest -15; Village +10; The Neighbours +10,Go to bed early,Village -10; Priests +10,,,,,
+fa-drought,farming,,priest,No rain for weeks. The priests want a sacrifice. They're looking at the ox.,Not the ox,Priests -15; Harvest +10,"Fine, the ox",Priests +15; Harvest -10,,,,,
+fa-mother-grandkids,farming,,mother,You're always in that field. When do I get grandchildren?,The field is my child,Village -10; Harvest +10,Soon,Village +15; Harvest -10,,,,,
+fa-mother-scarecrow,farming,,mother,You planted all this and you still look like a scarecrow. Did you eat?,I'm busy,Harvest +10; Village -10,"Fine, I'll eat",Harvest -10; Village +10,,,,,
+fa-animal,farming,,animal,,,Priests +15; Harvest -10,,Village +10; The Neighbours -15,,0.4,,,The unexplained animal. Still unexplained.
+# After this life's breakthrough,,,,,,,,,,,,,
+fa-after-sharp,farming,,farmer,Everyone has a sharp stick now. Arguments are going very differently.,Ban sharp sticks,Village +10; Harvest -10,Sharpen yours more,Village -10; The Neighbours +15,made sharp-tools,3,,,
+fa-after-ox,farming,,ox,The ox wants the good corner of the house.,It's my corner,Village +5; Harvest -15,Give it the corner,Village -10; Harvest +10,made tame-ox,3,,,
+fa-after-counting,farming,,priest,"Now that you can count, the priests want a tenth of everything.",One twentieth,Priests -15; Village +10,"Fine, a tenth",Priests +10; Harvest -15,made counting,3,,,
+fa-after-plough,farming,,farmer,The plough works so well that nobody has to farm all day. Now they're bored.,Invent weekends,Village +15; Harvest -10,Farm harder,Harvest +10; Village -15,made plough,3,,,
+# Fame: high-stakes cards once you've invented something this life,,,,,,,,,,,,,
+fa-fame-copy,farming,,neighbours,The village over copied your invention and is selling it back to you.,Buy it,Harvest -20; The Neighbours +15,Refuse on principle,The Neighbours -20; Village +10,made any,3,,,
+fa-fame-priests,farming,,priest,"The priests say your invention is a miracle, and miracles belong to the temple.",It's mine,Priests -20; Village +10,Hand it over,Priests +20; Harvest -15,made any,3,,,
+fa-fame-crowd,farming,,farmer,Farmers from three valleys came to see your invention. They brought their goats.,Send them home,Village -15; The Neighbours -10,Host everyone,Harvest -20; Village +15,made any,3,,,
+fa-fame-tax,farming,,priest,"Now that you're famous, the tax collector has questions.",Pay up,Harvest -20; Priests +10,Hide the grain,Harvest +10; Village -20,made any,3,,,
+# Fallback,,,,,,,,,,,,,
+fa-nothing,farming,script,narrator,"A quiet day in the fields. The crops grow. Nobody looks at you.",Nap,Village -5,Look busy,Priests +5,,,,,

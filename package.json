@@ -1,0 +1,11 @@
+{
+  "name": "swipe-dynasty",
+  "private": true,
+  "type": "module",
+  "description": "Untitled Swipe Game: Reigns, but the dynasty is the history of technology.",
+  "scripts": {
+    "test": "node --test tests/",
+    "check": "node tools/check.mjs",
+    "sim": "node tools/simulate.mjs"
+  }
+}

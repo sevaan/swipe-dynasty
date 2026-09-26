@@ -1,0 +1,55 @@
+{
+  "title": "Untitled Swipe Game",
+  "files": {
+    "characters": "characters.csv",
+    "flags": "flags.csv",
+    "inventions": "inventions.csv",
+    "deaths": "deaths.csv",
+    "cards": ["cards/tutorial.csv", "cards/stone-age.csv", "cards/farming.csv"]
+  },
+  "start": { "era": "stone-age", "card": "tutorial-1" },
+  "tuning": {
+    "startMeter": 50,
+    "minCardsBeforeBreakthrough": 6,
+    "triggerWindow": 3,
+    "recentCards": 6,
+    "tellChance": 0.5,
+    "dots": { "small": 6, "medium": 12 }
+  },
+  "eras": [
+    {
+      "id": "stone-age",
+      "name": "Stone Age",
+      "when": "A very long time ago",
+      "keystone": "firemaking",
+      "next": "farming",
+      "fallback": "sa-nothing",
+      "theme": { "bg": "#2a1c14", "panel": "#3b2a1e", "card": "#ecd9b4", "ink": "#2a1c14", "text": "#f4e7cd", "accent": "#e8793a" },
+      "meters": {
+        "people": { "label": "Tribe", "icon": "👥" },
+        "resources": { "label": "Food", "icon": "🍖" },
+        "belief": { "label": "Gods", "icon": "🌋" },
+        "power": { "label": "Fire", "icon": "🔥" }
+      },
+      "names": ["Oog", "Grak", "Ula", "Mek", "Thud", "Bonk", "Pebble", "Crag", "Moss", "Yuna", "Rukk", "Nib"]
+    },
+    {
+      "id": "farming",
+      "name": "Farming",
+      "when": "Some thousands of years later",
+      "intro": "Somebody planted a seed on purpose, and everyone stopped walking.",
+      "opener": "fa-open",
+      "keystone": "plough",
+      "next": null,
+      "fallback": "fa-nothing",
+      "theme": { "bg": "#1d2716", "panel": "#2b3820", "card": "#efe4ba", "ink": "#1d2716", "text": "#eef0d8", "accent": "#d9a520" },
+      "meters": {
+        "people": { "label": "Village", "icon": "🛖" },
+        "resources": { "label": "Harvest", "icon": "🌾" },
+        "belief": { "label": "Priests", "icon": "🛐" },
+        "power": { "label": "The Neighbours", "icon": "👀" }
+      },
+      "names": ["Oatis", "Barley", "Rye", "Clod", "Tilly", "Sheaf", "Meadow", "Hayden", "Furrow", "Millet", "Bran", "Posy"]
+    }
+  ]
+}
