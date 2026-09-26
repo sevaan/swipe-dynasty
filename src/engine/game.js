@@ -267,6 +267,15 @@ function previewSide(state, content, side) {
   };
 }
 
+function skyFor(state, content, eraId) {
+  const skies = content.eras[eraId]?.sky || [];
+  if (!skies.length) return null;
+  const life = state.life;
+  const every = Math.max(1, tune(content, 'skyEvery', 5));
+  const index = life ? (life.n + Math.floor(life.cards / every)) % skies.length : 0;
+  return skies[index];
+}
+
 export function eraView(content, eraId) {
   const era = content.eras[eraId];
   return {
@@ -293,6 +302,10 @@ export function view(state, content) {
     card: null,
     pending: state.pending,
     transition: null,
+    // Presentation: the time-of-day sky (it steps every few cards and each
+    // inventor starts at a different time) and the scene the card or death sets.
+    sky: skyFor(state, content, eraId),
+    scene: null,
   };
   if (state.phase === 'play' && state.life?.current) {
     const card = getCard(content, state.life.current.card);
@@ -305,12 +318,17 @@ export function view(state, content) {
       right: previewSide(state, content, card.right),
       hint: card.id === content.start.card && state.timeline.lives === 0,
     };
+    out.scene = content.scenes?.[card.scene] || null;
+  }
+  if (state.phase === 'epitaph' && state.pending) {
+    out.scene = content.scenes?.[content.deaths[state.pending.death]?.scene] || null;
   }
   if (state.phase === 'transition' && state.transition) {
     out.transition = {
       from: eraView(content, state.transition.from),
       to: eraView(content, state.transition.to),
       carried: state.timeline.history.map((id) => ({ id, name: inventionName(content, id), icon: content.inventions[id]?.icon || id })),
+      skies: content.eras[state.transition.to].sky,
     };
   }
   return out;

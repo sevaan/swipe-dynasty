@@ -45,7 +45,7 @@ export function clearSave() {
 
 export function loadSettings() {
   const { value } = tryGet(SETTINGS);
-  const defaults = { scale: 1, reduceMotion: false };
+  const defaults = { scale: 1, reduceMotion: false, effects: true };
   try { return { ...defaults, ...(value ? JSON.parse(value) : {}) }; } catch { return defaults; }
 }
 

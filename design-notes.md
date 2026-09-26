@@ -85,6 +85,7 @@ For scale: the original Reigns shipped with 700+ cards. The Stone Age sample run
 - **Knock-on (confirmed):** ancestors' inventions can't be dragged, so they appear inside cards instead. A card offers the invention as one of its two answers ("Show him the cave drawing" / "Send him away").
 - **Art:** 8-bit pixel art, kept flat and minimal like Reigns.
 - **No emoji (Sep 26, Sevaan):** everything on screen is drawn as 8-bit pixel art: portraits, meter icons, inventions and interface pieces. Text stays in a readable font.
+- **Skies and weather (Sep 26, Sevaan):** the background changes now and then. Each era's sky steps through day, dusk, night and dawn every few cards, and each inventor starts at a different time of day. A card or death can also set a scene with weather on screen: rain, a storm, volcano embers, flames and smoke, stars and fireflies, dust, birds, falling grain. "Centuries pass" is a time-lapse of the new era's skies.
 
 ### Decision: era progression (keystones)
 
@@ -496,4 +497,5 @@ These are the defaults the first build uses where the Decisions above are silent
 - **Content:** CSV files in `content/`, one row per card, per the authoring Decision. The browser parses them at load time with the same code the checker uses. The syntax is in `content/README.md`.
 - **Engine:** `src/engine/` has no page code, so the game, the tests and the simulation bot all run the same rules. Each swipe resolves in one atomic step, then autosaves.
 - **Tuning values:** the trigger window, minimum cards before a breakthrough, dot sizes and character caps live in `content/world.json`, not in code.
+- **Scenes:** `world.json` lists the scenes (a sky colour plus effects) and each era's four skies; cards and deaths pick a scene in their `scene` column. The effects are drawn in `src/ui/fx.js` as chunky pixels at 20 frames a second, behind the cards. Reduce motion freezes them; Settings can turn them off. The checker warns when a sky is too light for the era's text.
 - **Art:** every picture is a text sprite in `content/sprites/`, one character per pixel from a shared palette, so art can be edited like cards. The checker rejects emoji anywhere in the content. The Museum draws an unfound invention as its icon's silhouette. First-draft sprites; there's no sound yet.

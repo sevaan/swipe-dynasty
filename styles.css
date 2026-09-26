@@ -10,7 +10,10 @@
   --text: #f4e7cd;
   --accent: #e8793a;
   --muted: color-mix(in srgb, var(--text) 62%, transparent);
+  --sky: var(--bg);
   --scale: 1;
+  /* A pixel outline keeps text readable over weather */
+  --outline: 1px 0 0 rgb(0 0 0 / 50%), -1px 0 0 rgb(0 0 0 / 50%), 0 1px 0 rgb(0 0 0 / 50%), 0 -1px 0 rgb(0 0 0 / 50%);
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   --font: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   color-scheme: dark;
@@ -22,7 +25,7 @@ html, body {
   height: 100%;
   margin: 0;
   overscroll-behavior: none;
-  background: var(--bg);
+  background: var(--sky);
   color: var(--text);
   font-family: var(--font);
   -webkit-text-size-adjust: 100%;
@@ -33,7 +36,28 @@ body {
   position: fixed;
   inset: 0;
   overflow: hidden;
-  transition: background-color 600ms steps(6, end);
+  transition: background-color 900ms steps(6, end);
+}
+
+/* Weather and ambient effects (src/ui/fx.js), behind everything else */
+.fx {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  image-rendering: pixelated;
+}
+
+.shake { animation: shake 480ms steps(8, end); }
+
+@keyframes shake {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-4px, 2px); }
+  40% { transform: translate(4px, -2px); }
+  60% { transform: translate(-3px, -2px); }
+  80% { transform: translate(3px, 2px); }
 }
 
 button {
@@ -71,6 +95,8 @@ img.px {
   display: grid;
   grid-template-rows: auto 1fr auto;
   padding: calc(env(safe-area-inset-top) + 10px) 16px calc(env(safe-area-inset-bottom) + 8px);
+  position: relative;
+  z-index: 1;
   user-select: none;
   -webkit-user-select: none;
 }
@@ -136,6 +162,7 @@ img.px {
   text-align: center;
   line-height: 1.1;
   max-width: 100%;
+  text-shadow: var(--outline);
 }
 
 @keyframes blink { 50% { opacity: 0.35; } }
@@ -165,7 +192,10 @@ img.px {
   align-self: end;
   padding-bottom: 14px;
   min-height: 3.2em;
+  text-shadow: var(--outline);
 }
+
+.deck[hidden] { display: none; }
 
 .deck {
   position: relative;
@@ -309,10 +339,13 @@ img.px {
   gap: 14px;
   padding: 12px 8px 24px;
   text-align: center;
-  background: var(--bg);
+  background: transparent;
+  text-shadow: var(--outline);
   animation: fade-in 400ms steps(4, end);
   cursor: pointer;
 }
+
+.screen .stone, .screen .tag { text-shadow: none; }
 
 .screen[hidden] { display: none; }
 
@@ -417,6 +450,7 @@ img.px {
 
 .who {
   flex: 1;
+  text-shadow: var(--outline);
   font-size: calc(0.86rem * var(--scale));
   color: var(--muted);
   line-height: 1.25;

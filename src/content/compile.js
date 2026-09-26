@@ -12,15 +12,29 @@ const SCOPES = ['life', 'timeline', 'forever'];
 // Sprites the interface itself draws with (see content/sprites/ui.txt).
 export const UI_SPRITES = ['ui-menu', 'ui-close', 'ui-hand', 'ui-grave', 'ui-door', 'ui-unknown', 'ui-arrow-left', 'ui-arrow-right'];
 const EMOJI = /\p{Extended_Pictographic}/u;
+// Weather and ambient effects the interface can draw (see src/ui/fx.js).
+export const EFFECTS = ['rain', 'lightning', 'embers', 'smoke', 'flames', 'sparks', 'dust', 'stars', 'fireflies', 'grain', 'birds', 'shake'];
+const HEX = /^#[0-9a-fA-F]{6}$/;
+
+function luminance(hex) {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
+    .map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+export function contrast(a, b) {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (hi + 0.05) / (lo + 0.05);
+}
 
 const COLUMNS = {
   characters: { required: ['id', 'name'], optional: ['portrait', 'per life', 'notes'] },
   flags: { required: ['id', 'scope'], optional: ['default', 'notes'] },
   inventions: { required: ['id', 'era', 'type', 'name'], optional: ['requires', 'threshold', 'related', 'icon', 'museum', 'hint', 'notes'] },
-  deaths: { required: ['id', 'era', 'text', 'epitaph'], optional: ['meter', 'end', 'notes'] },
+  deaths: { required: ['id', 'era', 'text', 'epitaph'], optional: ['meter', 'end', 'scene', 'notes'] },
   cards: {
     required: ['id', 'era', 'speaker', 'text', 'left answer', 'right answer'],
-    optional: ['type', 'left effects', 'right effects', 'conditions', 'weight', 'trigger for', 'epitaph', 'notes'],
+    optional: ['type', 'left effects', 'right effects', 'conditions', 'weight', 'trigger for', 'epitaph', 'scene', 'notes'],
   },
 };
 
@@ -64,6 +78,19 @@ export function compileContent(files) {
     bagByEra: {}, triggersByInvention: {},
   };
 
+  // Scenes (JSON): a named mood a card or death can set: a sky colour and effects.
+  content.scenes = {};
+  const checkFx = (list, where) => (Array.isArray(list) ? list : []).map(normId).filter((f) => {
+    if (EFFECTS.includes(f)) return true;
+    err('world.json', 0, where, `Unknown effect "${f}" (known: ${EFFECTS.join(', ')})`);
+    return false;
+  });
+  for (const [rawId, raw] of Object.entries(world.scenes || {})) {
+    const id = normId(rawId);
+    if (raw.bg != null && !HEX.test(raw.bg)) err('world.json', 0, `scenes.${id}.bg`, `"${raw.bg}" should be a colour like #1b2530`);
+    content.scenes[id] = { id, bg: HEX.test(raw.bg || '') ? raw.bg : null, fx: checkFx(raw.fx, `scenes.${id}.fx`) };
+  }
+
   // Eras (JSON)
   for (const raw of world.eras || []) {
     const id = normId(raw.id || '');
@@ -87,6 +114,11 @@ export function compileContent(files) {
       next: raw.next ? normId(raw.next) : null,
       fallback: raw.fallback ? normId(raw.fallback) : null,
       theme: raw.theme || {}, meters, meterNames,
+      // The sky steps through these (day, dusk, night, dawn...) every few cards.
+      sky: (Array.isArray(raw.sky) && raw.sky.length ? raw.sky : [{ name: 'day', bg: raw.theme?.bg || '#2a1c14' }]).map((sk, i) => {
+        if (!HEX.test(sk.bg || '')) err('world.json', 0, `eras.${id}.sky`, `Sky ${i + 1} needs a colour like #2a1c14`);
+        return { name: sk.name || `sky ${i + 1}`, bg: HEX.test(sk.bg || '') ? sk.bg : '#2a1c14', fx: checkFx(sk.fx, `eras.${id}.sky`) };
+      }),
       names: Array.isArray(raw.names) && raw.names.length ? raw.names : ['Someone'],
     };
     content.eraOrder.push(id);
@@ -179,7 +211,9 @@ export function compileContent(files) {
         content.deathIndex[era][role][end] = id;
       }
     }
-    content.deaths[id] = { id, era, role, end, text: v.text, epitaph: v.epitaph };
+    const scene = v.scene ? normId(v.scene) : null;
+    if (scene && !content.scenes[scene]) err(deathPath, line, 'scene', `No scene "${v.scene}" in world.json`);
+    content.deaths[id] = { id, era, role, end, text: v.text, epitaph: v.epitaph, scene: content.scenes[scene] ? scene : null };
   }
 
   // Cards
@@ -224,6 +258,7 @@ export function compileContent(files) {
       if (trig.value) type = 'trigger';
       if (type === 'trigger' && !trig.value) at('trigger for', 'Trigger cards need a "trigger for" invention and side');
 
+      if (v.scene && !content.scenes[normId(v.scene)]) at('scene', `No scene "${v.scene}" in world.json`);
       const weight = v.weight ? Number(v.weight) : 1;
       if (!(weight >= 0)) at('weight', `"${v.weight}" should be a number, 0 or more`);
       if (words(v.text) > 25) warn(path, line, 'text', `${words(v.text)} words; house style is 25 or fewer`);
@@ -231,6 +266,7 @@ export function compileContent(files) {
       const card = {
         id, era: era.id, type, speaker, text: v.text, weight: weight >= 0 ? weight : 1,
         cond, trigger: trig.value, epitaph: v.epitaph || '',
+        scene: v.scene && content.scenes[normId(v.scene)] ? normId(v.scene) : null,
         left: side('left'), right: side('right'), src: { file: path, line },
       };
       if (trig.value) {
@@ -273,6 +309,16 @@ export function compileContent(files) {
     const eraInv = content.inventionOrder.map((i) => content.inventions[i]).filter((i) => i.era === era.id);
     if (!eraInv.some((i) => i.type === 'bad')) err(invPath, 0, 'type', `${era.id} needs at least one bad idea for lives that die without a breakthrough`);
     if (content.bagByEra[era.id].length === 0) warn('world.json', 0, `eras.${era.id}`, `${era.id} has no ordinary cards`);
+  }
+  for (const era of Object.values(content.eras)) {
+    const text = era.theme.text;
+    if (!HEX.test(text || '')) continue;
+    const skies = [...era.sky.map((sk) => [`eras.${era.id}.sky (${sk.name})`, sk.bg]),
+      ...Object.values(content.scenes).filter((sc) => sc.bg).map((sc) => [`scenes.${sc.id}`, sc.bg])];
+    for (const [where, bg] of skies) {
+      const ratio = contrast(text, bg);
+      if (ratio < 4.5) warn('world.json', 0, where, `${bg} is too light behind ${era.name}'s text (contrast ${ratio.toFixed(1)}, needs 4.5)`);
+    }
   }
   for (const inv of Object.values(content.inventions)) {
     if (inv.type !== 'bad' && !content.triggersByInvention[inv.id]?.length) {

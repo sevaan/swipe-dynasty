@@ -21,7 +21,8 @@
     "dots": {
       "small": 6,
       "medium": 12
-    }
+    },
+    "skyEvery": 5
   },
   "eras": [
     {
@@ -31,14 +32,13 @@
       "keystone": "firemaking",
       "next": "farming",
       "fallback": "sa-nothing",
-      "theme": {
-        "bg": "#2a1c14",
-        "panel": "#3b2a1e",
-        "card": "#ecd9b4",
-        "ink": "#2a1c14",
-        "text": "#f4e7cd",
-        "accent": "#e8793a"
-      },
+      "theme": { "bg": "#2a1c14", "panel": "#3b2a1e", "card": "#ecd9b4", "ink": "#2a1c14", "text": "#f4e7cd", "accent": "#e8793a" },
+      "sky": [
+        { "name": "day", "bg": "#2a1c14" },
+        { "name": "dusk", "bg": "#331a22" },
+        { "name": "night", "bg": "#121828", "fx": ["stars"] },
+        { "name": "dawn", "bg": "#2e2317" }
+      ],
       "meters": {
         "people": {
           "label": "Tribe",
@@ -68,14 +68,13 @@
       "keystone": "plough",
       "next": null,
       "fallback": "fa-nothing",
-      "theme": {
-        "bg": "#1d2716",
-        "panel": "#2b3820",
-        "card": "#efe4ba",
-        "ink": "#1d2716",
-        "text": "#eef0d8",
-        "accent": "#d9a520"
-      },
+      "theme": { "bg": "#1d2716", "panel": "#2b3820", "card": "#efe4ba", "ink": "#1d2716", "text": "#eef0d8", "accent": "#d9a520" },
+      "sky": [
+        { "name": "day", "bg": "#1d2716" },
+        { "name": "dusk", "bg": "#2c2410" },
+        { "name": "night", "bg": "#101a22", "fx": ["stars", "fireflies"] },
+        { "name": "dawn", "bg": "#1f2a24" }
+      ],
       "meters": {
         "people": {
           "label": "Village",
@@ -96,5 +95,19 @@
       },
       "names": ["Oatis", "Barley", "Rye", "Clod", "Tilly", "Sheaf", "Meadow", "Hayden", "Furrow", "Millet", "Bran", "Posy"]
     }
-  ]
+  ],
+  "scenes": {
+    "rain": { "bg": "#18222c", "fx": ["rain"] },
+    "storm": { "bg": "#111722", "fx": ["rain", "lightning"] },
+    "volcano": { "bg": "#2d1210", "fx": ["embers", "smoke", "shake"] },
+    "fire": { "bg": "#2c170c", "fx": ["flames", "embers"] },
+    "smoke": { "bg": "#1f1b19", "fx": ["smoke"] },
+    "sparks": { "fx": ["sparks"] },
+    "night": { "bg": "#10162a", "fx": ["stars", "fireflies"] },
+    "dust": { "bg": "#2d2415", "fx": ["dust"] },
+    "stampede": { "bg": "#2d2415", "fx": ["dust", "shake"] },
+    "harvest": { "fx": ["grain"] },
+    "birds": { "fx": ["birds"] },
+    "strange": { "bg": "#291d3a", "fx": [] }
+  }
 }

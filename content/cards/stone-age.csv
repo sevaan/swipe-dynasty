@@ -1,60 +1,60 @@
-id,era,type,speaker,text,left answer,left effects,right answer,right effects,conditions,weight,trigger for,epitaph,notes
-# First life after the tutorial: show them what survived them.,,,,,,,,,,,,,
-sa-first-callback,stone-age,,cousin,Your cousin found your sparking rocks. He wants to know how they work.,"Mine. Hands off.",Tribe -10; Fire +5,Show him,use sparks; Fire +10; Tribe +5; firemaking +2,has sparks; cards < 3; once,1000,,,Inherited-answer callback: almost always the first card of life 2.
-# Leanings toward tinder,,,,,,,,,,,,,
-sa-dry-grass,stone-age,,cousin,Your cousin keeps a pile of dry grass by the fire. For sitting.,Move it away,Fire -10; Tribe +10,Leave it there,Fire +15; Tribe -10; tinder +2,,,,,
-sa-rain,stone-age,,elder,"It's raining again. Everything we own is wet, including the fire.",Wait it out,Fire -15; Gods +10,Store things dry,Fire +10; Food -10; tinder +2,,,,,
-sa-rock-pillow,stone-age,,cousin,Your cousin says sleeping on a flat rock is great for your back.,Sleep on grass,Fire -10; Tribe +5; tinder +1,Try the rock,Tribe -10; Gods +10; rock-pillow +3,,,,,Feeds the rock pillow bad idea.
-sa-tinder-trigger,stone-age,,cousin,"Your cousin fell asleep on his dry grass pile, right next to your sparks.",Wake him up,Tribe +10; Fire -10,See what happens,Fire +20; Tribe -10,has sparks,,tinder right,"Invented tinder, using a cousin.",
-# Leanings toward art,,,,,,,,,,,,,
-sa-storytelling,stone-age,,elder,The elder's story about the big fish gets bigger every night.,Tell him to stop,Tribe -10; Food +5,Draw the fish,Gods +10; Food -10; cave-art +2,,,,,
-sa-moon-marks,stone-age,,cousin,Your cousin scratches a line on the wall every time the moon comes back.,Stop defacing the cave,Gods -10; Tribe +10,Count them,Gods +15; Food -10; cave-art +2,,,,,
-sa-hunt-plan,stone-age,,cousin,The hunters keep arguing about where the mammoths go. Nobody can remember.,Follow the loudest,Food -15; Tribe +10,Draw it in the dirt,Food +15; Tribe -10; cave-art +2,,,,,
-sa-pet-rock,stone-age,,kid,A kid named a rock and takes it everywhere. Now all the kids want one.,It's just a rock,Tribe -10; Gods +5,Name one too,Tribe +15; Food -10; pet-rock +3,,,,,Feeds the pet rock bad idea.
-sa-kid-drawing,stone-age,,kid,A kid drew a mammoth on the cave wall. The legs are all wrong.,Show him how it's done,Tribe -10; Gods +10,Let him be,Tribe +10; Gods -5,,,cave-art left,"Invented art, by accident, while scolding a child.",The matching answer is the scolding one.
-# Leanings toward fire (the keystone needs sparks and tinder first),,,,,,,,,,,,,
-sa-night-watch,stone-age,,elder,Someone has to stay up all night and feed the fire. The elders nominate you.,Refuse,Fire -15; Tribe +10,Stay up,Fire +15; Food -10; firemaking +2,,,,,
-sa-lightning,stone-age,,shaman,Lightning hit the big tree. The shaman says the Gods are handing out fire.,Hide from it,Gods +10; Fire -10,Run toward it,Fire +20; Tribe -10; firemaking +2,,,,,
-sa-wolf,stone-age,,cousin,A wolf is sniffing around the babies again.,Throw a rock,Tribe -15; Food +5,Scare it with sparks,use sparks; Tribe +10; Fire -10; firemaking +1,has sparks,,,,
-sa-neighbours-fire,stone-age,,neighbours,The tribe across the river has fire whenever they want. They're smug about it.,Wave angrily,Gods +10; Tribe -10,Steal some,Fire +20; Tribe -10; firemaking +2; set stole_fire,,,,,
-sa-neighbours-revenge,stone-age,,neighbours,The tribe across the river wants its fire back. They've brought rocks.,Give it back,Fire -20; Tribe +10,Throw rocks back,Tribe -15; Gods +10,stole_fire,3,,,
-sa-fire-insurance,stone-age,,elder,"The elder will protect your fire from the Gods. For a small fee, in meat.",I'll protect it,Fire -10; Food +5,Pay him,Food -15; Gods +10; fire-insurance +3,,,,,Feeds the fire insurance bad idea.
-sa-fire-trigger,stone-age,,elder,"The fire's out again. Everyone's looking at you, your sparks, and that dry grass.",Wait for lightning,Gods +10; Fire -15,"Sparks, meet grass",use sparks; use tinder; Fire +25; Tribe +10,has sparks; has tinder,,firemaking right,"Invented fire, on purpose.",The Stone Age keystone.
-# Gods and the shaman,,,,,,,,,,,,,
-sa-shaman-flint,stone-age,,shaman,The Gods demand the sparkly rock.,The Gods can wait,Gods -15; Fire +10,Hand it over,Gods +15; Fire -10,,,,,From the sample run.
-sa-rain-dance,stone-age,,shaman,"The shaman says if we dance hard enough, it will rain meat.",No dancing,Gods -10; Tribe +10,Dance,Gods +15; Food -15,,,,,
-sa-volcano,stone-age,,shaman,The volcano rumbled. The shaman says it wants a snack.,Toss in some fruit,Food -10; Gods +10,Ignore the mountain,Gods -15; Tribe +5,,,,,
-# Everyday trouble,,,,,,,,,,,,,
-sa-berries,stone-age,,cousin,Found red berries. Nobody has tried them yet.,Nobody still,Food -10; Tribe +5,Cousin goes first,Food +15; Tribe -15,,,,,
-sa-crowded,stone-age,,elder,The cave is crowded. Someone suggests a second cave.,One cave is plenty,Tribe -15; Food +10,Two caves,Tribe +15; Fire -15,,,,,
-sa-spear,stone-age,,cousin,Your cousin tied a pointy rock to a stick. He's very pleased with himself.,Put that down,Tribe +10; Food -10,Point it at dinner,Food +15; Tribe -10,,,,,
-sa-stampede-start,stone-age,,cousin,A mammoth wandered into the valley. The hunters want to try something bold.,Wait it out,Food -10; Tribe +5,Try something bold,Food +10; next sa-stampede-1,,,,,Starts the three-card stampede scene.
-sa-stampede-1,stone-age,script,mammoths,"The mammoth didn't enjoy that. It's back, with friends.",Run,Tribe -10; next sa-stampede-2,Hide in the cave,Food -10; next sa-stampede-2,,,,,
-sa-stampede-2,stone-age,script,mammoths,The herd is circling the cave. Someone has to distract them.,Send your cousin,Tribe -10; next sa-stampede-3,Wave sparks at them,use sparks; Fire -10; Gods +10; firemaking +2; next sa-stampede-3,,,,,
-sa-stampede-3,stone-age,script,mammoths,"It's over. The herd left, with half the food and most of your cousin.",Count the survivors,Tribe -5; Gods +10,Eat the evidence,Food +20; Gods -10,,,,,
-# Recurring cast,,,,,,,,,,,,,
-sa-mother-eat,stone-age,,mother,Are you eating? You look like a stick with hair.,I'm busy,Food -15; Fire +10,"Fine, I'll eat",Food +15; Fire -10,,,,,
-sa-mother-cave,stone-age,,mother,When are you going to settle down in a nice cave of your own?,I'm inventing,Tribe -10; Gods +10,Look at caves,Tribe +15; Food -10,,,,,Foreshadows Farming: settling down.
-sa-mother-sparks,stone-age,,mother,These sparks. Is that a real job?,It's a calling,Gods +10; Food -10; firemaking +1,I'll hunt instead,Food +15; Fire -10,has sparks,,,,
-sa-naysayer-sparks,stone-age,,naysayer,Sparks. Great. Now nobody in this tribe has eyebrows.,Eyebrows are overrated,Tribe -10; Fire +10; firemaking +1,He has a point,Fire -10; Tribe +10,kept_naysayer; has sparks,,,,
-sa-naysayer-art,stone-age,,naysayer,Pictures on the wall? It'll never catch on.,Paint over it,Gods -10; Tribe +10,Paint him,Tribe -10; Gods +10; cave-art +2,kept_naysayer,,,,
-sa-naysayer-meat,stone-age,,naysayer,"You're cooking the meat again. My father ate it cold, and he lived to nearly twenty.",Cook it anyway,Food +10; Tribe -10,Serve it raw,Food -10; Tribe +10,kept_naysayer,,,,
-sa-animal,stone-age,,animal,,,Gods +15; Food -10,,Tribe +10; Fire -15,,0.4,,,"A card with no text, just an animal. Something happens. Never explained."
-sa-advisor,stone-age,,advisor,"Don't do the thing with the... ah, do it. It's funnier. I'll see you when someone writes something down.",Who are you?,Gods +10; set met_advisor,Do what thing?,Tribe +10; set met_advisor,once; life >= 2,3,,,Appointment 1 of 3. He returns in the Bronze Age once writing exists.
-# Ancestors' inventions offered as answers,,,,,,,,,,,,,
-sa-tinder-bed,stone-age,,elder,The tinder pile is the comfiest thing we own. People keep napping on it.,Ban napping,Tribe -10; Fire +10,Make more beds,use tinder; Tribe +15; Fire -10; rock-pillow +1,has tinder,,,,
-sa-art-luck,stone-age,,cousin,"The hunters want the mammoth drawing moved nearer the exit, for luck.",Leave the art alone,Gods +10; Food -10,Draw a new one,use cave-art; Food +15; Tribe -5,has cave-art,,,,
-sa-pillow-heirloom,stone-age,,mother,Take your grandfather's rock pillow. Your neck needs it.,My neck is fine,Tribe +10; Food -5,Use the rock pillow,use rock-pillow; Tribe -10; Gods +15,has rock-pillow,,,,Bad ideas come back too.
-sa-pet-rock-gone,stone-age,,kid,The pet rock ran away. Nobody can explain how.,Good riddance,Tribe -10; Gods +10,Search everywhere,use pet-rock; Food -15; Tribe +15,has pet-rock,,,,
-sa-insurance-claim,stone-age,,elder,The fire went out. Your fire insurance says that was an act of the Gods.,Blame the Gods,Gods -15; Fire -5,Pay more meat,use fire-insurance; Food -15; Fire +15,has fire-insurance,,,,
-# After this life's breakthrough (it goes on; points stop counting),,,,,,,,,,,,,
-sa-after-tinder,stone-age,,cousin,"Now that dry grass catches sparks, nobody wants to sleep on it. Except your cousin.",Let him,Tribe -10; Fire +10,Give him a rock,Tribe +10; Gods -5,made tinder,3,,,
-sa-after-art,stone-age,,kid,Everyone wants their face on the cave wall now. The wall is full.,Paint over the old ones,Gods -10; Tribe +10,Find another wall,Tribe +10; Food -15,made cave-art,3,,,
-sa-after-fire,stone-age,,elder,"Now that anyone can make fire, the old fire keeper wants a new job.",Make him fire critic,Tribe +10; Gods -10,Retire him,Tribe -10; Fire +10,made firemaking,3,,,
-# Fame: high-stakes cards once you've invented something this life (the consequences arrive),,,,,,,,,,,,,
-sa-fame-copycat,stone-age,,cousin,Everyone's copying your invention. Badly. Two huts are on fire.,Teach them properly,Tribe +15; Food -15,Let them learn,Fire +20; Tribe -20,made any,3,,,
-sa-fame-shaman,stone-age,,shaman,"The shaman says your invention came from the Gods, and the Gods want credit.",It was me,Gods -20; Tribe +10,Credit the Gods,Gods +20; Tribe -10,made any,3,,,
-sa-fame-crowd,stone-age,,elder,People walk for days to see you. They're eating all the food.,Send them home,Tribe -20; Food +10,Feed them,Food -20; Tribe +15,made any,3,,,
-sa-fame-rival,stone-age,,neighbours,The tribe across the river says they invented it first. They brought a rock to prove it.,Fight for it,Tribe -20; Gods +10,Share the credit,Gods -15; Fire +15,made any,3,,,
-# Fallback when the deck runs dry (should be rare; the checker and bot watch for it),,,,,,,,,,,,,
-sa-nothing,stone-age,script,narrator,"Nothing happens today. The tribe looks at you, expecting something.",Nap,Tribe -5,Look busy,Gods +5,,,,,
+id,era,type,speaker,text,left answer,left effects,right answer,right effects,conditions,weight,trigger for,epitaph,scene,notes
+# First life after the tutorial: show them what survived them.,,,,,,,,,,,,,,
+sa-first-callback,stone-age,,cousin,Your cousin found your sparking rocks. He wants to know how they work.,Mine. Hands off.,Tribe -10; Fire +5,Show him,use sparks; Fire +10; Tribe +5; firemaking +2,has sparks; cards < 3; once,1000,,,sparks,Inherited-answer callback: almost always the first card of life 2.
+# Leanings toward tinder,,,,,,,,,,,,,,
+sa-dry-grass,stone-age,,cousin,Your cousin keeps a pile of dry grass by the fire. For sitting.,Move it away,Fire -10; Tribe +10,Leave it there,Fire +15; Tribe -10; tinder +2,,,,,,
+sa-rain,stone-age,,elder,"It's raining again. Everything we own is wet, including the fire.",Wait it out,Fire -15; Gods +10,Store things dry,Fire +10; Food -10; tinder +2,,,,,rain,
+sa-rock-pillow,stone-age,,cousin,Your cousin says sleeping on a flat rock is great for your back.,Sleep on grass,Fire -10; Tribe +5; tinder +1,Try the rock,Tribe -10; Gods +10; rock-pillow +3,,,,,,Feeds the rock pillow bad idea.
+sa-tinder-trigger,stone-age,,cousin,"Your cousin fell asleep on his dry grass pile, right next to your sparks.",Wake him up,Tribe +10; Fire -10,See what happens,Fire +20; Tribe -10,has sparks,,tinder right,"Invented tinder, using a cousin.",night,
+# Leanings toward art,,,,,,,,,,,,,,
+sa-storytelling,stone-age,,elder,The elder's story about the big fish gets bigger every night.,Tell him to stop,Tribe -10; Food +5,Draw the fish,Gods +10; Food -10; cave-art +2,,,,,night,
+sa-moon-marks,stone-age,,cousin,Your cousin scratches a line on the wall every time the moon comes back.,Stop defacing the cave,Gods -10; Tribe +10,Count them,Gods +15; Food -10; cave-art +2,,,,,night,
+sa-hunt-plan,stone-age,,cousin,The hunters keep arguing about where the mammoths go. Nobody can remember.,Follow the loudest,Food -15; Tribe +10,Draw it in the dirt,Food +15; Tribe -10; cave-art +2,,,,,,
+sa-pet-rock,stone-age,,kid,A kid named a rock and takes it everywhere. Now all the kids want one.,It's just a rock,Tribe -10; Gods +5,Name one too,Tribe +15; Food -10; pet-rock +3,,,,,,Feeds the pet rock bad idea.
+sa-kid-drawing,stone-age,,kid,A kid drew a mammoth on the cave wall. The legs are all wrong.,Show him how it's done,Tribe -10; Gods +10,Let him be,Tribe +10; Gods -5,,,cave-art left,"Invented art, by accident, while scolding a child.",,The matching answer is the scolding one.
+# Leanings toward fire (the keystone needs sparks and tinder first),,,,,,,,,,,,,,
+sa-night-watch,stone-age,,elder,Someone has to stay up all night and feed the fire. The elders nominate you.,Refuse,Fire -15; Tribe +10,Stay up,Fire +15; Food -10; firemaking +2,,,,,night,
+sa-lightning,stone-age,,shaman,Lightning hit the big tree. The shaman says the Gods are handing out fire.,Hide from it,Gods +10; Fire -10,Run toward it,Fire +20; Tribe -10; firemaking +2,,,,,storm,
+sa-wolf,stone-age,,cousin,A wolf is sniffing around the babies again.,Throw a rock,Tribe -15; Food +5,Scare it with sparks,use sparks; Tribe +10; Fire -10; firemaking +1,has sparks,,,,night,
+sa-neighbours-fire,stone-age,,neighbours,The tribe across the river has fire whenever they want. They're smug about it.,Wave angrily,Gods +10; Tribe -10,Steal some,Fire +20; Tribe -10; firemaking +2; set stole_fire,,,,,fire,
+sa-neighbours-revenge,stone-age,,neighbours,The tribe across the river wants its fire back. They've brought rocks.,Give it back,Fire -20; Tribe +10,Throw rocks back,Tribe -15; Gods +10,stole_fire,3,,,,
+sa-fire-insurance,stone-age,,elder,"The elder will protect your fire from the Gods. For a small fee, in meat.",I'll protect it,Fire -10; Food +5,Pay him,Food -15; Gods +10; fire-insurance +3,,,,,,Feeds the fire insurance bad idea.
+sa-fire-trigger,stone-age,,elder,"The fire's out again. Everyone's looking at you, your sparks, and that dry grass.",Wait for lightning,Gods +10; Fire -15,"Sparks, meet grass",use sparks; use tinder; Fire +25; Tribe +10,has sparks; has tinder,,firemaking right,"Invented fire, on purpose.",smoke,The Stone Age keystone.
+# Gods and the shaman,,,,,,,,,,,,,,
+sa-shaman-flint,stone-age,,shaman,The Gods demand the sparkly rock.,The Gods can wait,Gods -15; Fire +10,Hand it over,Gods +15; Fire -10,,,,,,From the sample run.
+sa-rain-dance,stone-age,,shaman,"The shaman says if we dance hard enough, it will rain meat.",No dancing,Gods -10; Tribe +10,Dance,Gods +15; Food -15,,,,,dust,
+sa-volcano,stone-age,,shaman,The volcano rumbled. The shaman says it wants a snack.,Toss in some fruit,Food -10; Gods +10,Ignore the mountain,Gods -15; Tribe +5,,,,,volcano,
+# Everyday trouble,,,,,,,,,,,,,,
+sa-berries,stone-age,,cousin,Found red berries. Nobody has tried them yet.,Nobody still,Food -10; Tribe +5,Cousin goes first,Food +15; Tribe -15,,,,,,
+sa-crowded,stone-age,,elder,The cave is crowded. Someone suggests a second cave.,One cave is plenty,Tribe -15; Food +10,Two caves,Tribe +15; Fire -15,,,,,,
+sa-spear,stone-age,,cousin,Your cousin tied a pointy rock to a stick. He's very pleased with himself.,Put that down,Tribe +10; Food -10,Point it at dinner,Food +15; Tribe -10,,,,,,
+sa-stampede-start,stone-age,,cousin,A mammoth wandered into the valley. The hunters want to try something bold.,Wait it out,Food -10; Tribe +5,Try something bold,Food +10; next sa-stampede-1,,,,,,Starts the three-card stampede scene.
+sa-stampede-1,stone-age,script,mammoths,"The mammoth didn't enjoy that. It's back, with friends.",Run,Tribe -10; next sa-stampede-2,Hide in the cave,Food -10; next sa-stampede-2,,,,,stampede,
+sa-stampede-2,stone-age,script,mammoths,The herd is circling the cave. Someone has to distract them.,Send your cousin,Tribe -10; next sa-stampede-3,Wave sparks at them,use sparks; Fire -10; Gods +10; firemaking +2; next sa-stampede-3,,,,,stampede,
+sa-stampede-3,stone-age,script,mammoths,"It's over. The herd left, with half the food and most of your cousin.",Count the survivors,Tribe -5; Gods +10,Eat the evidence,Food +20; Gods -10,,,,,dust,
+# Recurring cast,,,,,,,,,,,,,,
+sa-mother-eat,stone-age,,mother,Are you eating? You look like a stick with hair.,I'm busy,Food -15; Fire +10,"Fine, I'll eat",Food +15; Fire -10,,,,,,
+sa-mother-cave,stone-age,,mother,When are you going to settle down in a nice cave of your own?,I'm inventing,Tribe -10; Gods +10,Look at caves,Tribe +15; Food -10,,,,,,Foreshadows Farming: settling down.
+sa-mother-sparks,stone-age,,mother,These sparks. Is that a real job?,It's a calling,Gods +10; Food -10; firemaking +1,I'll hunt instead,Food +15; Fire -10,has sparks,,,,,
+sa-naysayer-sparks,stone-age,,naysayer,Sparks. Great. Now nobody in this tribe has eyebrows.,Eyebrows are overrated,Tribe -10; Fire +10; firemaking +1,He has a point,Fire -10; Tribe +10,kept_naysayer; has sparks,,,,sparks,
+sa-naysayer-art,stone-age,,naysayer,Pictures on the wall? It'll never catch on.,Paint over it,Gods -10; Tribe +10,Paint him,Tribe -10; Gods +10; cave-art +2,kept_naysayer,,,,,
+sa-naysayer-meat,stone-age,,naysayer,"You're cooking the meat again. My father ate it cold, and he lived to nearly twenty.",Cook it anyway,Food +10; Tribe -10,Serve it raw,Food -10; Tribe +10,kept_naysayer,,,,,
+sa-animal,stone-age,,animal,,,Gods +15; Food -10,,Tribe +10; Fire -15,,0.4,,,strange,"A card with no text, just an animal. Something happens. Never explained."
+sa-advisor,stone-age,,advisor,"Don't do the thing with the... ah, do it. It's funnier. I'll see you when someone writes something down.",Who are you?,Gods +10; set met_advisor,Do what thing?,Tribe +10; set met_advisor,once; life >= 2,3,,,,Appointment 1 of 3. He returns in the Bronze Age once writing exists.
+# Ancestors' inventions offered as answers,,,,,,,,,,,,,,
+sa-tinder-bed,stone-age,,elder,The tinder pile is the comfiest thing we own. People keep napping on it.,Ban napping,Tribe -10; Fire +10,Make more beds,use tinder; Tribe +15; Fire -10; rock-pillow +1,has tinder,,,,night,
+sa-art-luck,stone-age,,cousin,"The hunters want the mammoth drawing moved nearer the exit, for luck.",Leave the art alone,Gods +10; Food -10,Draw a new one,use cave-art; Food +15; Tribe -5,has cave-art,,,,,
+sa-pillow-heirloom,stone-age,,mother,Take your grandfather's rock pillow. Your neck needs it.,My neck is fine,Tribe +10; Food -5,Use the rock pillow,use rock-pillow; Tribe -10; Gods +15,has rock-pillow,,,,,Bad ideas come back too.
+sa-pet-rock-gone,stone-age,,kid,The pet rock ran away. Nobody can explain how.,Good riddance,Tribe -10; Gods +10,Search everywhere,use pet-rock; Food -15; Tribe +15,has pet-rock,,,,,
+sa-insurance-claim,stone-age,,elder,The fire went out. Your fire insurance says that was an act of the Gods.,Blame the Gods,Gods -15; Fire -5,Pay more meat,use fire-insurance; Food -15; Fire +15,has fire-insurance,,,,smoke,
+# After this life's breakthrough (it goes on; points stop counting),,,,,,,,,,,,,,
+sa-after-tinder,stone-age,,cousin,"Now that dry grass catches sparks, nobody wants to sleep on it. Except your cousin.",Let him,Tribe -10; Fire +10,Give him a rock,Tribe +10; Gods -5,made tinder,3,,,,
+sa-after-art,stone-age,,kid,Everyone wants their face on the cave wall now. The wall is full.,Paint over the old ones,Gods -10; Tribe +10,Find another wall,Tribe +10; Food -15,made cave-art,3,,,,
+sa-after-fire,stone-age,,elder,"Now that anyone can make fire, the old fire keeper wants a new job.",Make him fire critic,Tribe +10; Gods -10,Retire him,Tribe -10; Fire +10,made firemaking,3,,,fire,
+# Fame: high-stakes cards once you've invented something this life (the consequences arrive),,,,,,,,,,,,,,
+sa-fame-copycat,stone-age,,cousin,Everyone's copying your invention. Badly. Two huts are on fire.,Teach them properly,Tribe +15; Food -15,Let them learn,Fire +20; Tribe -20,made any,3,,,fire,
+sa-fame-shaman,stone-age,,shaman,"The shaman says your invention came from the Gods, and the Gods want credit.",It was me,Gods -20; Tribe +10,Credit the Gods,Gods +20; Tribe -10,made any,3,,,,
+sa-fame-crowd,stone-age,,elder,People walk for days to see you. They're eating all the food.,Send them home,Tribe -20; Food +10,Feed them,Food -20; Tribe +15,made any,3,,,,
+sa-fame-rival,stone-age,,neighbours,The tribe across the river says they invented it first. They brought a rock to prove it.,Fight for it,Tribe -20; Gods +10,Share the credit,Gods -15; Fire +15,made any,3,,,,
+# Fallback when the deck runs dry (should be rare; the checker and bot watch for it),,,,,,,,,,,,,,
+sa-nothing,stone-age,script,narrator,"Nothing happens today. The tribe looks at you, expecting something.",Nap,Tribe -5,Look busy,Gods +5,,,,,,

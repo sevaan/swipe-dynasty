@@ -5,6 +5,7 @@ import { advance, choose, devAction, eraView, inventionName, newGame, view } fro
 import { bindSwipe, bindTap } from './input.js';
 import { clearSave, loadSave, loadSettings, parseSave, saveSettings, writeSave } from './storage.js';
 import { setSprite, spriteBounds, spriteHTML, spriteSize, spriteURL } from './sprites.js';
+import { createFx } from './fx.js';
 
 const $ = (id) => document.getElementById(id);
 const els = {
@@ -22,6 +23,9 @@ let busy = false;
 let meterEra = null;
 let saveWarned = false;
 let currentTab = 'museum';
+let fx = null;
+let devScene = '';
+let timelapse = 0;
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const cap = (s) => (s ? s[0].toUpperCase() + s.slice(1) : s);
@@ -49,8 +53,45 @@ function applySettings() {
 function applyTheme(theme = {}) {
   const root = document.documentElement.style;
   for (const key of ['bg', 'panel', 'card', 'ink', 'text', 'accent']) if (theme[key]) root.setProperty(`--${key}`, theme[key]);
+}
+
+// The sky colour and weather for this moment: the time of day, unless the
+// card or death sets a scene. A scene with its own sky replaces the time of
+// day's effects; one without adds its effects to them.
+function applyScene(v) {
+  let bg = v.sky?.bg || v.era.theme.bg;
+  let effects = [...(v.sky?.fx || [])];
+  const scene = devScene ? content.scenes[devScene] : v.scene;
+  if (scene?.bg) { bg = scene.bg; effects = [...scene.fx]; }
+  else if (scene) effects.push(...scene.fx);
+
+  clearInterval(timelapse);
+  timelapse = 0;
+  if (v.phase === 'transition' && v.transition && !devScene) {
+    // "Centuries pass": the new era's skies go by quickly, under the stars
+    const skies = v.transition.skies;
+    bg = skies[0]?.bg || bg;
+    effects = ['stars'];
+    if (!settings.reduceMotion && skies.length > 1) {
+      let i = 0;
+      timelapse = setInterval(() => {
+        i = (i + 1) % skies.length;
+        document.documentElement.style.setProperty('--sky', skies[i].bg);
+      }, 500);
+    }
+  }
+  document.documentElement.style.setProperty('--sky', bg);
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta && theme.bg) meta.setAttribute('content', theme.bg);
+  if (meta) meta.setAttribute('content', bg);
+  fx?.set([...new Set(effects)], { reduceMotion: settings.reduceMotion, enabled: settings.effects !== false });
+}
+
+function shake() {
+  const app = $('app');
+  app.classList.remove('shake');
+  void app.offsetWidth;
+  app.classList.add('shake');
+  setTimeout(() => app.classList.remove('shake'), 500);
 }
 
 function level(value) {
@@ -234,6 +275,7 @@ function screenHTML(v) {
 function render(opts = {}) {
   const v = view(state, content);
   applyTheme(v.phase === 'transition' && v.transition ? v.transition.to.theme : v.era.theme);
+  applyScene(v);
   updateMeters(v);
   const life = v.life;
   els.who.innerHTML = life
@@ -241,11 +283,12 @@ function render(opts = {}) {
     : esc(v.era.name);
   if (v.phase === 'play' && v.card) {
     els.screen.hidden = true;
-    els.card.parentElement.hidden = false;
+    $('deck').hidden = false;
     showCard(v, opts);
   } else {
     els.question.textContent = '';
     els.hand.classList.remove('show');
+    $('deck').hidden = true;
     previewSide(null);
     els.screen.innerHTML = screenHTML(v);
     els.screen.hidden = false;
@@ -344,6 +387,7 @@ function settingsHTML() {
   const sizes = [[0.9, 'S'], [1, 'M'], [1.15, 'L'], [1.3, 'XL']];
   return `
     <div class="row pxc"><span>Text size</span><span class="seg">${sizes.map(([s, l]) => `<button class="pxc" type="button" data-scale="${s}" aria-pressed="${settings.scale === s}">${l}</button>`).join('')}</span></div>
+    <div class="row pxc"><span>Weather effects</span><span class="seg"><button class="pxc" type="button" data-effects="off" aria-pressed="${settings.effects === false}">Off</button><button class="pxc" type="button" data-effects="on" aria-pressed="${settings.effects !== false}">On</button></span></div>
     <div class="row pxc"><span>Reduce motion</span><span class="seg"><button class="pxc" type="button" data-motion="off" aria-pressed="${!settings.reduceMotion}">Off</button><button class="pxc" type="button" data-motion="on" aria-pressed="${!!settings.reduceMotion}">On</button></span></div>
     <h3>Your save</h3>
     <p class="fine">Saves stay in this browser only. To move one to another device, copy it here and paste it there.</p>
@@ -376,6 +420,8 @@ function devHTML() {
       <button class="btn pxc" type="button" data-dev="grant">Grant</button>
       <select id="devEra">${eras}</select>
       <button class="btn pxc" type="button" data-dev="era">Jump to era</button>
+      <select id="devScene"><option value="">(card's own scene)</option>${Object.keys(content.scenes).map((id) => `<option value="${id}"${id === devScene ? ' selected' : ''}>${id}</option>`).join('')}</select>
+      <button class="btn pxc" type="button" data-act="scene">Preview scene</button>
     </div>
     <div class="dev">${esc(JSON.stringify(dump, null, 1))}</div>`;
 }
@@ -390,10 +436,12 @@ function openPanel(tab = currentTab) {
     <div class="tabs" role="tablist" style="grid-template-columns: repeat(${tabs.length}, 1fr)">${tabs.map(([id, label]) => `<button class="pxc" type="button" role="tab" data-tab="${id}" aria-selected="${id === tab}">${label}</button>`).join('')}</div>
     <div class="panel-body">${body}</div>`;
   els.panel.hidden = false;
+  fx?.setPaused(true);
 }
 
 function closePanel() {
   els.panel.hidden = true;
+  fx?.setPaused(document.hidden);
   render();
 }
 
@@ -403,8 +451,10 @@ els.panel.addEventListener('click', async (e) => {
   if (t.dataset.tab) return openPanel(t.dataset.tab);
   if (t.dataset.scale) { settings.scale = Number(t.dataset.scale); saveSettings(settings); applySettings(); return openPanel('settings'); }
   if (t.dataset.motion) { settings.reduceMotion = t.dataset.motion === 'on'; saveSettings(settings); applySettings(); return openPanel('settings'); }
+  if (t.dataset.effects) { settings.effects = t.dataset.effects === 'on'; saveSettings(settings); return openPanel('settings'); }
   const act = t.dataset.act;
   if (act === 'close') return closePanel();
+  if (act === 'scene') { devScene = $('devScene').value; return closePanel(); }
   if (act === 'copy') {
     const box = $('saveBox');
     box.value = JSON.stringify(state);
@@ -470,6 +520,7 @@ async function boot() {
   if (loaded.errors.length) { showErrors(loaded.errors); return; }
   content = loaded.content;
   if (DEV && loaded.warnings.length) console.warn('Content warnings', loaded.warnings);
+  fx = createFx($('fx'), { colors: content.palette, onShake: () => { if (!settings.reduceMotion) shake(); } });
   setSprite($('menuIcon'), content, 'ui-menu', 2);
   setSprite(els.hand, content, 'ui-hand', 3);
   $('favicon').href = spriteURL(content, 'fire');

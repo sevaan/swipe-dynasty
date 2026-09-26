@@ -12,6 +12,7 @@ Read `design-notes.md` before doing anything. It is the source of truth for the 
 - `src/engine/` has no DOM code. The browser, `tools/simulate.mjs` and the tests all run the same engine.
 - Saves and settings persist in localStorage.
 - No emoji anywhere (Sevaan's call). Every picture is 8-bit pixel art drawn as a text sprite in `content/sprites/` (one character per pixel, shared palette); `tools/sprites.html` shows them all. Text stays in a readable font.
+- Skies and weather are data: scenes in `content/world.json`, picked by a card's or death's `scene` column, drawn by `src/ui/fx.js`. Preview any scene from the `?dev` panel.
 
 ## Before pushing
 

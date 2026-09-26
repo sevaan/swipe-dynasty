@@ -13,7 +13,7 @@ Before pushing, run `node tools/check.mjs`. It lists errors (the game won't star
 | `flags.csv` | Remembered fact | `id`, `scope` (`life`, `timeline` or `forever`), `default` |
 | `inventions.csv` | Invention | `type` (keystone, stepping stone, bad idea), `name` (as in "Invented ___"), `requires`, `threshold`, `related` (bad ideas only), `icon` (a sprite id; defaults to the invention's id), `museum`, `hint` (the Naysayer's Museum hint) |
 | `sprites/*.txt` | Picture | Pixel art as text (below) |
-| `deaths.csv` | Death card | `meter` + `end` (low or high) for the 8 meter deaths per era; blank for special deaths used with `die`. `epitaph` is the punchline after "Invented X." |
+| `deaths.csv` | Death card | `meter` + `end` (low or high) for the 8 meter deaths per era; blank for special deaths used with `die`. `epitaph` is the punchline after "Invented X." `scene` sets the weather on the gravestone screen |
 | `cards/*.csv` | Card | See below |
 
 Ids are forgiving: case doesn't matter, and spaces, `_` and `-` are the same (`kept_naysayer` = `kept naysayer`). A row whose first cell starts with `#` is a comment.
@@ -33,6 +33,7 @@ Ids are forgiving: case doesn't matter, and spaces, `_` and `-` are the same (`k
 | `weight` | How likely it is when eligible. Default 1; the unexplained animal is 0.4 |
 | `trigger for` | The invention this card can trigger and the matching side, like `tinder right` |
 | `epitaph` | Optional: how the epitaph phrases this breakthrough, like `Invented tinder, using a cousin.` |
+| `scene` | Optional: the weather while this card is up, like `rain` (see Scenes below) |
 | `notes` | For writers; the game ignores it |
 
 ## Effects
@@ -94,4 +95,23 @@ mirror
 - Portraits are 24 x 24, meter and invention icons 16 x 16. The game scales them by whole numbers so pixels stay square.
 - Meter icons fill up from the bottom as the meter rises, and the Museum shows an unfound invention as its icon's silhouette, so draw shapes that read in solid colour.
 - Keep each sprite to a handful of palette colours so it stays 8-bit.
+
+## Scenes: skies and weather
+
+The background changes as you play. Each era in `world.json` has a `sky` list (day, dusk, night, dawn); the sky moves on every `skyEvery` cards (in `tuning`), and each inventor starts at a different time of day. Night skies can bring their own effects, like stars.
+
+A card or death can set a scene in its `scene` column. Scenes live in `world.json`:
+
+```json
+"scenes": {
+  "rain":    { "bg": "#18222c", "fx": ["rain"] },
+  "volcano": { "bg": "#2d1210", "fx": ["embers", "smoke", "shake"] },
+  "sparks":  { "fx": ["sparks"] }
+}
+```
+
+- `bg` changes the sky while the scene is up. Leave it out to keep the time of day (and add the scene's effects to it).
+- `fx` picks from these effects: `rain`, `lightning`, `embers`, `smoke`, `flames`, `sparks`, `dust`, `stars`, `fireflies`, `grain`, `birds`, `shake`. A new effect needs code in `src/ui/fx.js`; a new scene is just data.
+- Keep skies dark: the text is light. The checker warns when a sky doesn't leave enough contrast.
+- To see a scene without playing to it, open the game with `?dev`, then Dev, pick a scene, Preview scene.
 

@@ -2,7 +2,7 @@
 import { compileContent, UI_SPRITES } from '../src/content/compile.js';
 
 const METERS = { people: { label: 'A', icon: 'meter' }, resources: { label: 'B', icon: 'meter' }, belief: { label: 'C', icon: 'meter' }, power: { label: 'D', icon: 'meter' } };
-const CARD_HEADER = 'id,era,type,speaker,text,left answer,left effects,right answer,right effects,conditions,weight,trigger for,epitaph';
+const CARD_HEADER = 'id,era,type,speaker,text,left answer,left effects,right answer,right effects,conditions,weight,trigger for,epitaph,scene';
 
 export function fixture({ cards, inventions, extraDeaths = '', start = 'c-start', tuning = {} }) {
   const deaths = ['low', 'high'].flatMap((end) => ['A', 'B', 'C', 'D'].map((m) => `d-${m}-${end},test,${m},${end},${m} ${end},${m} ${end}.`));
