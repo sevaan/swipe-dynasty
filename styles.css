@@ -448,8 +448,12 @@ img.px {
   min-height: 48px;
 }
 
+/* A dark plate keeps the inventor's name readable over flames and weather */
 .who {
-  flex: 1;
+  flex: 0 1 auto;
+  margin-right: auto;
+  padding: 6px 10px;
+  background: rgb(0 0 0 / 38%);
   text-shadow: var(--outline);
   font-size: calc(0.86rem * var(--scale));
   color: var(--muted);
