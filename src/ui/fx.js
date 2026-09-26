@@ -33,6 +33,7 @@ export function createFx(canvas, { colors, onShake = () => {} }) {
   let last = 0;
   let flash = [];
   let bolt = null;
+  let quiet = [];
   const next = {};
 
   // Flame colours, cool to hot, as RGBA
@@ -282,11 +283,40 @@ export function createFx(canvas, { colors, onShake = () => {} }) {
       }
     }
     if (bolt) for (const [x, y] of bolt.pts) px(x, y, c('w', '#fff5e6'), 0.95, 1, 3);
+    drawQuiet();
     if (flash.length) {
       const a = flash.shift();
       if (a > 0) px(0, 0, c('w', '#fff5e6'), a, W, H);
     }
     ctx.globalAlpha = 1;
+  }
+
+  // Weather thins out behind text, so rain and embers never cross the
+  // words: each quiet box fades what's under it, with a one-step pixel edge.
+  function drawQuiet() {
+    if (!quiet.length) return;
+    const sx = W / window.innerWidth;
+    const sy = H / window.innerHeight;
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.fillStyle = '#000';
+    for (const r of quiet) {
+      const x = Math.floor(r.left * sx);
+      const y = Math.floor(r.top * sy);
+      const w = Math.ceil(r.right * sx) - x;
+      const h = Math.ceil(r.bottom * sy) - y;
+      ctx.globalAlpha = 0.45;
+      ctx.fillRect(x - 2, y - 2, w + 4, h + 4);
+      ctx.globalAlpha = 0.65;
+      ctx.fillRect(x, y, w, h);
+    }
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1;
+  }
+
+  // Boxes (in CSS pixels, like getBoundingClientRect) where text sits.
+  function setQuiet(rects) {
+    quiet = rects.filter((r) => r && r.right > r.left && r.bottom > r.top);
+    if (still && enabled) draw();
   }
 
   function tick(now) {
@@ -338,5 +368,5 @@ export function createFx(canvas, { colors, onShake = () => {} }) {
   resize();
   window.addEventListener('resize', resize);
   document.addEventListener('visibilitychange', () => setPaused(document.hidden));
-  return { set, setPaused, resize };
+  return { set, setPaused, resize, setQuiet };
 }

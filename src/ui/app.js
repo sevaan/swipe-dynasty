@@ -295,7 +295,24 @@ function render(opts = {}) {
     if (v.phase === 'epitaph' && v.pending) els.live.textContent = `Here lies ${v.pending.name}. ${v.pending.epitaph}`;
     if (v.phase === 'transition') els.live.textContent = `Centuries pass. ${v.transition?.to.name}.`;
   }
+  quietText();
   if (DEV) renderDevButton();
+}
+
+// Tells the weather where the words are, so it thins out behind them.
+function quietText() {
+  if (!fx) return;
+  const pad = (r, x, y) => ({ left: r.left - x, top: r.top - y, right: r.right + x, bottom: r.bottom + y });
+  const boxes = [...els.meters.querySelectorAll('.label')].map((el) => pad(el.getBoundingClientRect(), 4, 2));
+  if (!$('deck').hidden && els.question.textContent) {
+    const range = document.createRange();
+    range.selectNodeContents(els.question);
+    boxes.push(pad(range.getBoundingClientRect(), 12, 8));
+  }
+  if (!els.screen.hidden) {
+    for (const el of els.screen.querySelectorAll('.scene, .big, .era-name, .fine, .tags, .carried, .continue')) boxes.push(pad(el.getBoundingClientRect(), 12, 6));
+  }
+  fx.setQuiet(boxes);
 }
 
 // Actions
@@ -343,7 +360,7 @@ function museumHTML() {
     for (const inv of all.filter((i) => i.era === eraId)) {
       html += found[inv.id]
         ? `<div class="item pxc"><div class="glyph">${spriteHTML(content, inv.icon, { scale: 2 })}</div><div class="title">${esc(cap(inv.name))} <span class="tag pxc ${inv.type}">${KIND[inv.type]}</span></div><div class="body">${esc(inv.museum)}</div></div>`
-        : `<div class="item pxc locked"><div class="glyph">${spriteHTML(content, inv.icon, { scale: 2, mode: 'ghost', cls: 'ghost' })}</div><div class="title">???</div><div class="body">“${esc(inv.hint)}” (the Naysayer)</div></div>`;
+        : `<div class="item pxc locked"><div class="glyph">${spriteHTML(content, inv.icon, { scale: 2, mode: 'ghost', cls: 'ghost' })}</div><div class="title">???</div><div class="body">“${esc(inv.hint)}” <span class="by">(the Naysayer)</span></div></div>`;
     }
   }
   html += `<h3>Endings</h3><div class="item pxc locked"><div class="glyph">${spriteHTML(content, 'ui-door', { scale: 2, mode: 'ghost', cls: 'ghost' })}</div><div class="title">A locked door</div><div class="body">None of the endings are built yet.</div></div>`;
@@ -536,6 +553,9 @@ async function boot() {
   if (saved.problem) banner(saved.problem, 9000);
   persist();
   render({ enter: true });
+  // The web font can arrive after the first draw and move the words
+  document.fonts?.ready.then(quietText);
+  document.fonts?.addEventListener?.('loadingdone', quietText);
 
   bindSwipe(els.card, {
     canStart: () => !busy && state.phase === 'play' && els.panel.hidden,

@@ -11,7 +11,8 @@ Read `design-notes.md` before doing anything. It is the source of truth for the 
 - Content lives in `content/` as spreadsheet-style CSV plus `world.json`, separate from engine code, so new cards never need logic changes. `content/README.md` is the writer's guide to the cell syntax.
 - `src/engine/` has no DOM code. The browser, `tools/simulate.mjs` and the tests all run the same engine.
 - Saves and settings persist in localStorage.
-- No emoji anywhere (Sevaan's call). Every picture is 8-bit pixel art drawn as a text sprite in `content/sprites/` (one character per pixel, shared palette); `tools/sprites.html` shows them all. Text stays in a readable font.
+- No emoji anywhere (Sevaan's call). Every picture is 8-bit pixel art drawn as a text sprite in `content/sprites/` (one character per pixel, shared palette); `tools/sprites.html` shows them all.
+- Text is Atkinson Hyperlegible Next, chosen for legibility. Keep the readability rules in design-notes.md: nothing players need to read is italic, faded or blinking, and secondary text uses `--muted` (at least 6:1).
 - Skies and weather are data: scenes in `content/world.json`, picked by a card's or death's `scene` column, drawn by `src/ui/fx.js`. Preview any scene from the `?dev` panel.
 
 ## Before pushing

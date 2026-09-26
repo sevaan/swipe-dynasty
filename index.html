@@ -7,6 +7,9 @@
   <meta name="description" content="Reigns, but the dynasty is the history of technology.">
   <title>Untitled Swipe Game</title>
   <link rel="icon" id="favicon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400..800&display=swap">
   <link rel="stylesheet" href="styles.css">
   <script type="module" src="src/ui/app.js"></script>
 </head>
@@ -16,17 +19,19 @@
     <header class="meters" id="meters" aria-label="Meters"></header>
 
     <main class="stage" id="stage">
-      <p class="question" id="question"></p>
       <div class="deck" id="deck">
-        <div class="card card-back" aria-hidden="true"><div class="card-face"></div></div>
-        <div class="card" id="card" aria-roledescription="card">
-          <div class="card-face">
-            <div class="answer" id="answer" aria-hidden="true"></div>
-            <div class="portrait" aria-hidden="true"><img class="px" id="portrait" alt="" draggable="false"></div>
-            <div class="speaker" id="speaker"></div>
+        <p class="question" id="question"></p>
+        <div class="pile">
+          <div class="card card-back" aria-hidden="true"><div class="card-face"></div></div>
+          <div class="card" id="card" aria-roledescription="card">
+            <div class="card-face">
+              <div class="answer" id="answer" aria-hidden="true"></div>
+              <div class="portrait" aria-hidden="true"><img class="px" id="portrait" alt="" draggable="false"></div>
+              <div class="speaker" id="speaker"></div>
+            </div>
           </div>
+          <img class="px hand" id="hand" alt="" aria-hidden="true" draggable="false">
         </div>
-        <img class="px hand" id="hand" alt="" aria-hidden="true" draggable="false">
       </div>
       <section class="screen" id="screen" hidden></section>
     </main>

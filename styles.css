@@ -1,6 +1,7 @@
 /* Untitled Swipe Game. Phone first, 8-bit: every picture is a pixel sprite
    (content/sprites), corners are stepped, nothing is rounded. Each era sets
-   its own colours on :root. Text stays in a readable font. */
+   its own colours on :root. Text stays in a readable font, at readable sizes
+   and contrast: nothing a player needs to read is italic, faded or blinking. */
 
 :root {
   --bg: #2a1c14;
@@ -9,13 +10,23 @@
   --ink: #2a1c14;
   --text: #f4e7cd;
   --accent: #e8793a;
-  --muted: color-mix(in srgb, var(--text) 62%, transparent);
+  /* Secondary text: at least 6:1 on every sky, panel and gravestone */
+  --muted: color-mix(in srgb, var(--text) 80%, transparent);
   --sky: var(--bg);
   --scale: 1;
-  /* A pixel outline keeps text readable over weather */
-  --outline: 1px 0 0 rgb(0 0 0 / 50%), -1px 0 0 rgb(0 0 0 / 50%), 0 1px 0 rgb(0 0 0 / 50%), 0 -1px 0 rgb(0 0 0 / 50%);
+  /* A hard pixel drop shadow for small text drawn straight on the sky.
+     (Weather also dims itself behind text: see setQuiet in src/ui/fx.js.) */
+  --lift: 0 2px 0 rgb(0 0 0 / 45%);
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --font: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Atkinson Hyperlegible Next (Braille Institute, SIL Open Font License) is
+     drawn for legibility: I, l and 1 all differ, and it stays clear at small
+     sizes. Without a connection it falls back to the system font. */
+  --font: "Atkinson Hyperlegible Next", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* The question, and the room kept for it above the card (three lines
+     holds every current question on a 375px phone) */
+  --q-size: calc(1.3rem * var(--scale));
+  --q-lh: 1.34;
+  --q-lines: 3;
   color-scheme: dark;
 }
 
@@ -28,6 +39,7 @@ html, body {
   background: var(--sky);
   color: var(--text);
   font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
 }
@@ -156,13 +168,14 @@ img.px {
 .meter.just-lit .icon { animation: light-up 800ms steps(4, end); }
 
 .meter .label {
-  font-size: calc(0.72rem * var(--scale));
+  font-size: calc(0.82rem * var(--scale));
+  font-weight: 600;
   letter-spacing: 0.02em;
   color: var(--muted);
   text-align: center;
-  line-height: 1.1;
+  line-height: 1.15;
   max-width: 100%;
-  text-shadow: var(--outline);
+  text-shadow: var(--lift);
 }
 
 @keyframes blink { 50% { opacity: 0.35; } }
@@ -173,44 +186,58 @@ img.px {
   50% { transform: scale(1.25); }
 }
 
-/* Stage: question above, card below */
+/* Stage: the question sits right on top of its card, and the two are
+   centred together in the space between the meters and the footer. */
 
 .stage {
   position: relative;
   display: grid;
-  grid-template-rows: minmax(6.5em, auto) 1fr;
-  align-items: start;
   min-height: 0;
-}
-
-.question {
-  margin: 10px 4px 0;
-  font-size: calc(1.14rem * var(--scale));
-  line-height: 1.38;
-  text-align: center;
-  text-wrap: balance;
-  align-self: end;
-  padding-bottom: 14px;
-  min-height: 3.2em;
-  text-shadow: var(--outline);
 }
 
 .deck[hidden] { display: none; }
 
 .deck {
+  /* A size container, so the card can shrink to fit short screens */
+  container-type: size;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding-bottom: 10px;
+  --q-room: calc(var(--q-size) * var(--q-lh) * var(--q-lines) + 18px);
+}
+
+/* Room for three lines is kept whatever the length, and the text sits at the
+   bottom of it, so the card holds still between short and long questions. */
+.question {
+  flex: none;
+  align-self: stretch;
+  display: grid;
+  align-content: end;
+  min-height: var(--q-room);
+  margin: 0;
+  padding: 0 6px 18px;
+  font-size: var(--q-size);
+  font-weight: 500;
+  line-height: var(--q-lh);
+  text-align: center;
+  text-wrap: balance;
+}
+
+.pile {
   position: relative;
   display: grid;
   place-items: center;
-  align-self: stretch;
-  min-height: 0;
-  padding: 8px 0 14px;
 }
 
 .card {
   position: relative;
   grid-area: 1 / 1;
-  width: min(68vw, 290px);
-  max-height: 100%;
+  /* 100cqh is the deck's height: what's left under the question, less room
+     for the card behind and the shadow */
+  width: min(74vw, 310px, max(150px, (100cqh - var(--q-room) - 22px) * 0.8));
   aspect-ratio: 4 / 5;
   touch-action: none;
   cursor: grab;
@@ -266,7 +293,7 @@ img.px {
   background: var(--ink);
   color: var(--card);
   font-weight: 700;
-  font-size: calc(1.02rem * var(--scale));
+  font-size: calc(1.1rem * var(--scale));
   line-height: 1.2;
   display: flex;
   align-items: center;
@@ -303,8 +330,8 @@ img.px {
   padding: 10px 12px 14px;
   text-align: center;
   font-weight: 800;
-  font-size: calc(0.95rem * var(--scale));
-  letter-spacing: 0.04em;
+  font-size: calc(1rem * var(--scale));
+  letter-spacing: 0.02em;
   min-height: 2.6em;
 }
 
@@ -340,21 +367,19 @@ img.px {
   padding: 12px 8px 24px;
   text-align: center;
   background: transparent;
-  text-shadow: var(--outline);
   animation: fade-in 400ms steps(4, end);
   cursor: pointer;
 }
 
-.screen .stone, .screen .tag { text-shadow: none; }
-
 .screen[hidden] { display: none; }
 
+/* How you died (or what the new era is): the joke, so it reads like one */
 .screen .scene {
-  font-size: calc(1.02rem * var(--scale));
-  line-height: 1.45;
-  color: var(--muted);
-  font-style: italic;
-  max-width: 30em;
+  margin: 0 0 4px;
+  font-size: calc(1.2rem * var(--scale));
+  font-weight: 500;
+  line-height: 1.38;
+  max-width: 20em;
   text-wrap: balance;
 }
 
@@ -374,10 +399,10 @@ img.px {
   );
 }
 
-.stone .rip { font-size: 0.8rem; font-weight: 800; letter-spacing: 0.3em; color: var(--muted); }
-.stone .name { font-size: calc(1.5rem * var(--scale)); font-weight: 800; }
-.stone .epitaph { font-size: calc(1.08rem * var(--scale)); line-height: 1.35; }
-.stone .meta { font-size: calc(0.78rem * var(--scale)); color: var(--muted); }
+.stone .rip { font-size: calc(0.8rem * var(--scale)); font-weight: 800; letter-spacing: 0.24em; color: var(--muted); }
+.stone .name { font-size: calc(1.75rem * var(--scale)); font-weight: 800; line-height: 1.1; }
+.stone .epitaph { font-size: calc(1.15rem * var(--scale)); font-weight: 500; line-height: 1.35; text-wrap: balance; }
+.stone .meta { font-size: calc(0.85rem * var(--scale)); color: var(--muted); }
 
 .tags {
   display: flex;
@@ -390,8 +415,8 @@ img.px {
   --s: 2px;
   display: inline-block;
   white-space: nowrap;
-  padding: 3px 10px;
-  font-size: calc(0.75rem * var(--scale));
+  padding: 4px 10px;
+  font-size: calc(0.82rem * var(--scale));
   font-weight: 800;
   letter-spacing: 0.04em;
   background: color-mix(in srgb, var(--text) 18%, transparent);
@@ -426,17 +451,34 @@ img.px {
 
 .carried .tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px 4px 5px; }
 
+/* The words hold still; a pixel arrow after them blinks */
 .continue {
   margin-top: 6px;
-  font-size: calc(0.85rem * var(--scale));
+  font-size: calc(0.9rem * var(--scale));
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted);
-  animation: breathe 1.2s steps(1, end) infinite;
+  text-shadow: var(--lift);
 }
 
-@keyframes breathe { 50% { opacity: 0.35; } }
+.continue::after {
+  --p: 3px;
+  content: '';
+  display: inline-block;
+  width: var(--p);
+  height: var(--p);
+  margin: 0 calc(var(--p) * 3) 0 calc(var(--p) * 5);
+  vertical-align: 0.05em;
+  background: currentColor;
+  box-shadow:
+    calc(var(--p) * -2) calc(var(--p) * -2) currentColor, calc(var(--p) * -1) calc(var(--p) * -2) currentColor, 0 calc(var(--p) * -2) currentColor,
+    var(--p) calc(var(--p) * -2) currentColor, calc(var(--p) * 2) calc(var(--p) * -2) currentColor,
+    calc(var(--p) * -1) calc(var(--p) * -1) currentColor, 0 calc(var(--p) * -1) currentColor, var(--p) calc(var(--p) * -1) currentColor;
+  animation: blink-off 1s steps(1, end) infinite;
+}
+
+@keyframes blink-off { 50% { opacity: 0; } }
 @keyframes fade-in { from { opacity: 0; } }
 
 /* Footer */
@@ -448,16 +490,15 @@ img.px {
   min-height: 48px;
 }
 
-/* A dark plate keeps the inventor's name readable over flames and weather */
+/* A solid plate keeps the inventor's name readable over flames and weather */
 .who {
   flex: 0 1 auto;
   margin-right: auto;
-  padding: 6px 10px;
-  background: rgb(0 0 0 / 62%);
-  text-shadow: var(--outline);
-  font-size: calc(0.86rem * var(--scale));
+  padding: 7px 11px;
+  background: color-mix(in srgb, var(--panel) 55%, #000);
+  font-size: calc(0.9rem * var(--scale));
   color: var(--muted);
-  line-height: 1.25;
+  line-height: 1.3;
 }
 
 .who strong { color: var(--text); font-weight: 800; }
@@ -530,14 +571,14 @@ button:focus-visible { background: var(--accent); color: var(--ink); outline: no
 }
 
 .panel-body h3 {
-  margin: 18px 0 8px;
-  font-size: calc(0.8rem * var(--scale));
+  margin: 20px 0 8px;
+  font-size: calc(0.82rem * var(--scale));
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
-.panel-body .summary { color: var(--muted); font-size: calc(0.9rem * var(--scale)); margin: 4px 0 0; }
+.panel-body .summary { color: var(--muted); font-size: calc(0.95rem * var(--scale)); margin: 4px 0 0; }
 
 .item {
   display: grid;
@@ -546,16 +587,16 @@ button:focus-visible { background: var(--accent); color: var(--ink); outline: no
   padding: 12px;
   margin-bottom: 8px;
   background: var(--panel);
-  font-size: calc(0.92rem * var(--scale));
-  line-height: 1.35;
+  font-size: calc(1rem * var(--scale));
+  line-height: 1.4;
 }
 
 .item .glyph { grid-row: span 2; align-self: center; }
 .item .glyph .ghost { opacity: 0.22; }
 .item .title { font-weight: 800; }
-.item .body { color: var(--muted); }
+.item .body { color: var(--muted); text-wrap: pretty; }
+.item .by { white-space: nowrap; }
 .item.locked .title { letter-spacing: 0.2em; }
-.item.locked .body { font-style: italic; }
 
 .row {
   display: flex;
@@ -595,7 +636,8 @@ textarea.save-box {
   font: 0.75rem ui-monospace, Menlo, monospace;
 }
 
-.fine { color: var(--muted); font-size: calc(0.78rem * var(--scale)); line-height: 1.4; }
+.fine { color: var(--muted); font-size: calc(0.88rem * var(--scale)); line-height: 1.45; }
+.screen .fine { margin: 0; text-shadow: var(--lift); }
 
 /* Banner and errors */
 
@@ -676,12 +718,7 @@ textarea.save-box {
   }
 }
 
-@media (min-height: 760px) {
-  .card { width: min(72vw, 310px); }
-}
-
 @media (max-height: 640px) {
+  :root { --q-size: calc(1.15rem * var(--scale)); }
   .meter .icon { width: 32px; height: 32px; }
-  .question { font-size: calc(1.02rem * var(--scale)); }
-  .card { width: min(58vw, 240px); }
 }

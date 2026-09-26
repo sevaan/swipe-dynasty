@@ -26,7 +26,7 @@ Ids are forgiving: case doesn't matter, and spaces, `_` and `-` are the same (`k
 | `era` | The era id, like `stone-age` |
 | `type` | Blank for an ordinary card. `script` for cards reached only by a `next` effect (scenes, the tutorial). Cards with a `trigger for` are triggers automatically |
 | `speaker` | A character id from `characters.csv` |
-| `text` | The question. House style: 25 words or fewer |
+| `text` | The question. House style: 25 words or fewer. About 100 characters fills the three lines kept for it on a phone; longer still works, it just nudges the card down |
 | `left answer`, `right answer` | 5 words or fewer each |
 | `left effects`, `right effects` | What each answer does (syntax below) |
 | `conditions` | When the card can appear (syntax below) |
