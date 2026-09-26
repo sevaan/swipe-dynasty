@@ -362,8 +362,6 @@ img.px {
   z-index: 5;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 14px;
   padding: 12px 8px 24px;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -374,11 +372,17 @@ img.px {
   cursor: pointer;
 }
 
+.screen::-webkit-scrollbar { display: none; }
+
 /* Centred when it fits. When it doesn't (big text on a short phone) it starts
    at the top and scrolls, instead of spilling over the meters and footer. */
-.screen::-webkit-scrollbar { display: none; }
-.screen > :first-child { margin-top: auto; }
-.screen > :last-child { margin-bottom: auto; }
+.screen-in {
+  margin-block: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
 
 .screen[hidden] { display: none; }
 
@@ -728,7 +732,8 @@ textarea.save-box {
 }
 
 @media (max-height: 720px) {
-  .screen { gap: 10px; padding-bottom: 12px; }
+  .screen { padding-bottom: 12px; }
+  .screen-in { gap: 10px; }
   .stone { padding: 16px 16px 18px; gap: 6px; }
 }
 

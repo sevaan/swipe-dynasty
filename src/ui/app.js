@@ -290,7 +290,7 @@ function render(opts = {}) {
     els.hand.classList.remove('show');
     $('deck').hidden = true;
     previewSide(null);
-    els.screen.innerHTML = screenHTML(v);
+    els.screen.innerHTML = `<div class="screen-in">${screenHTML(v)}</div>`;
     els.screen.hidden = false;
     if (v.phase === 'epitaph' && v.pending) els.live.textContent = `Here lies ${v.pending.name}. ${v.pending.epitaph}`;
     if (v.phase === 'transition') els.live.textContent = `Centuries pass. ${v.transition?.to.name}.`;
