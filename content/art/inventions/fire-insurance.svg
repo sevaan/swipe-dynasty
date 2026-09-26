@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <!-- a clay tablet: the policy -->
+  <clipPath id="fi-tab"><rect x="8" y="3" width="42" height="56" rx="6"/></clipPath>
+  <rect x="8" y="3" width="42" height="56" rx="6" fill="#d9b683"/>
+  <path clip-path="url(#fi-tab)" fill="#bf9660" d="M44 0h8v64h-8z"/>
+  <!-- ruled lines of small print -->
+  <g fill="#a87e4f">
+    <rect x="14" y="10" width="24" height="4" rx="2"/>
+    <rect x="14" y="19" width="26" height="3" rx="1.5"/>
+    <rect x="14" y="26" width="26" height="3" rx="1.5"/>
+    <rect x="14" y="33" width="22" height="3" rx="1.5"/>
+    <rect x="14" y="40" width="14" height="3" rx="1.5"/>
+  </g>
+  <!-- the seal, with a flame on it -->
+  <clipPath id="fi-seal"><circle cx="46" cy="49" r="12"/></clipPath>
+  <circle cx="46" cy="49" r="12" fill="#d9442e"/>
+  <path clip-path="url(#fi-seal)" fill="#b3361f" d="M52 30h12v34H49z"/>
+  <path fill="#f2c94c" d="M46 40c3 4 6 6 6 10 0 3.5-2.5 5.5-6 5.5s-6-2-6-5.5c0-2.5 1.5-4 2.5-6 1 1.5 1.5 2.5 2.5 3 0-2.5-.5-4.5 1-7z"/>
+</svg>

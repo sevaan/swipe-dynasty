@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="288" height="360" viewBox="0 0 288 360">
+  <!-- A stranger. Clearly from the future: the sunglasses, the collar, the watch. -->
+  <rect width="288" height="360" fill="#7a86b8"/>
+  <circle cx="144" cy="176" r="124" fill="#8491c1"/>
+  <!-- hood, behind, with its point flopping over -->
+  <path fill="#4a5344" d="M68 264C56 200 66 122 114 96c18-9 38-14 60-16-10 10-8 18 2 24 40 22 52 92 44 160z"/>
+  <path fill="#000" opacity=".16" d="M176 104c40 22 52 92 44 160h-32z"/>
+  <path fill="#262b22" d="M94 222c-6-60 10-112 50-114 40 2 56 54 50 114z"/>
+  <!-- neck -->
+  <rect x="122" y="196" width="44" height="84" fill="#f0c9a0"/>
+  <path d="M122 196h44v22c-14 6-30 6-44 0z" fill="#dba882"/>
+  <path d="M150 218h16v62h-16z" fill="#dba882"/>
+  <!-- a modern shirt under a borrowed cloak -->
+  <path fill="#bcd3e6" d="M96 260h96l10 100H86z"/>
+  <path fill="#a6c0d6" d="M150 262h42l10 98h-52z"/>
+  <path fill="#f4f7fa" d="M112 258l32 30 32-30-6-6-26 22-26-22z"/>
+  <g fill="#6f8fb0"><circle cx="144" cy="300" r="3.5"/><circle cx="144" cy="322" r="3.5"/><circle cx="144" cy="344" r="3.5"/></g>
+  <path fill="#4a5344" d="M14 360v-40c0-36 32-58 82-62l4 102zM274 360v-40c0-36-32-58-82-62l-4 102z"/>
+  <circle cx="144" cy="258" r="7" fill="#c9962a"/><path d="M106 256h76" stroke="#c9962a" stroke-width="3" opacity="0"/>
+  <path fill="#000" opacity=".14" d="M214 262c36 8 60 30 60 58v40h-80z"/>
+  <!-- face (the hood hides the ears) -->
+  <clipPath id="face"><path d="M98 142c0-30 20-42 46-42s46 12 46 42v30c0 34-20 52-46 52s-46-18-46-52z"/></clipPath>
+  <path fill="#f0c9a0" d="M98 142c0-30 20-42 46-42s46 12 46 42v30c0 34-20 52-46 52s-46-18-46-52z"/>
+  <path clip-path="url(#face)" d="M168 96h30v134h-44z" fill="#dba882"/>
+  <!-- a neat fringe, then the hood's front edge -->
+  <path fill="#4a3526" d="M104 132c4-18 20-28 40-28s36 10 40 28c-14-8-26-10-40-10s-26 2-40 10z"/>
+  <path d="M92 224c-8-62 10-118 52-120 42 2 60 58 52 120" fill="none" stroke="#5d6857" stroke-width="12" stroke-linecap="round"/>
+  <path d="M144 104c42 2 60 58 52 120" fill="none" stroke="#444c3f" stroke-width="12" stroke-linecap="round"/>
+  <!-- sunglasses, and a smile that knows how this ends -->
+  <path fill="#1d2433" d="M104 158h36l-2 14c-1 7-6 11-13 11h-8c-7 0-12-4-13-11zM148 158h36l-2 14c-1 7-6 11-13 11h-8c-7 0-12-4-13-11z"/>
+  <rect x="138" y="160" width="12" height="4" fill="#1d2433"/>
+  <path d="M110 162h10l-6 12h-4zM154 162h10l-6 12h-4z" fill="#6fb2e8" opacity=".85"/>
+  <path d="M144 176l-6 16q6 4 12 0z" fill="#dba882"/>
+  <path d="M130 204q10 6 26-4" fill="none" stroke="#9a5a44" stroke-width="4" stroke-linecap="round"/>
+</svg>

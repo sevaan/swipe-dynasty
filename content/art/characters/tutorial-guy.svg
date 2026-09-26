@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="288" height="360" viewBox="0 0 288 360">
+  <!-- A guy with a rock. Two rocks, actually. Something is about to happen. -->
+  <rect width="288" height="360" fill="#6c8299"/>
+  <circle cx="144" cy="176" r="124" fill="#768da5"/>
+  <!-- neck -->
+  <rect x="122" y="196" width="44" height="84" fill="#c68a5e"/>
+  <path d="M122 196h44v22c-14 6-30 6-44 0z" fill="#a8704a"/>
+  <path d="M150 218h16v62h-16z" fill="#b07a50"/>
+  <!-- fur tunic with a ragged neckline -->
+  <path fill="#8a5a36" d="M14 360v-40c0-36 32-58 82-62h16l6 8 5-6 5 11 5-6 5 14 6 15 6-15 5-14 5 6 5-11 5 6 6-8h16c50 4 82 26 82 62v40z"/>
+  <g fill="#6d4428"><ellipse cx="96" cy="332" rx="11" ry="6"/><ellipse cx="200" cy="318" rx="12" ry="7"/><ellipse cx="156" cy="346" rx="8" ry="5"/></g>
+  <path fill="#000" opacity=".12" d="M200 258c42 6 74 28 74 62v40h-74z"/>
+  <!-- arms up, a rock in each hand -->
+  <path fill="#c68a5e" d="M36 300c-6-52-8-108-4-164h28c-2 56 2 110 14 160z"/>
+  <path fill="#b07a50" d="M252 300c6-52 8-108 4-164h-28c2 56-2 110-14 160z"/>
+  <rect x="26" y="112" width="38" height="36" rx="16" fill="#c68a5e"/>
+  <rect x="224" y="112" width="38" height="36" rx="16" fill="#b07a50"/>
+  <path fill="#9b958d" d="M18 104l7-20 16-11 19 2 12 13 2 16-10 12-22 4-17-6z"/>
+  <path fill="#857c73" d="M60 75l12 13 2 16-10 12-12 2 4-24z"/>
+  <path fill="#b5aea5" d="M27 92l10-13 9-2-9 12z"/>
+  <path fill="#9b958d" d="M214 104l7-20 16-11 19 2 12 13 2 16-10 12-22 4-17-6z"/>
+  <path fill="#857c73" d="M256 75l12 13 2 16-10 12-12 2 4-24z"/>
+  <path fill="#b5aea5" d="M223 92l10-13 9-2-9 12z"/>
+  <!-- ears and face -->
+  <ellipse cx="99" cy="166" rx="9" ry="13" fill="#c68a5e"/><ellipse cx="189" cy="166" rx="9" ry="13" fill="#b07a50"/>
+  <clipPath id="face"><path d="M98 142c0-30 20-42 46-42s46 12 46 42v30c0 34-20 52-46 52s-46-18-46-52z"/></clipPath>
+  <path fill="#c68a5e" d="M98 142c0-30 20-42 46-42s46 12 46 42v30c0 34-20 52-46 52s-46-18-46-52z"/>
+  <path clip-path="url(#face)" d="M168 96h30v134h-44z" fill="#b07a50"/>
+  <!-- shaggy hair -->
+  <path fill="#6b4428" d="M92 154c-6-40 16-64 52-64s58 24 52 64l-8-18-6 10-6-16-8 12-6-16-8 12-8-14-8 12-6-12-6 14-6-12-8 18z"/>
+  <path fill="#6b4428" d="M100 90l10-12 6 12 10-14 8 12 10-14 8 14 10-12 6 12 10-10 2 20h-80z"/>
+  <!-- face: this is the best idea anyone has ever had -->
+  <path d="M110 146q14-12 28-3M150 143q14-9 28 3" fill="none" stroke="#3b2419" stroke-width="5" stroke-linecap="round"/>
+  <ellipse cx="125" cy="165" rx="8" ry="9" fill="#fff5e6"/><ellipse cx="163" cy="165" rx="8" ry="9" fill="#fff5e6"/>
+  <circle cx="127" cy="166" r="4.5" fill="#24150e"/><circle cx="165" cy="166" r="4.5" fill="#24150e"/>
+  <path d="M144 170l-7 18q7 5 14 0z" fill="#a8704a"/>
+  <path d="M120 194c8 20 40 20 48 0z" fill="#3a1d14"/>
+  <path d="M123 195h42c-1 5-2 7-4 8h-34c-2-1-3-3-4-8z" fill="#fff5e6"/>
+  <rect x="140" y="195" width="6" height="8" fill="#3a1d14"/>
+</svg>

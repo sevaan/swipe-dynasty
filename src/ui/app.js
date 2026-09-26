@@ -4,7 +4,7 @@ import { loadContentWeb } from '../content/load-web.js';
 import { advance, choose, devAction, eraView, inventionName, newGame, view } from '../engine/game.js';
 import { bindSwipe, bindTap } from './input.js';
 import { clearSave, loadSave, loadSettings, parseSave, saveSettings, writeSave } from './storage.js';
-import { setSprite, spriteBounds, spriteHTML, spriteSize, spriteURL } from './sprites.js';
+import { artHTML, artURL, glyphHTML, setGlyph } from './art.js';
 import { createFx } from './fx.js';
 
 const $ = (id) => document.getElementById(id);
@@ -108,16 +108,9 @@ function buildMeters(v) {
   els.meters.innerHTML = v.meters.map((m) => `
     <div class="meter" data-role="${m.role}">
       <div class="dot-slot"><div class="dot"></div></div>
-      <div class="icon" aria-hidden="true"><img class="px ghost" alt="" draggable="false"><img class="px fill" alt="" draggable="false"></div>
+      <div class="icon" aria-hidden="true" style="--art: url('${artURL('meters', m.icon)}')"><span class="ghost"></span><span class="fill"></span></div>
       <div class="label">${esc(m.label)}</div>
     </div>`).join('');
-  const box = els.meters.querySelector('.icon').clientWidth || 48;
-  for (const m of v.meters) {
-    const el = els.meters.querySelector(`[data-role="${m.role}"]`);
-    const scale = Math.max(1, Math.floor(box / spriteSize(content, m.icon).w));
-    setSprite(el.querySelector('.ghost'), content, m.icon, scale, 'ghost');
-    setSprite(el.querySelector('.fill'), content, m.icon, scale);
-  }
   meterEra = v.era.id;
 }
 
@@ -126,10 +119,9 @@ function updateMeters(v) {
   for (const m of v.meters) {
     const el = els.meters.querySelector(`[data-role="${m.role}"]`);
     const icon = el.querySelector('.icon');
-    // Fill whole pixel rows, over the rows of the icon that are drawn.
-    const { top, bottom, h } = spriteBounds(content, m.icon);
-    const filled = Math.round((m.value / 100) * (bottom - top + 1));
-    icon.style.setProperty('--empty', `${((bottom + 1 - filled) / h) * 100}%`);
+    // Glyphs are drawn from top to bottom of their canvas (content/art/README.md),
+    // so the level maps straight onto the height.
+    icon.style.setProperty('--empty', `${100 - m.value}%`);
     icon.classList.toggle('danger', m.value <= 15 || m.value >= 85);
     el.classList.toggle('unlit', !m.lit);
     el.setAttribute('aria-label', `${m.label}: ${level(m.value)}`);
@@ -175,12 +167,15 @@ function previewSide(side, strength = 1) {
     return;
   }
   const a = v.card[side];
-  const uses = a.uses.map((inv) => `<span class="uses pxc">${spriteHTML(content, content.inventions[inv]?.icon, { scale: 1 })}${esc(cap(inventionName(content, inv)))}</span>`).join('');
+  const uses = a.uses.map((inv) => `<span class="uses">${artHTML('inventions', content.inventions[inv]?.icon, { size: 20 })}${esc(cap(inventionName(content, inv)))}</span>`).join('');
   const label = `<span>${esc(a.label || '…')}</span>`;
+  const line = side === 'left'
+    ? `${glyphHTML('ui', 'arrow-left', { cls: 'arrow' })}${label}`
+    : `${label}${glyphHTML('ui', 'arrow-right', { cls: 'arrow' })}`;
   els.answer.className = `answer ${side}`;
-  els.answer.innerHTML = side === 'left'
-    ? `${spriteHTML(content, 'ui-arrow-left', { scale: 2 })}${label}${uses}`
-    : `${uses}${label}${spriteHTML(content, 'ui-arrow-right', { scale: 2 })}`;
+  // The answer first, and any inventions it uses on a row under it, all on
+  // the edge of the card that stays on screen
+  els.answer.innerHTML = `<div class="line">${line}</div>${uses ? `<div class="uses-row">${uses}</div>` : ''}`;
   els.answer.style.opacity = Math.min(1, strength);
   showDots(a.dots);
 }
@@ -192,7 +187,10 @@ function showCard(v, { enter = false, tell = false } = {}) {
   els.card.style.transform = '';
   els.card.style.opacity = '';
   els.question.textContent = c.text || '';
-  setSprite(els.portrait, content, c.speaker.portrait, portraitScale(c.speaker.portrait));
+  const src = artURL('characters', c.speaker.portrait);
+  if (els.portrait.src !== src) els.portrait.src = src;
+  els.portrait.hidden = false;
+  els.portrait.closest('.card-face').classList.remove('missing');
   els.speaker.textContent = c.speaker.name;
   els.card.setAttribute('aria-label', `${c.speaker.name || 'Card'}. ${c.text || ''}`);
   previewSide(null);
@@ -205,13 +203,6 @@ function showCard(v, { enter = false, tell = false } = {}) {
   const left = c.left.label || 'something';
   const right = c.right.label || 'something';
   els.live.textContent = `${c.speaker.name ? `${c.speaker.name}: ` : ''}${c.text || '(no words)'} Swipe left: ${left}. Swipe right: ${right}.`;
-}
-
-function portraitScale(id) {
-  const { w, h } = spriteSize(content, id);
-  const cardW = els.card.clientWidth || 280;
-  const room = cardW * 1.25 - 110; // card height minus the answer band and name
-  return Math.max(2, Math.min(9, Math.floor(Math.min((cardW * 0.64) / w, room / h))));
 }
 
 async function flyOut(side) {
@@ -237,18 +228,23 @@ function screenHTML(v) {
     const r = v.pending;
     const era = eraView(content, r.era);
     const tags = [
-      `<span class="tag pxc ${r.kind}">${r.again ? 'Reinvented' : KIND[r.kind] || 'Invention'}</span>`,
-      r.newFind ? '<span class="tag pxc new">New in the Museum</span>' : '',
-      r.newDeath ? '<span class="tag pxc">New in the Graveyard</span>' : '',
+      `<span class="tag ${r.kind}">${r.again ? 'Reinvented' : KIND[r.kind] || 'Invention'}</span>`,
+      r.newFind ? '<span class="tag new">New in the Museum</span>' : '',
+      r.newDeath ? '<span class="tag">New in the Graveyard</span>' : '',
     ].join(' ');
+    // "Invented fire, on purpose." then the death's punchline on its own line
+    const tail = content.deaths[r.death]?.epitaph;
+    const epitaph = tail && r.line && r.epitaph === `${r.line} ${tail}` ? `${esc(r.line)}<br>${esc(tail)}` : esc(r.epitaph);
     return `
       <p class="scene">${esc(r.deathText)}</p>
-      <div class="stone">
-        ${r.inv ? spriteHTML(content, content.inventions[r.inv]?.icon, { scale: 3, alt: inventionName(content, r.inv) }) : ''}
-        <div class="rip">HERE LIES</div>
-        <div class="name">${esc(r.name)}</div>
-        <div class="epitaph">${esc(r.epitaph)}</div>
-        <div class="meta">${esc(era.name)} · life ${r.eraLife} · ${r.cards} cards</div>
+      <div class="grave">
+        <div class="stone">
+          ${r.inv ? artHTML('inventions', content.inventions[r.inv]?.icon, { size: 64, alt: inventionName(content, r.inv) }) : ''}
+          <div class="rip">HERE LIES</div>
+          <div class="name">${esc(r.name)}</div>
+          <div class="epitaph">${epitaph}</div>
+          <div class="meta">${esc(era.name)} · life ${r.eraLife} · ${r.cards} cards</div>
+        </div>
       </div>
       <div class="tags">${tags}</div>
       <div class="continue">Tap to continue</div>`;
@@ -260,7 +256,7 @@ function screenHTML(v) {
       <p class="scene">${esc(t.to.intro)}</p>
       <p class="era-name">${esc(t.to.name)}</p>
       <p class="fine">Your ancestors left you</p>
-      <div class="carried">${t.carried.map((c) => `<span class="tag pxc">${spriteHTML(content, c.icon, { scale: 1 })}${esc(cap(c.name))}</span>`).join('')}</div>
+      <div class="carried">${t.carried.map((c) => `<span class="tag">${artHTML('inventions', c.icon, { size: 20 })}${esc(cap(c.name))}</span>`).join('')}</div>
       <div class="continue">Tap to begin</div>`;
   }
   if (v.phase === 'end') {
@@ -308,6 +304,11 @@ function quietText() {
     const range = document.createRange();
     range.selectNodeContents(els.question);
     boxes.push(pad(range.getBoundingClientRect(), 12, 8));
+  }
+  if (!$('deck').hidden && els.speaker.textContent) {
+    const range = document.createRange();
+    range.selectNodeContents(els.speaker);
+    boxes.push(pad(range.getBoundingClientRect(), 10, 6));
   }
   if (!els.screen.hidden) {
     for (const el of els.screen.querySelectorAll('.scene, .big, .era-name, .fine, .tags, .carried, .continue')) boxes.push(pad(el.getBoundingClientRect(), 12, 6));
@@ -359,11 +360,11 @@ function museumHTML() {
     html += `<h3>${esc(content.eras[eraId].name)}</h3>`;
     for (const inv of all.filter((i) => i.era === eraId)) {
       html += found[inv.id]
-        ? `<div class="item pxc"><div class="glyph">${spriteHTML(content, inv.icon, { scale: 2 })}</div><div class="title">${esc(cap(inv.name))} <span class="tag pxc ${inv.type}">${KIND[inv.type]}</span></div><div class="body">${esc(inv.museum)}</div></div>`
-        : `<div class="item pxc locked"><div class="glyph">${spriteHTML(content, inv.icon, { scale: 2, mode: 'ghost', cls: 'ghost' })}</div><div class="title">???</div><div class="body">“${esc(inv.hint)}” <span class="by">(the Naysayer)</span></div></div>`;
+        ? `<div class="item"><div class="pic">${artHTML('inventions', inv.icon, { size: 40 })}</div><div class="title">${esc(cap(inv.name))} <span class="tag ${inv.type}">${KIND[inv.type]}</span></div><div class="body">${esc(inv.museum)}</div></div>`
+        : `<div class="item locked"><div class="pic">${artHTML('inventions', inv.icon, { size: 40, cls: 'ghost' })}</div><div class="title">???</div><div class="body">“${esc(inv.hint)}” <span class="by">(the Naysayer)</span></div></div>`;
     }
   }
-  html += `<h3>Endings</h3><div class="item pxc locked"><div class="glyph">${spriteHTML(content, 'ui-door', { scale: 2, mode: 'ghost', cls: 'ghost' })}</div><div class="title">A locked door</div><div class="body">None of the endings are built yet.</div></div>`;
+  html += `<h3>Endings</h3><div class="item locked"><div class="pic">${glyphHTML('ui', 'door', { cls: 'ghost' })}</div><div class="title">A locked door</div><div class="body">None of the endings are built yet.</div></div>`;
   return html;
 }
 
@@ -377,8 +378,8 @@ function graveyardHTML() {
     for (const d of all.filter((x) => x.era === eraId)) {
       const how = d.role ? `${era.meters[d.role].label} too ${d.end}` : 'Something you did';
       html += seen[d.id]
-        ? `<div class="item pxc"><div class="glyph">${spriteHTML(content, 'ui-grave', { scale: 2 })}</div><div class="title">${esc(d.epitaph)}${seen[d.id] > 1 ? ` ×${seen[d.id]}` : ''}</div><div class="body">${esc(d.text)}</div></div>`
-        : `<div class="item pxc locked"><div class="glyph">${spriteHTML(content, 'ui-grave', { scale: 2, mode: 'ghost', cls: 'ghost' })}</div><div class="title">???</div><div class="body">${esc(how)}</div></div>`;
+        ? `<div class="item"><div class="pic">${glyphHTML('ui', 'grave')}</div><div class="title">${esc(d.epitaph)}${seen[d.id] > 1 ? ` ×${seen[d.id]}` : ''}</div><div class="body">${esc(d.text)}</div></div>`
+        : `<div class="item locked"><div class="pic">${glyphHTML('ui', 'grave', { cls: 'ghost' })}</div><div class="title">???</div><div class="body">${esc(how)}</div></div>`;
     }
   }
   return html;
@@ -389,8 +390,8 @@ function familyHTML() {
   if (!lives.length) return '<p class="summary">Nobody has died yet. Give it a minute.</p>';
   let html = `<p class="summary">${lives.length} ${lives.length === 1 ? 'life' : 'lives'}, newest first.</p>`;
   for (const r of lives) {
-    const glyph = spriteHTML(content, content.inventions[r.inv]?.icon, { scale: 2 });
-    html += `<div class="item pxc"><div class="glyph">${glyph}</div><div class="title">${esc(r.name)} · ${esc(content.eras[r.era]?.name || r.era)} · life ${r.eraLife}</div><div class="body">${esc(r.epitaph)}</div></div>`;
+    const pic = artHTML('inventions', content.inventions[r.inv]?.icon, { size: 40 });
+    html += `<div class="item"><div class="pic">${pic}</div><div class="title">${esc(r.name)} · ${esc(content.eras[r.era]?.name || r.era)} · life ${r.eraLife}</div><div class="body">${esc(r.epitaph)}</div></div>`;
   }
   return html;
 }
@@ -403,16 +404,16 @@ function buildStamp() {
 function settingsHTML() {
   const sizes = [[0.9, 'S'], [1, 'M'], [1.15, 'L'], [1.3, 'XL']];
   return `
-    <div class="row pxc"><span>Text size</span><span class="seg">${sizes.map(([s, l]) => `<button class="pxc" type="button" data-scale="${s}" aria-pressed="${settings.scale === s}">${l}</button>`).join('')}</span></div>
-    <div class="row pxc"><span>Weather effects</span><span class="seg"><button class="pxc" type="button" data-effects="off" aria-pressed="${settings.effects === false}">Off</button><button class="pxc" type="button" data-effects="on" aria-pressed="${settings.effects !== false}">On</button></span></div>
-    <div class="row pxc"><span>Reduce motion</span><span class="seg"><button class="pxc" type="button" data-motion="off" aria-pressed="${!settings.reduceMotion}">Off</button><button class="pxc" type="button" data-motion="on" aria-pressed="${!!settings.reduceMotion}">On</button></span></div>
+    <div class="row"><span>Text size</span><span class="seg">${sizes.map(([s, l]) => `<button type="button" data-scale="${s}" aria-pressed="${settings.scale === s}">${l}</button>`).join('')}</span></div>
+    <div class="row"><span>Weather effects</span><span class="seg"><button type="button" data-effects="off" aria-pressed="${settings.effects === false}">Off</button><button type="button" data-effects="on" aria-pressed="${settings.effects !== false}">On</button></span></div>
+    <div class="row"><span>Reduce motion</span><span class="seg"><button type="button" data-motion="off" aria-pressed="${!settings.reduceMotion}">Off</button><button type="button" data-motion="on" aria-pressed="${!!settings.reduceMotion}">On</button></span></div>
     <h3>Your save</h3>
     <p class="fine">Saves stay in this browser only. To move one to another device, copy it here and paste it there.</p>
-    <div class="dev-actions"><button class="btn pxc" type="button" data-act="copy">Copy save</button><button class="btn pxc" type="button" data-act="load">Load pasted save</button></div>
+    <div class="dev-actions"><button class="btn" type="button" data-act="copy">Copy save</button><button class="btn" type="button" data-act="load">Load pasted save</button></div>
     <textarea class="save-box" id="saveBox" placeholder="Paste a save here, then tap Load pasted save" spellcheck="false"></textarea>
     <h3>Start over</h3>
     <p class="fine">Wipes every life, the Museum and the Graveyard.</p>
-    <button class="btn pxc danger" type="button" data-act="reset">Start over</button>
+    <button class="btn danger" type="button" data-act="reset">Start over</button>
     <h3>About</h3>
     <p class="fine">Build ${esc(buildStamp())} · content ${esc(content.hash)} · seed ${esc(state.seed)}<br>
     ${DEV ? '<a href="./">Leave dev mode</a>' : '<a href="?dev">Dev mode</a>'}</p>`;
@@ -431,14 +432,14 @@ function devHTML() {
   };
   return `
     <div class="dev-actions">
-      <button class="btn pxc" type="button" data-dev="kill">Kill this life</button>
+      <button class="btn" type="button" data-dev="kill">Kill this life</button>
       <select id="devInv">${inv}</select>
-      <button class="btn pxc" type="button" data-dev="points">+5 points</button>
-      <button class="btn pxc" type="button" data-dev="grant">Grant</button>
+      <button class="btn" type="button" data-dev="points">+5 points</button>
+      <button class="btn" type="button" data-dev="grant">Grant</button>
       <select id="devEra">${eras}</select>
-      <button class="btn pxc" type="button" data-dev="era">Jump to era</button>
+      <button class="btn" type="button" data-dev="era">Jump to era</button>
       <select id="devScene"><option value="">(card's own scene)</option>${Object.keys(content.scenes).map((id) => `<option value="${id}"${id === devScene ? ' selected' : ''}>${id}</option>`).join('')}</select>
-      <button class="btn pxc" type="button" data-act="scene">Preview scene</button>
+      <button class="btn" type="button" data-act="scene">Preview scene</button>
     </div>
     <div class="dev">${esc(JSON.stringify(dump, null, 1))}</div>`;
 }
@@ -449,8 +450,8 @@ function openPanel(tab = currentTab) {
   if (DEV) tabs.push(['dev', 'Dev']);
   const body = { museum: museumHTML, graveyard: graveyardHTML, family: familyHTML, settings: settingsHTML, dev: devHTML }[tab]();
   els.panel.innerHTML = `
-    <div class="panel-head"><h2>${esc(tabs.find((t) => t[0] === tab)[1])}</h2><button class="close-btn pxc" type="button" data-act="close" aria-label="Close">${spriteHTML(content, 'ui-close', { scale: 2 })}</button></div>
-    <div class="tabs" role="tablist" style="grid-template-columns: repeat(${tabs.length}, 1fr)">${tabs.map(([id, label]) => `<button class="pxc" type="button" role="tab" data-tab="${id}" aria-selected="${id === tab}">${label}</button>`).join('')}</div>
+    <div class="panel-head"><h2>${esc(tabs.find((t) => t[0] === tab)[1])}</h2><button class="close-btn" type="button" data-act="close" aria-label="Close">${glyphHTML('ui', 'close')}</button></div>
+    <div class="tabs" role="tablist" style="grid-template-columns: repeat(${tabs.length}, 1fr)">${tabs.map(([id, label]) => `<button type="button" role="tab" data-tab="${id}" aria-selected="${id === tab}">${label}</button>`).join('')}</div>
     <div class="panel-body">${body}</div>`;
   els.panel.hidden = false;
   fx?.setPaused(true);
@@ -507,7 +508,7 @@ els.panel.addEventListener('click', async (e) => {
 function renderDevButton() {
   if (document.querySelector('.dev-btn')) return;
   const b = document.createElement('button');
-  b.className = 'dev-btn pxc';
+  b.className = 'dev-btn';
   b.type = 'button';
   b.textContent = 'DEV';
   b.setAttribute('aria-label', 'Dev panel');
@@ -537,10 +538,14 @@ async function boot() {
   if (loaded.errors.length) { showErrors(loaded.errors); return; }
   content = loaded.content;
   if (DEV && loaded.warnings.length) console.warn('Content warnings', loaded.warnings);
-  fx = createFx($('fx'), { colors: content.palette, onShake: () => { if (!settings.reduceMotion) shake(); } });
-  setSprite($('menuIcon'), content, 'ui-menu', 2);
-  setSprite(els.hand, content, 'ui-hand', 3);
-  $('favicon').href = spriteURL(content, 'fire');
+  fx = createFx($('fx'), { onShake: () => { if (!settings.reduceMotion) shake(); } });
+  setGlyph($('menuIcon'), 'ui', 'menu');
+  document.documentElement.style.setProperty('--missing-art', `url('${artURL('ui', 'unknown')}')`);
+  els.hand.src = artURL('ui', 'hand');
+  $('favicon').href = artURL('inventions', 'firemaking');
+  // Fetch every portrait up front, so a new face never arrives late and the
+  // service worker has them all for playing offline.
+  for (const id of new Set(Object.values(content.characters).map((c) => c.portrait))) new Image().src = artURL('characters', id);
   let resizeTimer;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);

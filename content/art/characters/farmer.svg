@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="288" height="360" viewBox="0 0 288 360">
+  <!-- A farmer. Has opinions about rain. -->
+  <rect width="288" height="360" fill="#c48b86"/>
+  <circle cx="144" cy="176" r="124" fill="#cc958f"/>
+  <!-- neck -->
+  <rect x="122" y="196" width="44" height="84" fill="#c68a5e"/>
+  <path d="M122 196h44v22c-14 6-30 6-44 0z" fill="#a8704a"/>
+  <path d="M150 218h16v62h-16z" fill="#b07a50"/>
+  <!-- a green work shirt, open at the neck, and a rope belt of a strap -->
+  <path fill="#6f8f4a" d="M14 360v-40c0-36 32-58 82-62h22l26 34 26-34h22c50 4 82 26 82 62v40z"/>
+  <path fill="#5c793b" d="M118 258l26 34-14 14-24-40zM170 258l-26 34 14 14 24-40z"/>
+  <path fill="#000" opacity=".12" d="M200 258c42 6 74 28 74 62v40h-74z"/>
+  <path d="M60 280l140 80" stroke="#c9a06a" stroke-width="8" stroke-linecap="round"/>
+  <!-- ears and face -->
+  <ellipse cx="99" cy="166" rx="9" ry="13" fill="#c68a5e"/><ellipse cx="189" cy="166" rx="9" ry="13" fill="#b07a50"/>
+  <clipPath id="face"><path d="M98 142c0-30 20-42 46-42s46 12 46 42v30c0 34-20 52-46 52s-46-18-46-52z"/></clipPath>
+  <path fill="#c68a5e" d="M98 142c0-30 20-42 46-42s46 12 46 42v30c0 34-20 52-46 52s-46-18-46-52z"/>
+  <path clip-path="url(#face)" d="M168 96h30v134h-44z" fill="#b07a50"/>
+  <!-- a wide straw hat with a red band -->
+  <ellipse cx="144" cy="132" rx="104" ry="20" fill="#e8c25a"/>
+  <path fill="#c9962a" d="M190 116c34 4 58 10 58 16 0 8-30 16-70 19z"/>
+  <path fill="#e8c25a" d="M100 132c0-40 18-62 44-62s44 22 44 62z"/>
+  <path fill="#c9962a" d="M160 72c18 8 28 28 28 60h-24c0-26-2-46-4-60z"/>
+  <path fill="#b5553a" d="M100 118h88v14h-88z"/>
+  <path fill="#8e3d28" d="M164 118h24v14h-24z"/>
+  <path d="M112 96l64 0M108 108h72" stroke="#c9962a" stroke-width="2.5" opacity=".6"/>
+  <!-- face: a big moustache and a squint at the sky -->
+  <path d="M114 158l20-2M154 156l20 2" stroke="#3b2419" stroke-width="5" stroke-linecap="round"/>
+  <path d="M117 170q8-4 16 0M155 170q8-4 16 0" fill="none" stroke="#24150e" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M144 170l-7 18q7 5 14 0z" fill="#a8704a"/>
+  <path fill="#3b2419" d="M144 192c-10-4-26-2-32 10 10 2 24 2 32-2 8 4 22 4 32 2-6-12-22-14-32-10z"/>
+  <path d="M136 210q8 4 16 0" fill="none" stroke="#7a3f28" stroke-width="4" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <!-- the wheel, improved: same stone, same axle, and it stays where you put it -->
+  <path fill="#857c73" d="M20 5h32a9 9 0 0 1 9 9v36a9 9 0 0 1-9 9H20a9 9 0 0 1-9-9V14a9 9 0 0 1 9-9z M29.5 32a6.5 6.5 0 1 0 13 0 6.5 6.5 0 1 0-13 0z"/>
+  <path fill="#a39a90" fill-rule="evenodd" d="M13 5h32a9 9 0 0 1 9 9v36a9 9 0 0 1-9 9H13a9 9 0 0 1-9-9V14a9 9 0 0 1 9-9z M22.5 32a6.5 6.5 0 1 0 13 0 6.5 6.5 0 1 0-13 0z"/>
+  <!-- chisel marks -->
+  <path fill="#8f877e" d="M11 18l6-3-4 5z M42 46l6-2-5 5z M12 45l3 5-5-3z M40 12l5 3-6-1z"/>
+</svg>

@@ -1,5 +1,5 @@
 // Loads content/ from disk for the checker, the bot and the tests.
-import { readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { compileContent, contentFileList } from '../src/content/compile.js';
@@ -14,6 +14,20 @@ export function readContentFiles(dir = join(ROOT, 'content')) {
   return files;
 }
 
+// Every picture in content/art, keyed like "art/characters/mother.svg".
+export function readArtFiles(dir = join(ROOT, 'content')) {
+  const art = {};
+  const root = join(dir, 'art');
+  if (!existsSync(root)) return art;
+  for (const kind of readdirSync(root, { withFileTypes: true })) {
+    if (!kind.isDirectory()) continue;
+    for (const file of readdirSync(join(root, kind.name))) {
+      if (file.endsWith('.svg')) art[`art/${kind.name}/${file}`] = readFileSync(join(root, kind.name, file), 'utf8');
+    }
+  }
+  return art;
+}
+
 export function loadContent(dir) {
-  return compileContent(readContentFiles(dir));
+  return compileContent(readContentFiles(dir), { art: readArtFiles(dir) });
 }

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="288" height="360" viewBox="0 0 288 360">
+  <!-- The neighbours. They already did the thing. They're watching you not do it. -->
+  <rect width="288" height="360" fill="#a3b889"/>
+  <circle cx="144" cy="176" r="124" fill="#adc293"/>
+  <!-- three heads over the wall -->
+  <ellipse cx="62" cy="204" rx="40" ry="46" fill="#d8a67c"/>
+  <path fill="#c08e64" d="M78 160c14 8 24 24 24 44s-6 34-18 42z"/>
+  <path fill="#6b4428" d="M22 200c-4-40 16-60 40-60s44 20 40 60c-8-16-20-24-40-26-20 2-32 10-40 26z"/>
+  <ellipse cx="226" cy="204" rx="40" ry="46" fill="#f0c9a0"/>
+  <path fill="#dba882" d="M242 160c14 8 24 24 24 44s-6 34-18 42z"/>
+  <path fill="#3b2419" d="M186 200c-4-40 16-62 40-62s44 22 40 62c-10-22-22-30-40-30s-30 8-40 30z"/>
+  <ellipse cx="144" cy="178" rx="46" ry="54" fill="#8d5a3b"/>
+  <path fill="#744829" d="M162 128c18 8 28 28 28 50s-8 40-22 50z"/>
+  <path fill="#3b2419" d="M98 170c-4-44 16-68 46-68s50 24 46 68c-10-18-24-28-46-28s-36 10-46 28z"/>
+  <circle cx="144" cy="96" r="16" fill="#3b2419"/>
+  <!-- eyes, all sliding the same way -->
+  <path d="M40 190l14-3M70 186l14 3M122 162l16-3M156 158l16 3M204 190l14-3M234 186l14 3" stroke="#24150e" stroke-width="4.5" stroke-linecap="round"/>
+  <ellipse cx="52" cy="204" rx="5" ry="6" fill="#24150e"/><ellipse cx="78" cy="204" rx="5" ry="6" fill="#24150e"/>
+  <ellipse cx="136" cy="178" rx="5.5" ry="6.5" fill="#24150e"/><ellipse cx="164" cy="178" rx="5.5" ry="6.5" fill="#24150e"/>
+  <ellipse cx="216" cy="204" rx="5" ry="6" fill="#24150e"/><ellipse cx="242" cy="204" rx="5" ry="6" fill="#24150e"/>
+  <!-- the wall -->
+  <path fill="#8e857b" d="M0 232h288v128H0z"/>
+  <g fill="#a39a90">
+    <rect x="-8" y="238" width="70" height="34" rx="8"/><rect x="68" y="238" width="84" height="34" rx="8"/><rect x="158" y="238" width="62" height="34" rx="8"/><rect x="226" y="238" width="70" height="34" rx="8"/>
+    <rect x="-8" y="278" width="40" height="34" rx="8"/><rect x="38" y="278" width="80" height="34" rx="8"/><rect x="124" y="278" width="70" height="34" rx="8"/><rect x="200" y="278" width="96" height="34" rx="8"/>
+    <rect x="-8" y="318" width="76" height="34" rx="8"/><rect x="74" y="318" width="60" height="34" rx="8"/><rect x="140" y="318" width="84" height="34" rx="8"/><rect x="230" y="318" width="66" height="34" rx="8"/>
+  </g>
+  <g fill="#b3aba2"><rect x="-8" y="238" width="70" height="8" rx="4"/><rect x="68" y="238" width="84" height="8" rx="4"/><rect x="158" y="238" width="62" height="8" rx="4"/><rect x="226" y="238" width="70" height="8" rx="4"/></g>
+  <path fill="#000" opacity=".1" d="M200 232h88v128h-88z"/>
+</svg>

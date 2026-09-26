@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="288" height="360" viewBox="0 0 288 360">
+  <!-- The shaman, in an antler headdress. Knows what the Gods want. Suspiciously often, it's snacks. -->
+  <rect width="288" height="360" fill="#3f6f6a"/>
+  <circle cx="144" cy="176" r="124" fill="#467874"/>
+  <!-- antlers, behind -->
+  <g fill="#e6d7b8">
+    <path d="M108 122c-18-18-30-42-32-70l12-2c2 24 10 44 26 60z"/>
+    <path d="M86 72c-14-4-24-14-28-28l11-4c4 10 10 17 20 20z"/>
+    <path d="M94 98c-16 2-30-4-38-16l9-7c6 8 16 12 26 11z"/>
+    <path d="M82 50c2-12 8-22 18-28l7 9c-7 5-11 12-12 21z"/>
+  </g>
+  <g fill="#cdbd9c">
+    <path d="M180 122c18-18 30-42 32-70l-12-2c-2 24-10 44-26 60z"/>
+    <path d="M202 72c14-4 24-14 28-28l-11-4c-4 10-10 17-20 20z"/>
+    <path d="M194 98c16 2 30-4 38-16l-9-7c-6 8-16 12-26 11z"/>
+    <path d="M206 50c-2-12-8-22-18-28l-7 9c7 5 11 12 12 21z"/>
+  </g>
+  <!-- neck -->
+  <rect x="122" y="196" width="44" height="84" fill="#b07a50"/>
+  <path d="M122 196h44v22c-14 6-30 6-44 0z" fill="#8f5f3c"/>
+  <path d="M150 218h16v62h-16z" fill="#9a6644"/>
+  <!-- robe and a bone necklace -->
+  <path fill="#6f4b8a" d="M14 360v-40c0-36 32-58 82-62h96c50 4 82 26 82 62v40z"/>
+  <path fill="#000" opacity=".14" d="M200 258c42 6 74 28 74 62v40h-74z"/>
+  <path d="M104 262l40 40 40-40" fill="none" stroke="#efe2c2" stroke-width="4"/>
+  <g fill="#efe2c2"><path d="M112 272l6 2-4 12z"/><path d="M124 284l6 1-3 12z"/><path d="M140 296h8l-4 13z"/><path d="M158 285l6-1-3 12z"/><path d="M170 274l6-2-2 12z"/></g>
+  <!-- ears and face -->
+  <ellipse cx="99" cy="166" rx="9" ry="13" fill="#b07a50"/><ellipse cx="189" cy="166" rx="9" ry="13" fill="#9a6644"/>
+  <clipPath id="face"><path d="M98 142c0-30 20-42 46-42s46 12 46 42v30c0 34-20 52-46 52s-46-18-46-52z"/></clipPath>
+  <path fill="#b07a50" d="M98 142c0-30 20-42 46-42s46 12 46 42v30c0 34-20 52-46 52s-46-18-46-52z"/>
+  <path clip-path="url(#face)" d="M168 96h30v134h-44z" fill="#9a6644"/>
+  <!-- a fur headband holding the antlers -->
+  <path fill="#8a5a36" d="M92 132c16-14 34-20 52-20s36 6 52 20v18c-16-10-34-16-52-16s-36 6-52 16z"/>
+  <path fill="#6d4428" d="M172 116c10 4 18 9 24 16v18c-7-6-15-10-24-13z"/>
+  <g fill="#efe2c2"><circle cx="116" cy="134" r="4"/><circle cx="144" cy="128" r="4"/><circle cx="172" cy="134" r="4"/></g>
+  <!-- face paint, and eyes closed: the Gods are talking -->
+  <path d="M108 182h16M108 192h16M164 182h16M164 192h16" stroke="#d9442e" stroke-width="5" stroke-linecap="round"/>
+  <path d="M114 160q10 7 20 0M154 160q10 7 20 0" fill="none" stroke="#24150e" stroke-width="4" stroke-linecap="round"/>
+  <path d="M112 148q11-6 22-2M154 146q11-4 22 2" fill="none" stroke="#3b2419" stroke-width="5" stroke-linecap="round"/>
+  <path d="M144 166l-7 18q7 5 14 0z" fill="#8f5f3c"/>
+  <path d="M132 204h24" stroke="#6b3524" stroke-width="4" stroke-linecap="round"/>
+</svg>

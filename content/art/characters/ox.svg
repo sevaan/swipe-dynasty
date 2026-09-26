@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="288" height="360" viewBox="0 0 288 360">
+  <!-- An ox. Stronger than you, calmer than you, and it knows it. -->
+  <rect width="288" height="360" fill="#9d8fbf"/>
+  <circle cx="144" cy="176" r="124" fill="#a799c7"/>
+  <!-- neck and shoulders -->
+  <path fill="#7a4a2a" d="M30 360c0-60 30-100 70-110h88c40 10 70 50 70 110z"/>
+  <path fill="#000" opacity=".12" d="M190 252c38 12 68 50 68 108h-68z"/>
+  <!-- horns -->
+  <path fill="#efe2c2" d="M96 118c-30 0-52-14-60-42 0-6 6-8 10-4 10 16 28 24 52 24z"/>
+  <path fill="#efe2c2" d="M192 118c30 0 52-14 60-42 0-6-6-8-10-4-10 16-28 24-52 24z"/>
+  <path fill="#d6c9ab" d="M192 118c30 0 52-14 60-42 0-6-6-8-10-4-4 18-24 38-50 42z"/>
+  <!-- ears, pink inside -->
+  <path fill="#8a5a36" d="M92 138c-24-4-44 4-54 18 18 8 38 8 56 0z"/>
+  <path fill="#e98f8f" d="M86 142c-14 0-26 4-34 12 12 4 24 4 36 0z"/>
+  <path fill="#7a4a2a" d="M196 138c24-4 44 4 54 18-18 8-38 8-56 0z"/>
+  <path fill="#d9807f" d="M202 142c14 0 26 4 34 12-12 4-24 4-36 0z"/>
+  <!-- head -->
+  <clipPath id="head"><path d="M90 150c0-40 22-62 54-62s54 22 54 62l-6 70c-2 26-20 42-48 42s-46-16-48-42z"/></clipPath>
+  <path fill="#8a5a36" d="M90 150c0-40 22-62 54-62s54 22 54 62l-6 70c-2 26-20 42-48 42s-46-16-48-42z"/>
+  <rect clip-path="url(#head)" x="160" y="80" width="50" height="190" fill="#7a4a2a"/>
+  <path fill="#efe2c2" d="M122 92c6 14 14 22 22 22s16-8 22-22c-6-3-14-4-22-4s-16 1-22 4z"/>
+  <!-- the soft muzzle -->
+  <path fill="#e7dccb" d="M102 214c0-20 18-32 42-32s42 12 42 32c0 26-18 44-42 44s-42-18-42-44z"/>
+  <path fill="#d3c6b1" d="M160 186c16 6 26 16 26 28 0 26-18 44-42 44z"/>
+  <ellipse cx="128" cy="222" rx="7" ry="9" fill="#5a3a2a"/><ellipse cx="160" cy="222" rx="7" ry="9" fill="#5a3a2a"/>
+  <!-- eyes: sleepy, unbothered -->
+  <path d="M110 160q10 6 20 0M158 160q10 6 20 0" fill="none" stroke="#24150e" stroke-width="4.5" stroke-linecap="round"/>
+  <!-- a bell on a strap -->
+  <path d="M104 270q40 22 80 0" fill="none" stroke="#5e3b1f" stroke-width="8"/>
+  <path fill="#f2c94c" d="M130 286c0-12 6-18 14-18s14 6 14 18l4 14h-36z"/>
+  <path fill="#c9962a" d="M144 268c8 0 14 6 14 18l4 14h-18z"/>
+  <circle cx="144" cy="304" r="5" fill="#8e5f1e"/>
+</svg>

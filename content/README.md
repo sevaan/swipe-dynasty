@@ -9,10 +9,10 @@ Before pushing, run `node tools/check.mjs`. It lists errors (the game won't star
 | File | One row per | Key columns |
 |---|---|---|
 | `world.json` | (not a CSV) | Eras, their four meter labels and icons, keystone, next era, colours, inventor names; tuning values |
-| `characters.csv` | Speaker | `id`, `name`, `portrait` (a sprite id; defaults to the character's id), `per life` (cap per life, blank for none) |
+| `characters.csv` | Speaker | `id`, `name`, `portrait` (a picture in `art/characters/`; defaults to the character's id), `per life` (cap per life, blank for none) |
 | `flags.csv` | Remembered fact | `id`, `scope` (`life`, `timeline` or `forever`), `default` |
-| `inventions.csv` | Invention | `type` (keystone, stepping stone, bad idea), `name` (as in "Invented ___"), `requires`, `threshold`, `related` (bad ideas only), `icon` (a sprite id; defaults to the invention's id), `museum`, `hint` (the Naysayer's Museum hint) |
-| `sprites/*.txt` | Picture | Pixel art as text (below) |
+| `inventions.csv` | Invention | `type` (keystone, stepping stone, bad idea), `name` (as in "Invented ___"), `requires`, `threshold`, `related` (bad ideas only), `icon` (a picture in `art/inventions/`; defaults to the invention's id), `museum`, `hint` (the Naysayer's Museum hint) |
+| `art/*/*.svg` | Picture | One SVG per picture (see `art/README.md`) |
 | `deaths.csv` | Death card | `meter` + `end` (low or high) for the 8 meter deaths per era; blank for special deaths used with `die`. `epitaph` is the punchline after "Invented X." `scene` sets the weather on the gravestone screen |
 | `cards/*.csv` | Card | See below |
 
@@ -77,24 +77,13 @@ Separate conditions with `;`. All must hold. Use `or` for alternatives within on
 
 Tuning values (the 6 cards, the 3 draws, dot sizes) live in `world.json` under `tuning`.
 
-## Sprites (all the art)
+## Art
 
-There are no emoji in this game: every picture is pixel art written as text in `sprites/`, and the checker rejects emoji anywhere in the content. Open `tools/sprites.html` (on the live site too) to see every sprite at once.
+There are no emoji in this game. Every picture is flat vector art, one SVG file per picture in `art/`, and the checker rejects emoji anywhere in the content. `art/README.md` covers the house style, the canvas sizes and where each kind of picture goes. Open `tools/art.html` (on the live site too) to see every picture at once.
 
-```
-== mother ==
-mirror
-..........kk
-.........kHH
-```
-
-- `== name ==` starts a sprite. Each following line is one row of pixels; a blank line ends the sprite.
-- Each character is one pixel, named in `sprites/palette.txt` (`k` outline, `s` skin, `H` grey hair...). `.` is transparent.
-- `mirror` means you only draw the left half; the right half is its mirror image. Most faces are drawn this way.
-- Every row must be the same width. The checker names the row if one isn't.
-- Portraits are 24 x 24, meter and invention icons 16 x 16. The game scales them by whole numbers so pixels stay square.
-- Meter icons fill up from the bottom as the meter rises, and the Museum shows an unfound invention as its icon's silhouette, so draw shapes that read in solid colour.
-- Keep each sprite to a handful of palette colours so it stays 8-bit.
+- A new character needs `art/characters/<portrait>.svg`, a 288 × 360 card face.
+- A new invention's icon is `art/inventions/<icon>.svg` at 64 × 64. A missing icon shows as a question mark and the checker warns you.
+- A new era's meters need four one-colour glyphs in `art/meters/`, each 48 × 48.
 
 ## Scenes: skies and weather
 

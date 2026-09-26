@@ -83,8 +83,12 @@ For scale: the original Reigns shipped with 700+ cards. The Stone Age sample run
 
 - **Controls:** swiping left and right are the only playable actions. No third choice, no dragging.
 - **Knock-on (confirmed):** ancestors' inventions can't be dragged, so they appear inside cards instead. A card offers the invention as one of its two answers ("Show him the cave drawing" / "Send him away").
-- **Art:** 8-bit pixel art, kept flat and minimal like Reigns.
-- **No emoji (Sep 26, Sevaan):** everything on screen is drawn as 8-bit pixel art: portraits, meter icons, inventions and interface pieces. Text stays in a readable font.
+- **Art (Sep 26, Sevaan): flat vector, like Reigns.** This replaces 8-bit pixel art (see the Graveyard).
+  - Every picture is built from simple shapes with one hard-edged shadow, with no outlines, gradients or textures.
+  - Each character has their own card colour and fills the card edge to edge, with their name under it.
+  - Meters are one-colour glyphs that fill from the bottom. Corners are rounded, and weather is drawn as smooth flat shapes.
+  - The house style is in `content/art/README.md`.
+- **No emoji (Sep 26, Sevaan):** everything on screen is drawn: portraits, meter icons, inventions and interface pieces. Text stays in a readable font.
 - **Skies and weather (Sep 26, Sevaan):** the background changes now and then. Each era's sky steps through day, dusk, night and dawn every few cards, and each inventor starts at a different time of day. A card or death can also set a scene with weather on screen: rain, a storm, volcano embers, flames and smoke, stars and fireflies, dust, birds, falling grain. "Centuries pass" is a time-lapse of the new era's skies.
 - **Readability (Sep 26, Sevaan asked for a pass):**
   - Text is set in Atkinson Hyperlegible Next, a face drawn for legibility.
@@ -427,6 +431,12 @@ Meters: Harvest, Village, Priests, The Neighbours.
 
 Discarded, but kept in case something here comes back.
 
+**8-bit pixel art (the first look, Sep 25–26)**
+
+- The first builds drew every picture as 16- and 24-pixel sprites written as text, one character per pixel from a shared palette, with stepped corners and chunky pixel weather.
+- It was cheap to edit from a phone, but it was replaced by flat vector art on Sep 26 after Sevaan saw a mock. Flat art gives the faces room to act, like the mother's raised eyebrow, and room for props.
+- The sprites are in git history, before the "Flat art" commit.
+
 **Peterborough, Ontario (the original starting point)**
 
 - 8-bit canoe up the Otonabee; Peterborough Lift Lock as a vertical level.
@@ -477,7 +487,7 @@ A new room (Nadia, mobile UX; Theo, systems and balance; Iris, playtester; Sam, 
 - [x] Which meters, and how many per era?
 - [x] Does the student-to-founder idea become the modern era of the main game, or stay separate?
 - [x] What are the extra options beyond left and right, and when do they appear?
-- [x] Art style: 8-bit pixel, or something else?
+- [x] Art style: 8-bit pixel, or something else? (Flat vector, like Reigns.)
 
 ## Pinned: visual directions (Sep 26)
 
@@ -490,6 +500,8 @@ Five redesign mockups, put on hold by Sevaan, not decided. The canvas is at http
 5. **Chronicle:** an illuminated history book on a leather desk.
 
 Claude's recommendation when they were shown: Carved for play, with The Exhibit's gallery look for the Museum screens.
+
+A sixth mock, a flat Reigns-like version of the current layout, was then chosen as the art style (see "Decision: controls and art").
 
 ## Pending proposals
 
@@ -515,9 +527,14 @@ These are the defaults the first build uses where the Decisions above are silent
 - **Content:** CSV files in `content/`, one row per card, per the authoring Decision. The browser parses them at load time with the same code the checker uses. The syntax is in `content/README.md`.
 - **Engine:** `src/engine/` has no page code, so the game, the tests and the simulation bot all run the same rules. Each swipe resolves in one atomic step, then autosaves.
 - **Tuning values:** the trigger window, minimum cards before a breakthrough, dot sizes and character caps live in `content/world.json`, not in code.
-- **Scenes:** `world.json` lists the scenes (a sky colour plus effects) and each era's four skies; cards and deaths pick a scene in their `scene` column. The effects are drawn in `src/ui/fx.js` as chunky pixels at 20 frames a second, behind the cards. Reduce motion freezes them; Settings can turn them off. The checker warns when a sky is too light for the era's text.
+- **Scenes:** `world.json` lists the scenes (a sky colour plus effects) and each era's four skies; cards and deaths pick a scene in their `scene` column. The effects are drawn in `src/ui/fx.js` as smooth flat shapes at about 30 frames a second, behind the cards. `tools/fx.html` previews any scene. Reduce motion freezes them, and Settings can turn them off. The checker warns when a sky is too light for the era's text.
 - **Text:**
   - The font loads from Google Fonts (a link in `index.html`); offline, the system font takes over.
   - The question keeps three lines of room above the card, so the card holds still between cards. The card shrinks to fit short screens, using a container query on the deck.
   - `fx.setQuiet()` gets the boxes around the words from `app.js` and fades the weather inside them.
-- **Art:** every picture is a text sprite in `content/sprites/`, one character per pixel from a shared palette, so art can be edited like cards. The checker rejects emoji anywhere in the content. The Museum draws an unfound invention as its icon's silhouette. First-draft sprites; there's no sound yet.
+- **Art:**
+  - Every picture is an SVG in `content/art/` (characters 288 × 360, invention icons 64 × 64, meter glyphs and interface pieces 48 × 48), named after the id that uses it. The house style is in `content/art/README.md`.
+  - The browser shows colour art as images and one-colour glyphs as CSS masks, so meters and icons take each era's text colour.
+  - The checker reads every file. It reports missing pictures, the wrong canvas size, and anything unsafe or unportable: scripts, `<text>`, embedded images, outside links.
+  - `tools/art.html` shows them all. The Museum draws an unfound invention as a pale silhouette of its icon.
+  - This is first-draft art, and there's no sound yet.

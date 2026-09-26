@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <!-- a wooden ard: a beam to the ox, a handle for the ploughman, a pointed stone share -->
+  <!-- handle, with a peg to hold -->
+  <clipPath id="pl-handle"><rect x="0" y="-3.25" width="47" height="6.5" rx="3.25"/></clipPath>
+  <g transform="translate(46 55) rotate(-77.5)">
+    <rect x="0" y="-3.25" width="47" height="6.5" rx="3.25" fill="#7a4a2a"/>
+    <rect clip-path="url(#pl-handle)" x="0" y=".5" width="47" height="3" fill="#5e3c24"/>
+  </g>
+  <rect x="48.5" y="4" width="13" height="6" rx="3" transform="rotate(-12 55 7)" fill="#7a4a2a"/>
+  <!-- beam, shaded on its underside -->
+  <clipPath id="pl-beam"><rect x="0" y="-4.25" width="51" height="8.5" rx="4.25"/></clipPath>
+  <g transform="translate(7 11) rotate(45.5)">
+    <rect x="0" y="-4.25" width="51" height="8.5" rx="4.25" fill="#915a32"/>
+    <rect clip-path="url(#pl-beam)" x="0" y="1" width="51" height="4" fill="#7a4a2a"/>
+  </g>
+  <!-- sole, and its share -->
+  <path fill="#915a32" d="M51 47.5v11H28v-9z"/>
+  <path fill="#7a4a2a" d="M51 55v3.5H28V55z"/>
+  <path fill="#a39a90" d="M30 49v9.5h-4L5 60z"/>
+  <path fill="#857c73" d="M30 55v3.5h-4L5 60z"/>
+</svg>

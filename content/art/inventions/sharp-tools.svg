@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <!-- a stone-tipped spear, drawn upright and turned onto the diagonal -->
+  <clipPath id="st-shaft"><rect x="29" y="14" width="6" height="54" rx="3"/></clipPath>
+  <g transform="rotate(45 32 32)">
+    <rect x="29" y="14" width="6" height="54" rx="3" fill="#915a32"/>
+    <rect clip-path="url(#st-shaft)" x="32.5" y="14" width="3" height="54" fill="#7a4a2a"/>
+    <!-- knapped head: light and dark faces either side of the ridge -->
+    <path fill="#a39a90" d="M32-5c5 8 9 14 9 19s-4 8-9 8-9-3-9-8 4-11 9-19z"/>
+    <path fill="#857c73" d="M32-5c5 8 9 14 9 19s-4 8-9 8z"/>
+    <path fill="#b8afa4" d="M26.5 9l3 2.5-4 3.5z M27 16l3.5 1.5-3 3z"/>
+    <path fill="#6e665e" d="M37.5 7.5l-2 4 4 1z M38.5 16l-3 2 3.5 1.5z"/>
+    <!-- sinew binding -->
+    <g fill="#efe2c2"><rect x="28" y="21" width="8" height="2.4" rx="1.2"/><rect x="28" y="24.4" width="8" height="2.4" rx="1.2"/><rect x="28" y="27.8" width="8" height="2.4" rx="1.2"/></g>
+  </g>
+</svg>

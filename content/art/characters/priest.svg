@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="288" height="360" viewBox="0 0 288 360">
+  <!-- A priest. The temple is bigger than your house, and it needs to be bigger still. -->
+  <rect width="288" height="360" fill="#d39a4a"/>
+  <circle cx="144" cy="176" r="124" fill="#daa556"/>
+  <!-- neck -->
+  <rect x="122" y="196" width="44" height="84" fill="#f0c9a0"/>
+  <path d="M122 196h44v22c-14 6-30 6-44 0z" fill="#dba882"/>
+  <path d="M150 218h16v62h-16z" fill="#dba882"/>
+  <!-- white robe with red edging and a gold pendant -->
+  <path fill="#f5eddc" d="M14 360v-40c0-36 32-58 82-62h16l32 40 32-40h16c50 4 82 26 82 62v40z"/>
+  <path fill="#000" opacity=".1" d="M200 258c42 6 74 28 74 62v40h-74z"/>
+  <path d="M108 256l36 44 36-44" fill="none" stroke="#b5413a" stroke-width="9" stroke-linejoin="round"/>
+  <path d="M96 262l-6 98M192 262l6 98" stroke="#b5413a" stroke-width="7"/>
+  <path fill="#f2c94c" d="M144 300l12 12-12 14-12-14z"/><path fill="#c9962a" d="M144 300l12 12-12 14z"/>
+  <!-- ears and face -->
+  <ellipse cx="99" cy="166" rx="9" ry="13" fill="#f0c9a0"/><ellipse cx="189" cy="166" rx="9" ry="13" fill="#dba882"/>
+  <clipPath id="face"><path d="M98 142c0-30 20-42 46-42s46 12 46 42v30c0 34-20 52-46 52s-46-18-46-52z"/></clipPath>
+  <path fill="#f0c9a0" d="M98 142c0-30 20-42 46-42s46 12 46 42v30c0 34-20 52-46 52s-46-18-46-52z"/>
+  <path clip-path="url(#face)" d="M168 96h30v134h-44z" fill="#dba882"/>
+  <!-- a tall red headdress with a gold sun on it -->
+  <path fill="#9e3a33" d="M104 138l-6-96c0-10 20-18 46-18s46 8 46 18l-6 96z"/>
+  <path fill="#83302a" d="M160 25c18 3 30 9 30 17l-6 96h-26z"/>
+  <ellipse cx="144" cy="42" rx="46" ry="14" fill="#b5453d"/>
+  <path fill="#f2c94c" d="M101 118h86l-1 20h-84z"/><path fill="#c9962a" d="M162 118h25l-1 20h-24z"/>
+  <path fill="#f2c94c" d="M100 60h88l-1 10h-86z"/>
+  <g fill="#f2c94c"><circle cx="144" cy="92" r="11"/><path d="M144 72l3 7h-6zM144 112l3-7h-6zM124 92l7 3v-6zM164 92l-7 3v-6zM130 78l7 3-3 4zM158 78l-7 3 3 4zM130 106l7-3-3-4zM158 106l-7-3 3-4z"/></g>
+  <!-- face: serene, and certain -->
+  <path d="M114 158q10-6 20-2M154 156q10-4 20 2" fill="none" stroke="#8f6a48" stroke-width="5" stroke-linecap="round"/>
+  <path d="M116 172q9 6 18 0M154 172q9 6 18 0" fill="none" stroke="#24150e" stroke-width="4" stroke-linecap="round"/>
+  <path d="M144 174l-7 18q7 5 14 0z" fill="#dba882"/>
+  <path d="M132 206q12 6 24 0" fill="none" stroke="#9a5a44" stroke-width="4" stroke-linecap="round"/>
+</svg>

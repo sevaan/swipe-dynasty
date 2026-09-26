@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="288" height="360" viewBox="0 0 288 360">
+  <!-- The Naysayer. It'll never catch on. -->
+  <rect width="288" height="360" fill="#8a6a86"/>
+  <circle cx="144" cy="176" r="124" fill="#94748f"/>
+  <!-- neck -->
+  <rect x="122" y="196" width="44" height="84" fill="#e0b48e"/>
+  <path d="M122 196h44v22c-14 6-30 6-44 0z" fill="#c89a72"/>
+  <path d="M150 218h16v62h-16z" fill="#c89a72"/>
+  <!-- a tidy grey tunic, buttoned all the way up -->
+  <path fill="#6e665e" d="M14 360v-40c0-36 32-58 82-62h96c50 4 82 26 82 62v40z"/>
+  <path fill="#5b544d" d="M118 258h52l-8 22h-36z"/>
+  <path fill="#000" opacity=".12" d="M200 258c42 6 74 28 74 62v40h-74z"/>
+  <!-- arms folded: two forearms stacked across the chest, elbows out, hands tucked -->
+  <path fill="#5f5850" d="M40 330c-16 0-24-10-22-22 2-14 14-22 30-22h170c14 0 24 8 26 20 2 14-8 24-24 24z"/>
+  <path fill="#8f877e" d="M66 318c-14 0-22-10-20-22 2-12 12-20 26-20h148c16 0 28 8 30 22 2 12-8 22-24 22z"/>
+  <path fill="#7d756c" d="M150 276h70c16 0 28 8 30 22 2 12-8 22-24 22h-76z"/>
+  <path d="M100 318l64-40" stroke="#6e665e" stroke-width="3" stroke-linecap="round"/>
+  <g fill="#e0b48e"><rect x="30" y="292" width="10" height="20" rx="5"/><rect x="42" y="290" width="10" height="22" rx="5"/></g>
+  <g fill="#c89a72"><rect x="236" y="300" width="10" height="20" rx="5"/><rect x="248" y="302" width="10" height="18" rx="5"/></g>
+  <!-- ears and face -->
+  <ellipse cx="99" cy="166" rx="9" ry="13" fill="#e0b48e"/><ellipse cx="189" cy="166" rx="9" ry="13" fill="#c89a72"/>
+  <clipPath id="face"><path d="M98 142c0-30 20-42 46-42s46 12 46 42v30c0 34-20 52-46 52s-46-18-46-52z"/></clipPath>
+  <path fill="#e0b48e" d="M98 142c0-30 20-42 46-42s46 12 46 42v30c0 34-20 52-46 52s-46-18-46-52z"/>
+  <path clip-path="url(#face)" d="M168 96h30v134h-44z" fill="#c89a72"/>
+  <!-- neat hair with a hard side part -->
+  <path fill="#6b4428" d="M94 150c-6-42 14-58 50-58s56 16 50 58c-4-14-8-22-14-26l-70-4c-8 6-14 16-16 30z"/>
+  <path fill="#7d5231" d="M118 94c-14 4-22 14-24 30 10-14 26-22 50-26z"/>
+  <!-- face: no -->
+  <path d="M112 156l24 6M152 162l24-6" fill="none" stroke="#4f3322" stroke-width="5" stroke-linecap="round"/>
+  <path d="M117 170q9-5 18 0" fill="#24150e" stroke="#24150e" stroke-width="2"/>
+  <path d="M153 170q9-5 18 0" fill="#24150e" stroke="#24150e" stroke-width="2"/>
+  <ellipse cx="126" cy="171" rx="5.5" ry="3.5" fill="#24150e"/><ellipse cx="162" cy="171" rx="5.5" ry="3.5" fill="#24150e"/>
+  <path d="M144 172l-7 18q7 5 14 0z" fill="#c89a72"/>
+  <path d="M124 198c8-6 32-6 40 0l-4 6c-8-4-24-4-32 0z" fill="#5a3a26"/>
+  <path d="M130 212q14-8 28 0" fill="none" stroke="#8e4a34" stroke-width="4" stroke-linecap="round"/>
+</svg>

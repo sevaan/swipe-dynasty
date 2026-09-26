@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="#000">
+  <!-- a rounded headstone with two engraved lines, on a mound -->
+  <path fill-rule="evenodd" d="M12 34V16a12 12 0 0 1 24 0v18z M17.5 15.5h13v3h-13z M19 22h10v3H19z"/>
+  <path d="M3 45c2-6 10-9.5 21-9.5S43 39 45 45z"/>
+</svg>

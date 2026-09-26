@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <!-- a round rock with googly eyes -->
+  <clipPath id="pr-rock"><path d="M5 37C4 20 17 8 33 8s27 11 26 27c-1 15-12 22-27 22S6 51 5 37z"/></clipPath>
+  <path fill="#a39a90" d="M5 37C4 20 17 8 33 8s27 11 26 27c-1 15-12 22-27 22S6 51 5 37z"/>
+  <g clip-path="url(#pr-rock)">
+    <path fill="#857c73" d="M44 0h20v64H40z"/>
+    <ellipse cx="17" cy="19.5" rx="7" ry="3.5" transform="rotate(-32 17 19.5)" fill="#b8afa4"/>
+  </g>
+  <!-- the eyes, stuck on, each with a hard shadow; the pupils have settled -->
+  <circle cx="25" cy="31" r="8.5" fill="#6e665e"/><circle cx="41.5" cy="30" r="8.5" fill="#6e665e"/>
+  <circle cx="23.5" cy="29.5" r="8.5" fill="#fff"/><circle cx="40" cy="28.5" r="8.5" fill="#fff"/>
+  <circle cx="25.5" cy="33" r="4" fill="#24150e"/><circle cx="37.5" cy="32.5" r="4" fill="#24150e"/>
+</svg>

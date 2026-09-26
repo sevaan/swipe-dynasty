@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="288" height="360" viewBox="0 0 288 360">
+  <rect width="288" height="360" fill="#c29a55"/>
+  <circle cx="144" cy="176" r="124" fill="#cba460"/>
+  <!-- staff, behind -->
+  <rect x="34" y="92" width="14" height="280" rx="7" fill="#8b5e3c"/>
+  <circle cx="41" cy="92" r="14" fill="#8b5e3c"/><circle cx="37" cy="88" r="4" fill="#a9774e"/>
+  <rect x="33" y="196" width="16" height="7" fill="#5e3c24"/><rect x="33" y="208" width="16" height="7" fill="#5e3c24"/>
+  <!-- robe -->
+  <path fill="#6b4a32" d="M18 360v-40c0-36 32-58 82-62h88c50 4 82 26 82 62v40z"/>
+  <path fill="#000" opacity=".12" d="M198 258c42 6 72 28 72 62v40h-72z"/>
+  <path d="M66 276q78 34 156 0" fill="none" stroke="#b99b78" stroke-width="24" stroke-linecap="round"/>
+  <!-- hand on the staff -->
+  <rect x="25" y="246" width="32" height="40" rx="14" fill="#d8a67c"/>
+  <path d="M28 258h26M28 268h26M29 278h24" stroke="#b8865c" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- neck, ears, head -->
+  <rect x="124" y="198" width="40" height="70" fill="#c08e64"/>
+  <ellipse cx="97" cy="166" rx="10" ry="14" fill="#d8a67c"/><ellipse cx="191" cy="166" rx="10" ry="14" fill="#c08e64"/>
+  <clipPath id="e-face"><path d="M96 150c0-44 20-60 48-60s48 16 48 60v26c0 30-20 46-48 46s-48-16-48-46z"/></clipPath>
+  <path fill="#d8a67c" d="M96 150c0-44 20-60 48-60s48 16 48 60v26c0 30-20 46-48 46s-48-16-48-46z"/>
+  <path clip-path="url(#e-face)" d="M170 86h30v140h-46z" fill="#c08e64"/>
+  <ellipse cx="121" cy="110" rx="13" ry="7" transform="rotate(-28 121 110)" fill="#ecc49a"/>
+  <!-- tufts over the ears -->
+  <g fill="#efe9df"><circle cx="92" cy="146" r="9"/><circle cx="99" cy="138" r="7"/><circle cx="196" cy="146" r="9"/><circle cx="189" cy="138" r="7"/></g>
+  <!-- eyebrows, eyes (asleep, or wise), nose -->
+  <path fill="#efe9df" d="M106 164c3-14 22-20 34-10-10 1-22 5-34 18z"/>
+  <path fill="#efe9df" d="M182 164c-3-14-22-20-34-10 10 1 22 5 34 18z"/>
+  <path d="M116 170q9 7 18 0M154 170q9 7 18 0" fill="none" stroke="#3a2418" stroke-width="4" stroke-linecap="round"/>
+  <ellipse cx="144" cy="186" rx="12" ry="11" fill="#c08e64"/><ellipse cx="139.5" cy="181.5" rx="3.5" ry="2.5" fill="#e8bf96"/>
+  <!-- beard, then moustache -->
+  <clipPath id="e-beard"><path d="M102 190c-4 52 14 110 42 170 28-60 46-118 42-170-12 17-27 24-42 24s-30-7-42-24z"/></clipPath>
+  <path fill="#efe9df" d="M102 190c-4 52 14 110 42 170 28-60 46-118 42-170-12 17-27 24-42 24s-30-7-42-24z"/>
+  <rect clip-path="url(#e-beard)" x="150" y="180" width="60" height="190" fill="#d9d2c5"/>
+  <path d="M126 236q6 30 12 60M156 238q2 30-6 64" fill="none" stroke="#d9d2c5" stroke-width="3" stroke-linecap="round"/>
+  <path fill="#f8f5ef" d="M144 195c-12-5-29 0-36 12 13-3 26-3 36-8 10 5 23 5 36 8-7-12-24-17-36-12z"/>
+</svg>

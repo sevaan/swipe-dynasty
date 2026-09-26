@@ -5,8 +5,7 @@
     "flags": "flags.csv",
     "inventions": "inventions.csv",
     "deaths": "deaths.csv",
-    "cards": ["cards/tutorial.csv", "cards/stone-age.csv", "cards/farming.csv"],
-    "sprites": ["sprites/palette.txt", "sprites/characters.txt", "sprites/meters.txt", "sprites/inventions.txt", "sprites/ui.txt"]
+    "cards": ["cards/tutorial.csv", "cards/stone-age.csv", "cards/farming.csv"]
   },
   "start": {
     "era": "stone-age",

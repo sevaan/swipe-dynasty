@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="288" height="360" viewBox="0 0 288 360">
+  <!-- A kid. Asks "why" about fire, and nobody has a good answer. -->
+  <rect width="288" height="360" fill="#7fa7c9"/>
+  <circle cx="144" cy="186" r="124" fill="#89b1d2"/>
+  <!-- neck -->
+  <rect x="126" y="206" width="36" height="80" fill="#f0c9a0"/>
+  <path d="M126 206h36v18c-12 5-24 5-36 0z" fill="#dba882"/>
+  <path d="M148 224h14v60h-14z" fill="#dba882"/>
+  <!-- a small fur tunic -->
+  <path fill="#8a5a36" d="M40 360v-34c0-30 26-48 66-52h14l6 8 5-6 5 10 5-6 4 12 4 12 4-12 4-12 5 6 5-10 5 6 6-8h14c40 4 66 22 66 52v34z"/>
+  <g fill="#6d4428"><ellipse cx="90" cy="318" rx="10" ry="6"/><ellipse cx="206" cy="332" rx="9" ry="5"/><ellipse cx="130" cy="346" rx="7" ry="4"/></g>
+  <path fill="#000" opacity=".1" d="M192 274c40 4 66 22 66 52v34h-66z"/>
+  <!-- ears and a round face -->
+  <ellipse cx="97" cy="178" rx="10" ry="13" fill="#f0c9a0"/><ellipse cx="191" cy="178" rx="10" ry="13" fill="#dba882"/>
+  <clipPath id="face"><path d="M96 162c0-34 22-50 48-50s48 16 48 50v10c0 34-22 56-48 56s-48-22-48-56z"/></clipPath>
+  <path fill="#f0c9a0" d="M96 162c0-34 22-50 48-50s48 16 48 50v10c0 34-22 56-48 56s-48-22-48-56z"/>
+  <path clip-path="url(#face)" d="M170 104h32v130h-48z" fill="#dba882"/>
+  <circle cx="114" cy="196" r="10" fill="#e98f8f" opacity=".5"/><circle cx="175" cy="196" r="10" fill="#e98f8f" opacity=".4"/>
+  <!-- blond hair, sticking up -->
+  <path fill="#e8c25a" d="M90 168c-8-44 14-72 54-72s62 28 54 72c-6-18-12-28-20-32l-6 10-4-14-10 10-4-14-10 12-4-14-8 12-6-12-6 14-8-10c-10 6-18 16-22 32z"/>
+  <path fill="#e8c25a" d="M128 98c-2-14 4-22 14-26-2 8 0 14 4 18 4-8 12-12 22-10-8 4-12 10-12 18z"/>
+  <path fill="#c9962a" d="M160 100c22 8 36 28 38 58-8-20-18-32-30-38z"/>
+  <!-- face: up to something -->
+  <path d="M112 162q10-8 22-2M154 158q12-4 22 4" fill="none" stroke="#b58a2a" stroke-width="5" stroke-linecap="round"/>
+  <path d="M116 176q9-7 18 0" fill="none" stroke="#24150e" stroke-width="4" stroke-linecap="round"/>
+  <ellipse cx="164" cy="176" rx="5.5" ry="6.5" fill="#24150e"/>
+  <path d="M144 180l-6 14q6 4 12 0z" fill="#dba882"/>
+  <path d="M130 206q14 10 30-4" fill="none" stroke="#8e4a34" stroke-width="4.5" stroke-linecap="round"/>
+</svg>

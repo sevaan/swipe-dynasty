@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="288" height="360" viewBox="0 0 288 360">
+  <!-- The mammoths. More are coming. -->
+  <rect width="288" height="360" fill="#9db2c0"/>
+  <circle cx="144" cy="176" r="124" fill="#a7bcc9"/>
+  <!-- two more, behind -->
+  <g fill="#7f95a3">
+    <path d="M-20 360V238c0-50 22-84 58-84 30 0 46 24 48 58v148z"/>
+    <path d="M308 360V238c0-50-22-84-58-84-30 0-46 24-48 58v148z"/>
+  </g>
+  <g fill="#c9d3d9"><path d="M60 262c-18 4-30 20-30 40 0 10 4 18 10 22-2-16 4-32 18-42z"/><path d="M228 262c18 4 30 20 30 40 0 10-4 18-10 22 2-16-4-32-18-42z"/></g>
+  <!-- the big one: a shaggy domed head -->
+  <clipPath id="head"><path d="M64 214c0-92 34-150 80-150s80 58 80 150c0 36-22 62-80 62s-80-26-80-62z"/></clipPath>
+  <path fill="#6b4428" d="M64 214c0-92 34-150 80-150s80 58 80 150c0 36-22 62-80 62s-80-26-80-62z"/>
+  <rect clip-path="url(#head)" x="160" y="50" width="80" height="240" fill="#5a381f"/>
+  <path fill="#8a5a36" d="M88 130c8-38 30-60 56-64-18 14-30 34-34 64zM132 66c-8 10-12 22-12 36 8-16 20-28 34-34z"/>
+  <path fill="#6b4428" d="M58 196l12 16 6-18 10 20 6-16 8 16 2-24c-16 0-30 2-44 6zM230 196l-12 16-6-18-10 20-6-16-8 16-2-24c16 0 30 2 44 6z"/>
+  <!-- tusks: out, down, and curling up -->
+  <path fill="#efe2c2" d="M122 238c-36 4-62 26-66 58-3 22 8 38 26 42-10-14-12-30-4-44 10-18 28-28 48-30z"/>
+  <path fill="#efe2c2" d="M166 238c36 4 62 26 66 58 3 22-8 38-26 42 10-14 12-30 4-44-10-18-28-28-48-30z"/>
+  <path fill="#d6c9ab" d="M190 246c24 10 40 28 42 50 3 22-8 38-26 42 10-14 12-30 4-44-4-8-10-14-18-18z"/>
+  <!-- the trunk, hanging down the middle and curling at the end -->
+  <path fill="#7d5231" d="M124 200h40v96c0 20 8 34 22 40-4 16-24 20-40 10-16-10-22-30-22-54z"/>
+  <path fill="#6b4428" d="M150 200h14v96c0 20 8 34 22 40-4 16-24 20-40 10z"/>
+  <path d="M128 222h32M128 244h32M128 266h32" stroke="#6b4428" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+  <!-- small eyes, not happy -->
+  <path d="M96 170l22 6M192 170l-22 6" stroke="#2e1c10" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="108" cy="184" r="5.5" fill="#24150e"/><circle cx="180" cy="184" r="5.5" fill="#24150e"/>
+</svg>

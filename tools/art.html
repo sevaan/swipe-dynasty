@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Art gallery</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400..800&display=swap">
+  <style>
+    body { margin: 0; padding: 16px; background: #2a1c14; color: #f4e7cd; font: 14px/1.4 "Atkinson Hyperlegible Next", system-ui, sans-serif; }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    h2 { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; opacity: .75; margin: 24px 0 10px; }
+    p { margin: 0 0 8px; opacity: .85; }
+    .grid { display: flex; flex-wrap: wrap; gap: 14px; }
+    figure { margin: 0; display: grid; justify-items: center; gap: 6px; }
+    figcaption { font: 12px ui-monospace, Menlo, monospace; opacity: .8; }
+    .card { width: 144px; height: 180px; border-radius: 12px; overflow: hidden; background: #3b2a1e; box-shadow: 0 4px 0 rgb(0 0 0 / 30%); }
+    .card img { display: block; width: 100%; height: 100%; }
+    .tile { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 12px; background: #3b2a1e; }
+    .ghost { filter: brightness(0) invert(1); opacity: .22; }
+    .glyph { position: relative; width: 48px; height: 48px; }
+    .glyph span { position: absolute; inset: 0; -webkit-mask: var(--art) center / contain no-repeat; mask: var(--art) center / contain no-repeat; }
+    .glyph .g { background: rgb(244 231 205 / 24%); }
+    .glyph .f { background: #f4e7cd; clip-path: inset(40% 0 0 0); }
+    .small { width: 22px; height: 22px; }
+    .missing { outline: 2px solid #ff8a7a; }
+    .errors { white-space: pre-wrap; font: 12px ui-monospace, Menlo, monospace; color: #ffb4a8; }
+  </style>
+</head>
+<body>
+  <h1>Art gallery</h1>
+  <p>Every picture the game uses, from <code>content/art/</code> (see its README). Meters show at 60% full. A red outline means the file is missing.</p>
+  <div id="out"></div>
+  <script type="module">
+    import { loadContentWeb } from '../src/content/load-web.js';
+    import { artReferences, UI_ART } from '../src/content/art.js';
+    import { artURL, setArtBase } from '../src/ui/art.js';
+    setArtBase('../content/');
+    const out = document.getElementById('out');
+    const { content, errors } = await loadContentWeb('../content/');
+    if (errors.length) out.insertAdjacentHTML('beforeend', `<div class="errors">${errors.map((e) => `${e.file}:${e.line} ${e.message}`).join('\n')}</div>`);
+    const refs = artReferences(content);
+    const ids = (kind) => [...new Set(refs.filter((r) => r.kind === kind).map((r) => r.id))];
+    const img = (kind, id, attrs = '') => `<img src="${artURL(kind, id)}" alt="" ${attrs} onerror="this.classList.add('missing')">`;
+    const mask = (kind, id, cls = '') => `<div class="glyph ${cls}" style="--art: url('${artURL(kind, id)}')"><span class="g"></span><span class="f"></span></div>`;
+    const section = (title, cells) => out.insertAdjacentHTML('beforeend', `<h2>${title}</h2><div class="grid">${cells.join('')}</div>`);
+    const who = (id) => Object.values(content.characters).filter((c) => c.portrait === id).map((c) => c.name || c.id).join(', ');
+    section('Characters (288 × 360)', ids('characters').map((id) => `<figure><div class="card">${img('characters', id)}</div><figcaption>${id}${who(id) ? ` · ${who(id)}` : ''}</figcaption></figure>`));
+    section('Inventions (64 × 64)', ids('inventions').map((id) => `<figure><div class="tile">${img('inventions', id, 'width="64" height="64"')}${img('inventions', id, 'width="20" height="20"')}${img('inventions', id, 'width="40" height="40" class="ghost"')}</div><figcaption>${id}</figcaption></figure>`));
+    section('Meters (48 × 48)', content.eraOrder.flatMap((e) => Object.values(content.eras[e].meters).map((m) => `<figure><div class="tile">${mask('meters', m.icon)}</div><figcaption>${m.icon} · ${m.label}</figcaption></figure>`)));
+    section('Interface (48 × 48)', UI_ART.map((id) => `<figure><div class="tile">${id === 'hand' ? `<div style="background:#ecd9b4;border-radius:8px;padding:6px">${img('ui', id, 'width="48" height="48"')}</div>` : `${mask('ui', id)}${mask('ui', id, 'small')}`}</div><figcaption>${id}</figcaption></figure>`));
+  </script>
+</body>
+</html>

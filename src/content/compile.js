@@ -4,13 +4,11 @@
 
 import { tableFromCSV } from './csv.js';
 import { normId, parseConditions, parseEffects, parseTrigger, splitList } from './syntax.js';
-import { parseSprites } from './sprites.js';
+import { artPath, artProblems, artReferences } from './art.js';
 
 export const ROLES = ['people', 'resources', 'belief', 'power'];
 const INVENTION_TYPES = { keystone: 'keystone', 'stepping-stone': 'stepping', stepping: 'stepping', 'bad-idea': 'bad', bad: 'bad' };
 const SCOPES = ['life', 'timeline', 'forever'];
-// Sprites the interface itself draws with (see content/sprites/ui.txt).
-export const UI_SPRITES = ['ui-menu', 'ui-close', 'ui-hand', 'ui-grave', 'ui-door', 'ui-unknown', 'ui-arrow-left', 'ui-arrow-right'];
 const EMOJI = /\p{Extended_Pictographic}/u;
 // Weather and ambient effects the interface can draw (see src/ui/fx.js).
 export const EFFECTS = ['rain', 'lightning', 'embers', 'smoke', 'flames', 'sparks', 'dust', 'stars', 'fireflies', 'grain', 'birds', 'shake'];
@@ -51,7 +49,7 @@ function hashText(parts) {
 
 const words = (s) => String(s).trim().split(/\s+/).filter(Boolean).length;
 
-export function compileContent(files) {
+export function compileContent(files, options = {}) {
   const errors = [];
   const warnings = [];
   const err = (file, line, column, message) => errors.push({ file, line, column, message });
@@ -333,30 +331,31 @@ export function compileContent(files) {
     if (!flagReads.has(f)) warn(paths.flags, 0, 'id', `Flag "${f}" is never checked by any card (fine if it's for later)`);
   }
 
-  // Sprites: every picture in the game is pixel art from content/sprites.
-  const { palette, sprites } = parseSprites(paths.sprites || [], files, err);
-  content.palette = palette;
-  content.sprites = sprites;
-  const charPath = paths.characters || 'characters.csv';
-  for (const ch of Object.values(content.characters)) {
-    if (!sprites[ch.portrait]) err(charPath, ch.line, 'portrait', `No sprite "${ch.portrait}" for ${ch.id} (add one to content/sprites)`);
-  }
-  for (const era of Object.values(content.eras)) {
-    for (const role of ROLES) {
-      const icon = era.meters[role].icon;
-      if (!sprites[icon]) err('world.json', 0, `eras.${era.id}.meters.${role}.icon`, `No sprite "${icon}" for the ${era.meters[role].label} meter`);
+  // Pictures: SVG files in content/art. The checker and the tests pass them
+  // in as options.art and get them checked; the browser loads them as images
+  // when it needs them, so it skips this.
+  if (options.art) {
+    const used = new Set();
+    for (const ref of artReferences(content, paths)) {
+      const path = artPath(ref.kind, ref.id);
+      used.add(path);
+      if (options.art[path] == null) {
+        (ref.level === 'error' ? err : warn)(ref.file, ref.line, ref.column, `No picture content/${path} for ${ref.what}`);
+      }
+    }
+    for (const [path, text] of Object.entries(options.art)) {
+      const kind = path.split('/')[1];
+      for (const p of artProblems(kind, text)) err(`content/${path}`, 0, '', `This picture ${p}`);
+      if (!used.has(path)) warn(`content/${path}`, 0, '', 'Nothing uses this picture yet');
     }
   }
-  for (const inv of Object.values(content.inventions)) {
-    if (!sprites[inv.icon]) warn(invPath, inv.line, 'icon', `No sprite "${inv.icon}" for ${inv.id}; the Museum shows a question mark`);
-  }
-  for (const id of UI_SPRITES) if (!sprites[id]) err('sprites', 0, '', `The interface needs a sprite called "${id}"`);
 
-  // No emoji anywhere: pictures are drawn as sprites.
-  for (const [path, text] of Object.entries(files)) {
+  // No emoji anywhere: pictures are drawn as art.
+  const artFiles = Object.fromEntries(Object.entries(options.art || {}).map(([p, t]) => [`content/${p}`, t]));
+  for (const [path, text] of Object.entries({ ...files, ...artFiles })) {
     String(text).split('\n').forEach((lineText, i) => {
       const m = EMOJI.exec(lineText);
-      if (m) err(path, i + 1, '', `No emoji ("${m[0]}"): draw it as a pixel sprite in content/sprites instead`);
+      if (m) err(path, i + 1, '', `No emoji ("${m[0]}"): draw it as a picture in content/art instead`);
     });
   }
 
@@ -368,5 +367,5 @@ export function compileContent(files) {
 export function contentFileList(worldText) {
   const world = JSON.parse(worldText);
   const f = world.files || {};
-  return [f.characters, f.flags, f.inventions, f.deaths, ...(f.cards || []), ...(f.sprites || [])].filter(Boolean);
+  return [f.characters, f.flags, f.inventions, f.deaths, ...(f.cards || [])].filter(Boolean);
 }

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="#000">
+  <!-- two half-lidded eyes peeking over a wall; the pupils are knocked out under the lids, sliding sideways -->
+  <clipPath id="ne-wall"><rect width="48" height="36.5"/></clipPath>
+  <path d="M4.24 17a9.5 18 0 0 1 18.52 0z M25.24 17a9.5 18 0 0 1 18.52 0z"/>
+  <path clip-path="url(#ne-wall)" d="M4.06 19H7a5 5 0 0 0 10 0h5.94a9.5 18 0 1 1-18.88 0z M25.06 19H28a5 5 0 0 0 10 0h5.94a9.5 18 0 1 1-18.88 0z"/>
+  <rect x="1" y="38" width="46" height="7" rx="1"/>
+</svg>

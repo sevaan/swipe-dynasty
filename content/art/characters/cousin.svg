@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="288" height="360" viewBox="0 0 288 360">
+  <!-- Your cousin. Every era has one. It's never the same cousin. -->
+  <rect width="288" height="360" fill="#9a9a58"/>
+  <circle cx="144" cy="176" r="124" fill="#a4a462"/>
+  <!-- neck -->
+  <rect x="122" y="196" width="44" height="84" fill="#c68a5e"/>
+  <path d="M122 196h44v22c-14 6-30 6-44 0z" fill="#a8704a"/>
+  <path d="M150 218h16v62h-16z" fill="#b07a50"/>
+  <!-- fur, slung over one shoulder -->
+  <path fill="#c68a5e" d="M14 360v-40c0-36 32-58 82-62h96c50 4 82 26 82 62v40z"/>
+  <path fill="#b07a50" d="M200 258c42 6 74 28 74 62v40h-74z"/>
+  <path fill="#8a5a36" d="M14 360v-40c0-36 32-58 82-62h22l112 102z"/>
+  <path fill="#8a5a36" d="M230 360l-58-52 48-40c34 10 54 28 54 52v40z"/>
+  <g fill="#6d4428"><ellipse cx="64" cy="314" rx="12" ry="7"/><ellipse cx="112" cy="340" rx="10" ry="6"/><ellipse cx="238" cy="330" rx="9" ry="5"/><ellipse cx="44" cy="348" rx="7" ry="4"/></g>
+  <path fill="#000" opacity=".1" d="M220 272c34 10 54 28 54 52v36h-40z"/>
+  <!-- ears and face -->
+  <ellipse cx="99" cy="166" rx="9" ry="13" fill="#c68a5e"/><ellipse cx="189" cy="166" rx="9" ry="13" fill="#b07a50"/>
+  <clipPath id="face"><path d="M98 142c0-30 20-42 46-42s46 12 46 42v30c0 34-20 52-46 52s-46-18-46-52z"/></clipPath>
+  <path fill="#c68a5e" d="M98 142c0-30 20-42 46-42s46 12 46 42v30c0 34-20 52-46 52s-46-18-46-52z"/>
+  <path clip-path="url(#face)" d="M168 96h30v134h-44z" fill="#b07a50"/>
+  <!-- a lot of hair -->
+  <path fill="#3b2419" d="M88 170c-12-50 6-86 56-86s68 36 56 86c-4-18-8-30-14-36l-6 12-6-16-8 12-6-16-8 12-8-14-8 12-6-12-8 14-6-10-8 12-6-8c-6 8-10 20-14 38z"/>
+  <path fill="#3b2419" d="M96 84l8-14 8 10 8-14 8 12 8-14 8 12 8-12 8 12 8-10 6 14-6 10H100z"/>
+  <path fill="#52341f" d="M100 124c4-20 16-32 34-36-12 10-18 22-20 38z"/>
+  <!-- face: happy to see you, happier to see your rocks -->
+  <path d="M112 150q12-9 24-2M152 148q12-7 24 2" fill="none" stroke="#3b2419" stroke-width="5" stroke-linecap="round"/>
+  <ellipse cx="125" cy="166" rx="5.5" ry="6.5" fill="#24150e"/><ellipse cx="163" cy="166" rx="5.5" ry="6.5" fill="#24150e"/>
+  <path d="M144 170l-7 18q7 5 14 0z" fill="#a8704a"/>
+  <path d="M116 194c8 22 48 22 56 0z" fill="#3a1d14"/>
+  <path d="M119 195h50l-2 6h-46z" fill="#fff5e6"/>
+  <rect x="150" y="195" width="7" height="6" fill="#3a1d14"/>
+</svg>

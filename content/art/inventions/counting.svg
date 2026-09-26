@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <!-- a wooden tally board -->
+  <clipPath id="ct-board"><rect x="3" y="10" width="58" height="44" rx="5"/></clipPath>
+  <rect x="3" y="10" width="58" height="44" rx="5" fill="#915a32"/>
+  <g clip-path="url(#ct-board)" fill="#7a4a2a">
+    <path d="M54 0h10v64H54z"/>
+    <rect x="8" y="48" width="20" height="2" rx="1"/><rect x="33" y="14" width="16" height="2" rx="1"/>
+  </g>
+  <!-- scratched tallies: four and a slash, then three more -->
+  <g fill="#efe2c2">
+    <rect x="9" y="18" width="3.4" height="28" rx="1.7" transform="rotate(-3 10.7 32)"/>
+    <rect x="14.8" y="17" width="3.4" height="29" rx="1.7" transform="rotate(2 16.5 31.5)"/>
+    <rect x="20.6" y="18" width="3.4" height="28" rx="1.7" transform="rotate(-2 22.3 32)"/>
+    <rect x="26.4" y="17.5" width="3.4" height="28" rx="1.7" transform="rotate(3 28.1 31.5)"/>
+    <rect x="3" y="30.3" width="33" height="3.6" rx="1.8" transform="rotate(-34 19.5 32)"/>
+    <rect x="37" y="18" width="3.4" height="28" rx="1.7" transform="rotate(2 38.7 32)"/>
+    <rect x="42.8" y="17.5" width="3.4" height="28" rx="1.7" transform="rotate(-2 44.5 31.5)"/>
+    <rect x="48.6" y="18.5" width="3.4" height="27" rx="1.7" transform="rotate(3 50.3 32)"/>
+  </g>
+</svg>
