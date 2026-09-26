@@ -570,6 +570,7 @@ async function boot() {
     onCommit: commit,
   });
   bindTap(els.screen, proceed);
+  els.screen.addEventListener('scroll', quietText, { passive: true });
   els.menuBtn.addEventListener('click', () => { if (!busy) openPanel(); });
 
   document.addEventListener('keydown', async (e) => {
