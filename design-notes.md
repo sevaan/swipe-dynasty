@@ -6,6 +6,7 @@ Sep 25, 2026 · @Sevaan Franks
 
 ## Decisions since the spec
 
+- **Plain language for a casual reader (Sep 27, Sevaan).** The script is being rewritten line by line so a casual reader and gamer understands it at once: what happens first, in everyday words, then at most one easy joke, and nothing to decode. Choices, effects, names and story beats stay the same. C01 and C02 are done as the sample. The rest follow once Sevaan approves the voice. The rule is in CLAUDE.md under "Writing the script".
 - **The complete game script replaces the spec's systems (Sep 27, Sevaan).** `content/script.md` (v1.0) is the whole game, and the game reads it directly: 34 lives, 204 cards, 28 callbacks, five routes, five endings and one redirect. Where it differs from `spec.md`, the script wins:
   - every life plays exactly six cards, with the invention on card four and the legacy on card six, and nothing ends a life early;
   - "danger" is now hidden experimental exposure, which only picks the obituary;

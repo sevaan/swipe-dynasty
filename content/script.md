@@ -357,10 +357,10 @@ The era labels convey setting, not a scientifically exact universal chronology. 
 **Inventor:** Aru — A cold, persistent experimenter  
 **Personal want:** Keep Iri warm through the night.
 
-**Arrival:** Before the archive, before the measurements, there is a cold evening. People already use found tools and share knowledge. You are trying to make a flame when you need one.
+**Arrival:** It's a cold evening, long before anyone wrote anything down. People already use stone tools and share what they know. You're trying to make fire whenever you need it.
 
 **Single invention:** `c01-invention` — **A repeatable spark hearth**  
-A workable combination of spark-making stone, prepared tinder and a sheltered hearth.
+A way to make fire on purpose: the right pair of stones, dry grass to catch the spark, and a sheltered spot for the flame.
 
 ### Cast
 
@@ -383,11 +383,11 @@ A workable combination of spark-making stone, prepared tinder and a sheltered he
 **Situation:** You strike two stones together. A spark lands in the grass and disappears. Behind you, someone is trying not to shiver.
 
 **Left: Strike closer to the grass.**  
-**Result:** You kneel over the tinder. The next spark reaches it alive. Iri kneels too, pretending this was their idea.  
+**Result:** You kneel and strike right above the grass. This time the spark lands still glowing. Iri kneels too, as if it was their idea.  
 **Effects:** experimental exposure unchanged.
 
-**Right: Find something finer to catch it.**  
-**Result:** You rub dry fibres apart. Iri contributes the least wet corner of a very wet evening.  
+**Right: Find drier grass to catch it.**  
+**Result:** You pull dry grass apart into soft, fluffy strands. Iri finds the only dry scraps left on a wet night.  
 **Effects:** experimental exposure unchanged.
 
 
@@ -395,14 +395,14 @@ A workable combination of spark-making stone, prepared tinder and a sheltered he
 
 **Speaker:** Iri (`iri`)
 
-**Situation:** One pale stone chips. The darker nodule throws brighter sparks against its edge. Iri sorts your pile into stones that help and stones that merely hurt.
+**Situation:** Most stones just chip. But one dark lump makes bright sparks when you strike it against a sharp flint. Iri sorts your pile into stones that work and stones that only hurt your hands.
 
-**Left: Keep the brighter pair.**  
-**Result:** You set aside a flint edge and the spark-making mineral. The remaining stones are promoted to seating.  
+**Left: Keep the pair that sparks best.**  
+**Result:** You keep the sharp flint and the dark sparking lump. The useless stones become something to sit on.  
 **Effects:** experimental exposure unchanged.
 
-**Right: Test the pairs methodically.**  
-**Result:** By dusk you know which pair works. Iri now has an opinion about every stone in the valley.  
+**Right: Test every pair, one by one.**  
+**Result:** By sunset you know exactly which pair works. Iri now has an opinion about every stone in the valley.  
 **Effects:** experimental exposure unchanged.
 
 
@@ -410,14 +410,14 @@ A workable combination of spark-making stone, prepared tinder and a sheltered he
 
 **Speaker:** Iri (`iri`)
 
-**Situation:** The fibres glow, then die. Iri offers a large breath and nearly sends your entire invention across the ground. The cold has become very interested in your progress.
+**Situation:** The grass glows, then goes out. Iri blows on it hard and nearly scatters the whole pile. It's getting colder.
 
-**Left: Feed it air gently.**  
-**Result:** You breathe until the glow spreads. Iri watches with the fierce attention usually reserved for somebody carrying dinner.  
+**Left: Blow on it gently.**  
+**Result:** You blow softly and the glow spreads. Iri watches it the way a hungry person watches dinner cook.  
 **Effects:** experimental exposure unchanged.
 
 **Right: Build a wind shelter first.**  
-**Result:** A low wall of stones holds the air still. Inside it, the next ember has time to become a flame.  
+**Result:** You stack stones into a low wall to block the wind. Behind it, the next ember has time to grow into a flame.  
 **Effects:** experimental exposure unchanged.
 
 
@@ -425,14 +425,14 @@ A workable combination of spark-making stone, prepared tinder and a sheltered he
 
 **Speaker:** Iri (`iri`)
 
-**Situation:** A flame catches. You let it go out deliberately. Iri looks at you as if you have thrown away the sun. Now you must prove you can do it again.
+**Situation:** Finally, a flame. Then you let it go out on purpose. Iri stares at you like you've thrown away the sun. Now you have to prove you can make fire again.
 
 **Left: Repeat the same steps.**  
-**Result:** Stone, spark, fibre, breath. A second flame stands up. For the first time tonight, failure would not mean starting from nothing.  
+**Result:** Stone, spark, grass, breath. A second flame appears. Now, if the fire goes out, you know how to bring it back.  
 **Effects:** experimental exposure unchanged.
 
-**Right: Let Iri follow your method.**  
-**Result:** Iri curses your explanation, corrects your grip, and makes fire. The method works even when you are not holding the stones.  
+**Right: Let Iri try your method.**  
+**Result:** Iri complains about your explanation, fixes your grip, and makes fire anyway. It works even when you're not the one holding the stones.  
 **Effects:** experimental exposure unchanged.
 
 **Proof rule:** Either choice permanently commits `c01-invention` after its result transaction. Show the invention reveal before C01.5.
@@ -442,14 +442,14 @@ A workable combination of spark-making stone, prepared tinder and a sheltered he
 
 **Speaker:** Iri (`iri`)
 
-**Situation:** The others arrive with wood, food and several reasons they were unable to help earlier. One child has never been warm after sunset. They sit very close.
+**Situation:** The others show up with wood, food and excuses for not helping earlier. One child has never been warm after dark before. They sit very close to the fire.
 
-**Left: Teach another hearth.**  
-**Result:** Two fires burn by nightfall. You cannot watch both, which is precisely the useful thing about another person learning.  
+**Left: Teach someone to build a fire.**  
+**Result:** By nightfall, two fires are burning. You can't watch both, and you don't have to: someone else knows how now.  
 **Effects:** experimental exposure unchanged; A affinity +1.
 
-**Right: Make a travelling ember carrier.**  
-**Result:** A lined bark carrier holds warmth for a short journey. Someone goes to fetch a friend who thought darkness meant staying home.  
+**Right: Make a way to carry embers.**  
+**Result:** You line a curl of bark to hold hot embers. Someone carries the warmth into the dark to fetch a friend who stayed home.  
 **Effects:** experimental exposure unchanged; D affinity +1.
 
 
@@ -457,21 +457,21 @@ A workable combination of spark-making stone, prepared tinder and a sheltered he
 
 **Speaker:** Iri (`iri`)
 
-**Situation:** Iri is no longer shivering. Beyond the firelight, someone is practicing the striking motion with empty hands. There is still time tonight to teach one more thing.
+**Situation:** Iri isn't shivering anymore. Just outside the firelight, someone is practising the striking motion with empty hands. There's time tonight to teach one more thing.
 
-**Left: Show how to start again.**  
-**Result:** You extinguish a small flame, then bring it back. The watching hands begin to copy yours.  
+**Left: Show how to relight it.**  
+**Result:** You put out a small flame, then bring it back. The person watching starts copying your hands.  
 **Effects:** experimental exposure unchanged; S affinity +1.
 
 **Right: Show how to carry it.**  
-**Result:** You wrap an ember and walk together into the dark. Behind you, the original fire becomes a small, steady point.  
+**Result:** You wrap up an ember and walk into the dark together. Behind you, the first fire shrinks to a small, steady light.  
 **Effects:** experimental exposure unchanged; D affinity +1.
 
 ### Closing record
 
-**If card six was left:** Aru taught people to start again when the fire went out. The lesson travelled farther than the warmth.
+**If card six was left:** Aru taught people how to relight a fire that went out. The lesson spread farther than the heat ever could.
 
-**If card six was right:** Aru made embers portable. Someone could leave the hearth without leaving warmth behind.
+**If card six was right:** Aru found a way to carry fire. People could leave the hearth and still stay warm.
 
 **Natural obituary:** Aru died many winters later. That evening, someone else tended the fire.
 
@@ -485,10 +485,10 @@ A workable combination of spark-making stone, prepared tinder and a sheltered he
 **Inventor:** Bel — A water carrier with a bad back  
 **Personal want:** Bring water home without making six journeys.
 
-**Arrival:** The hearth outlived Aru. In another settlement, heat is ordinary enough for Bel to complain that nobody uses it sensibly.
+**Arrival:** Aru's way of making fire outlived Aru. Generations later, in another village, fire is so ordinary that Bel complains nobody uses it properly.
 
 **Single invention:** `c02-invention` — **Fired vessels**  
-Clay shaped, dried and heated into durable containers.
+Clay that's shaped, dried and fired until it's hard enough to hold water.
 
 ### Cast
 
@@ -508,14 +508,14 @@ Clay shaped, dried and heated into durable containers.
 
 **Speaker:** Ves (`ves`)
 
-**Situation:** Your best basket has carried almost all the river halfway home. Ves holds the dripping base and asks whether the river would consider moving nearer instead.
+**Situation:** You carry water home in your best basket, but most of it leaks out on the way. Ves holds up the dripping basket and asks if the river could just move closer.
 
 **Left: Line the basket with clay.**  
-**Result:** The lining keeps a little water. Ves walks very slowly, briefly achieving the dignity normally reserved for processions.  
+**Result:** The clay lining holds a little water, if you walk very slowly. Ves walks home as carefully as someone leading a parade.  
 **Effects:** experimental exposure unchanged.
 
 **Right: Shape a bowl from clay.**  
-**Result:** The bowl holds water until you lift it. Ves suggests inventing a river that visits your kitchen.  
+**Result:** The clay bowl holds water, right up until you lift it. Ves suggests inventing a river that comes to the kitchen instead.  
 **Effects:** experimental exposure unchanged.
 
 
@@ -523,14 +523,14 @@ Clay shaped, dried and heated into durable containers.
 
 **Speaker:** Ves (`ves`)
 
-**Situation:** The dry clay seems hard. Rain restores its confidence in being mud. Near your hearth, however, a fallen fragment has changed colour and refuses to soften.
+**Situation:** Dried clay seems hard, but rain turns it back into mud. Then you notice a piece that fell near your fire. It has changed colour, and water won't soften it.
 
 **Left: Heat small test pieces.**  
-**Result:** You place samples at different distances. Ves marks them with scratches, then scratches a warning beside the hottest one.  
+**Result:** You set small clay pieces at different distances from the fire. Ves scratches a mark on each one, and a warning next to the hottest.  
 **Effects:** experimental exposure unchanged.
 
-**Right: Build a small firing enclosure.**  
-**Result:** Stones concentrate the heat. Your eyebrows discover this before the clay does, but both results are informative.  
+**Right: Build a small stone oven.**  
+**Result:** The stones trap the heat. It singes your eyebrows, but the clay inside comes out hard.  
 **Effects:** experimental exposure +1.
 
 
@@ -538,14 +538,14 @@ Clay shaped, dried and heated into durable containers.
 
 **Speaker:** Ves (`ves`)
 
-**Situation:** Your first vessel splits. The thick base stayed damp while the thin rim dried. Ves points out that you have successfully invented two smaller vessels without bottoms.
+**Situation:** Your first pot cracks apart. The thick bottom stayed wet while the thin top dried too fast. Ves says you've invented two pots with no bottoms.
 
 **Left: Dry it more evenly.**  
-**Result:** You turn the clay in shade for several days. Ves waits with the strained patience of someone still carrying water.  
+**Result:** You dry the next pot slowly in the shade, turning it for days. Ves waits, still carrying water the old way.  
 **Effects:** experimental exposure unchanged.
 
-**Right: Make the walls evenly thin.**  
-**Result:** You reshape the pot until the walls match. It looks less impressive and becomes considerably more useful.  
+**Right: Make the walls the same thickness.**  
+**Result:** You reshape the pot until the walls are even. It looks plainer, but it doesn't crack.  
 **Effects:** experimental exposure +1.
 
 
@@ -553,14 +553,14 @@ Clay shaped, dried and heated into durable containers.
 
 **Speaker:** Ves (`ves`)
 
-**Situation:** The next pot rings when tapped. You fill it at sunset. At sunrise, the water is still present and Ves has brought a second person to witness this unreasonable event.
+**Situation:** The next pot rings when you tap it. You fill it with water at sunset. At sunrise the water is still there, and Ves has brought a friend to see it.
 
 **Left: Carry it home.**  
-**Result:** Ves arrives with dry feet and a full vessel. For once, the journey has delivered what it promised.  
+**Result:** Ves gets home with dry feet and a full pot. For once, all the water makes it.  
 **Effects:** experimental exposure unchanged.
 
 **Right: Leave water in it another day.**  
-**Result:** The level barely changes. You mark the line and discover that a container also makes comparison possible.  
+**Result:** The water level barely drops. You scratch a line at the waterline, and realise a pot can measure things too.  
 **Effects:** experimental exposure unchanged.
 
 **Proof rule:** Either choice permanently commits `c02-invention` after its result transaction. Show the invention reveal before C02.5.
@@ -570,14 +570,14 @@ Clay shaped, dried and heated into durable containers.
 
 **Speaker:** Ves (`ves`)
 
-**Situation:** Everyone wants a pot. The firing shelter can make many small ones or a single jar large enough to supply the meeting place. Both require people to gather fuel.
+**Situation:** Now everyone wants a pot. Your oven can make lots of small ones for families, or one huge jar for the whole village to share. Either way, people will need to gather firewood.
 
-**Left: Make household pots.**  
-**Result:** Different homes get different shapes. One family requests a lid; another requests that the first family stop requesting things.  
+**Left: Make pots for every home.**  
+**Result:** Every home gets its own pot, each a slightly different shape. One family asks for a lid. Another family asks the first to stop asking for things.  
 **Effects:** experimental exposure unchanged; R affinity +1.
 
-**Right: Make a communal jar.**  
-**Result:** The great jar fills. People meet beside it, share news, and begin the first argument about whose turn it is to clean.  
+**Right: Make one big jar to share.**  
+**Result:** The big jar fills up. People gather around it to chat, and start the first argument about whose turn it is to clean it.  
 **Effects:** experimental exposure unchanged; A affinity +1.
 
 
@@ -585,25 +585,25 @@ Clay shaped, dried and heated into durable containers.
 
 **Speaker:** Ves (`ves`)
 
-**Situation:** Ves can finally carry a day’s water in one trip. Someone asks whether the same vessel could hold grain. You look at the lid and the damp interior.
+**Situation:** Ves can finally carry a whole day's water in one trip. Someone asks if a pot could store grain too. You look at the damp inside and aren't sure.
 
-**Left: Leave a simple pattern to copy.**  
-**Result:** You scratch measurements into a fired tile. Years later, someone mistakes the tile for a very disappointing serving plate.  
+**Left: Leave a pattern others can copy.**  
+**Result:** You scratch the pot's measurements into a clay tile. Years later, someone mistakes the tile for a very disappointing plate.  
 **Effects:** experimental exposure unchanged; S affinity +1.
 
-**Right: Leave a large working vessel.**  
-**Result:** You make one final large jar for the meeting place. People remember it long after your workshop closes, and keep finding things to put inside.  
+**Right: Leave one great jar for everyone.**  
+**Result:** You make one last giant jar for the village. People use it long after you're gone, and keep finding new things to put in it.  
 **Effects:** experimental exposure unchanged; R affinity +1.
 
 ### Closing record
 
-**If card six was left:** Bel left a small vessel anyone could copy. The copies varied; the water stayed inside.
+**If card six was left:** Bel left a simple pot anyone could copy. No two copies matched, but they all held water.
 
-**If card six was right:** Bel left a large vessel people could fill together. Soon they needed to agree whose water it was.
+**If card six was right:** Bel left a giant jar everyone could share. Soon people had to agree whose water was whose.
 
-**Natural obituary:** Bel grew old enough to complain about newer pots. They were lighter, which was apparently suspicious.
+**Natural obituary:** Bel lived long enough to complain about newer pots. They were lighter, which Bel found suspicious.
 
-**Risk obituary (exposure ≥ 2):** Years of hot workshop trials shortened Bel’s life. Ves kept the useful vessels and improved the shelter around the kiln.
+**Risk obituary (exposure ≥ 2):** Years of working beside hot ovens shortened Bel's life. Ves kept the best pots and built a safer oven.
 
 
 ## C03 — Dinner, Later
@@ -4898,7 +4898,7 @@ Every row is exact additional result copy. No matching prior side means no line.
 
 **After:** `C02.1`  
 **Only if:** `C01.6 = right`  
-**Text:** A travelling ember carrier brought heat to this settlement. Now the carrier itself needs improving.
+**Text:** This village got its first fire from an ember someone carried all the way here. Carrying things is still the hard part.
 
 ### Callback 02
 

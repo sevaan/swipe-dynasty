@@ -29,7 +29,9 @@ Read `content/script.md` before doing anything. It's Sevaan's complete game scri
 
 ## Writing the script
 
-The script's own sections 1 and 3 set the rules and the register: dry, concrete, humane, occasionally dark; practical objections puncture grandeur; a sincere success may stay sincere. Inventors are different people, not a dynasty; relationships are local to a life. Don't paraphrase, summarise or generate story text: every word players see comes from `content/script.md` or `content/ui.json`. `content/README.md` explains the format the game reads.
+The script's own sections 1 and 3 set the rules and the register: dry, concrete, humane, occasionally dark; practical objections puncture grandeur; a sincere success may stay sincere. Inventors are different people, not a dynasty; relationships are local to a life. Don't paraphrase, summarise or generate story text: every word players see comes from `content/script.md` or `content/ui.json`.
+
+Write for a casual reader and gamer (Sevaan, Sep 27). Say plainly what happens first, in everyday words, then at most one easy joke; never make the reader decode a riddle ("the remaining stones are promoted to seating" became "the useless stones become something to sit on"). Short sentences, concrete nouns, no wry personification of the weather or the cold. Keep each choice's meaning, effects and names exactly as they are. `content/README.md` explains the format the game reads.
 
 ## Working agreement
 
