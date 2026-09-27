@@ -38,7 +38,7 @@ export function bindSwipe(el, { canStart, onMove, onCancel, onCommit, onTap = ()
     drag = null;
     // Whatever a drag ends over, it isn't also a tap on it
     if (axis) quietUntil = performance.now() + 400;
-    if (!axis && !cancelled) onTap();
+    if (!axis && !cancelled) onTap(e);
     if (axis !== 'x') return;
     if (!cancelled && Math.abs(dx) >= threshold()) onCommit(dx < 0 ? 'left' : 'right');
     else onCancel();

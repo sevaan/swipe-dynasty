@@ -37,21 +37,21 @@
       <!-- 3. At the bottom, under the thumb: what this inventor has found out, and the card -->
       <div class="stage" id="stage">
         <ul class="evidence" id="evidence" aria-label="What you've found out"></ul>
-        <!-- The card: the object on its workbench. Drag it sideways to see that
-             side's answer; let go past about a quarter of the way to choose it. -->
-        <div class="card" id="card" aria-hidden="true">
-          <div class="bench" id="bench">
+        <!-- The card: the object on its workbench, with the two answers along its
+             foot. Tap an answer, or drag the card sideways to see that side's
+             answer and let go past about a quarter of the way to choose it. -->
+        <div class="card" id="card">
+          <div class="bench" id="bench" aria-hidden="true">
             <img class="art layer" id="benchArt" alt="" draggable="false">
             <img class="art layer" id="objectArt" alt="" draggable="false">
             <div class="marks" id="marks"></div>
+            <div class="peek" id="peek"></div>
+            <img class="art hand" id="hand" alt="" draggable="false">
           </div>
-          <div class="peek" id="peek"></div>
-          <img class="art hand" id="hand" alt="" draggable="false">
-        </div>
-        <!-- The same two answers for screen readers, which can't drag the card -->
-        <div class="sr-only" id="choices">
-          <button id="choiceLeft" type="button" data-side="left" tabindex="-1"></button>
-          <button id="choiceRight" type="button" data-side="right" tabindex="-1"></button>
+          <div class="choices" id="choices">
+            <button class="choice left" id="choiceLeft" type="button" data-side="left"></button>
+            <button class="choice right" id="choiceRight" type="button" data-side="right"></button>
+          </div>
         </div>
       </div>
     </main>

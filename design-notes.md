@@ -18,13 +18,13 @@ Sep 25, 2026 · @Sevaan Franks
 - **Milestone 1 first (Sep 26).** Build the spec's Milestone 1, the pottery-to-preservation causal prototype, then stop for Sevaan's playtest against its exit condition.
 - **Danger is hidden (Sep 26, Sevaan).** The engine still tracks it, and reaching 6 still kills, but the screen shows no meter, no "Danger +1" tags and no Fatal marks. This overrides spec §7.1's visible segments, §7.2's visible consequences and §12.1's "Danger remains visible". An answer's description carries the risk in words ("Fast and very hot"), and each risky answer names the death that fits it. The `?dev` panel and the simulator still show Danger.
 - **No phase indicator (Sep 26, Sevaan).** "Investigating · 1 of 4" is gone from the screen, overriding spec §12.1's small phase indicator. The phases still run as written.
-- **The card is at the bottom, and there are no answer buttons (Sep 26, Sevaan).**
+- **The card is at the bottom, with the answers along its foot (Sep 26, Sevaan).**
   - The object on its workbench is a card at the bottom of the screen, under the thumb. The situation sits just above it, and the context stays at the top. This replaces spec §12.1's layer order.
-  - There are no visible answer buttons, overriding spec §12.3. Dragging the card shows that side's answer and its description across the top of the card. The band turns to the accent colour once letting go would choose it; letting go before then puts the card back. A chosen card flies off, and the next one arrives.
-  - A tap on the card nudges it and shows the hand.
+  - The two answers are the card's two halves: the label at the top of each, the description at the bottom, so the small text lines up across both.
+  - Tapping an answer chooses it. Dragging the card shows that side's answer and its description across the top of the picture, and the band turns to the accent colour once letting go would choose it. Letting go before then puts the card back.
+  - A chosen card flies off, and the next one arrives. A tap on the picture nudges the card and shows the hand.
   - Keyboard: an arrow shows that side's answer, and the same arrow again (or Enter) chooses it.
-  - Screen readers get the two answers as buttons that aren't drawn on screen.
-  - Open question: spec §12.3 also says no player should be forced into a gesture they can't comfortably make. A "Show answer buttons" setting would cover touch players who can't drag. It hasn't been decided.
+  - For about an hour the answers were swipe-only; see the Graveyard.
 
 ## The pitch
 
@@ -453,6 +453,8 @@ Meters: Harvest, Village, Priests, The Neighbours.
 
 Discarded, but kept in case something here comes back.
 
+**Swipe-only answers (Sep 26), replaced by the answers along the card's foot.** Sevaan tried the card with no answer buttons: you dragged it to read each answer and let go to choose. The buttons came back the same day, after swiping turned out not to work on the iPhone (a touch bug, since fixed). Swiping stays as the second way to answer.
+
 **The Reigns-style design (Sep 25–26), replaced by `spec.md`**
 
 - **Four survival meters per era** (Tribe, Food, Gods, Fire and their era renames), with death at either end. Replaced by one visible Danger track.
@@ -577,12 +579,11 @@ Updated Sep 26 for the One Bright Idea engine (Milestone 1).
 - **Tuning values:** Danger's maximum, the investigation and aftermath lengths, the callback deadline, the stall rule and the sky's pace live under `tuning` in `content/world.json`, not in code.
 - **Saves (§16.7):** each save is an IndexedDB snapshot, with the one before it kept. A revision check stops a stale tab from overwriting a newer game. localStorage stands in when IndexedDB isn't available, and export and import are in Settings.
 - **Screen (§12, as changed Sep 26):**
-  - The layers, top to bottom: context, then the situation, then the evidence chips, then the card (the bench, the object and its overlays).
-  - There are no answer buttons and nothing shows Danger or the phase.
-  - To answer, drag the card: the answer and its description come up across the card's top. Past 28% of its width the band turns to the accent colour, and letting go chooses it. A tap on the card nudges it.
-  - An arrow key shows an answer, and the same arrow again chooses it. Screen readers get the two answers as buttons that aren't drawn.
-  - The card is square when there's room and shrinks first when there isn't. Workbench art paints 80 units of bleed on every side of its 4:3 frame, so any shape from about 2:1 to square looks finished.
-  - The situation keeps its full height up to about half the play area, then scrolls.
+  - The layers, top to bottom: context, then the situation, then the evidence chips, then the card. The card is the bench, the object and its overlays, with the two answers along its foot. Nothing shows Danger or the phase.
+  - To answer, tap one of the card's two halves, or drag the card: the answer and its description come up across the top of the picture. Past 28% of its width the band turns to the accent colour, and letting go chooses it. A tap on the picture nudges the card.
+  - An arrow key shows an answer, and the same arrow again chooses it.
+  - Touch needs care: a phone captures a finger to whatever it touched first. The pictures inside the card never take pointer events, and the swipe ignores lost-capture events that bubble up from inside the card. Test with touch, not just a mouse.
+  - `fitCard()` in app.js sizes the picture: whatever height the words, the evidence and the answers leave, up to square. It stays at least 2:1 unless that would leave the words under 140px; only then does the situation scroll. Workbench art paints 80 units of bleed on every side of its 4:3 frame, so any shape from 2:1 to square looks finished.
 - **Between lives (§12.6):** the epitaph (the object as an exhibit, then the three-part placard), then one line of inheritance, then the next life. History (Discoveries, Lives, Connections) is in the menu and never forced.
 - **Weather:** `world.json` has each era's skies and a `weather` list, and scenes pick weather in their `weather` column. `src/ui/fx.js` draws it as flat shapes at about 30 frames a second. `fx.setQuiet()` thins it behind the words, reduce motion freezes it, and Settings can turn it off. `tools/fx.html` previews any weather.
 - **Text:** the font loads from Google Fonts (a link in `index.html`); offline, the system font takes over.

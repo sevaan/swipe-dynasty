@@ -14,7 +14,7 @@ Before pushing, run `node tools/check.mjs`. It lists errors (the game won't star
 - An **invention**'s recipe is a set of observations. Once a recipe is met, the proof scene can commit that invention. With nothing committed, the life leaves a **failed design** (`failures.csv`) instead. Either way, it's exactly one contribution per life.
 - Each invention has two **legacy packages** (`legacies.csv`): two ways it could spread. Answers pick one with `legacy <id>`, and the last pick wins. The chosen legacy becomes the next life's **featured problem**. Scenes check it with `problem <legacy>`.
 - **Danger** runs from 0 to 6. `danger +1` raises it, and at 6 the inventor dies. The player never sees it: no meter and no warnings. So an answer's description has to carry the risk in words, and a risky answer should name the death that fits it (`death prov-died-salt`).
-- The object on the workbench has a **look** (one picture per state) and **marks** (overlays such as smoke or drips). It's a card at the bottom of the screen. Dragging it shows an answer and its description, and letting go past the line chooses it.
+- The object on the workbench has a **look** (one picture per state) and **marks** (overlays such as smoke or drips). It's a card at the bottom of the screen with the two answers along its foot. Tapping an answer chooses it; dragging the card shows an answer across its top, and letting go past the line chooses it.
 
 ## Files
 
@@ -43,8 +43,8 @@ Ids are forgiving: case doesn't matter, and spaces, `_` and `-` are the same (`l
 | `speaker` | A character id, or blank for no speaker |
 | `shows` | What the object looks like when the scene appears, before any answer: `look`, `mark` and `unmark`, like `look rotting-pot; mark smell`. Each can take `if`: `look store-jar if legacy pottery-communal` |
 | `text` | The situation. Aim for 20 to 45 words |
-| `left`, `right` | The two answers, 2 to 8 words each, shown on the card while it's dragged |
-| `left preview`, `right preview` | The answer's description, a few words shown under it on the card. Since Danger is hidden, this is where a risky approach says so ("Fast and very hot") |
+| `left`, `right` | The two answers, 2 to 8 words each: the card's two halves, and across its top while it's dragged |
+| `left preview`, `right preview` | The answer's description, a few words at the bottom of its half of the card. Since Danger is hidden, this is where a risky approach says so ("Fast and very hot") |
 | `left result`, `right result` | What happened, shown above the next scene. 5 to 20 words |
 | `left effects`, `right effects` | What each answer does (below) |
 | `conditions` | When the scene can appear (below) |

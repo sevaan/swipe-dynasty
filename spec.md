@@ -696,7 +696,7 @@ Vertical reading gestures must not commit horizontal choices.
 
 Visible left and right buttons activate the same two outcomes.
 
-(Decided Sep 26, Sevaan: no visible buttons. Dragging the card shows each answer; keys and screen-reader buttons remain. See `design-notes.md`.)
+(Decided Sep 26, Sevaan: the two buttons are the halves of the card's foot, at the bottom of the screen; dragging the card does the same. See `design-notes.md`.)
 
 Keyboard controls and screen-reader actions use the same underlying decision function.
 

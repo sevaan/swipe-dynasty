@@ -136,11 +136,17 @@ function drawObject(eraBench, project, look, marks) {
   }
 }
 
-// An answer as it appears across the top of the card while it's dragged:
-// flush to the edge that stays on screen, with its description and anything
-// that made it possible. There are no answer buttons, and Danger is tracked
-// but never shown (Sevaan, Sep 26), so the description's words are what warn
-// the player.
+// One half of the card's foot: the answer at the top, its description at the
+// bottom. Danger is tracked but never shown (Sevaan, Sep 26), so the
+// description's words are what warn the player.
+function choiceHTML(o) {
+  const tags = o.because.map((b) => `<span class="tag">Possible because of ${esc(b)}</span>`).join('');
+  return `<span class="top"><span class="label">${esc(o.label)}</span>${tags}</span>
+    ${o.preview ? `<span class="foot">${esc(o.preview)}</span>` : ''}`;
+}
+
+// The same answer across the top of the card while it's dragged, flush to
+// the edge that stays on screen
 function peekHTML(side, o) {
   const arrow = glyphHTML('ui', side === 'left' ? 'arrow-left' : 'arrow-right');
   const label = side === 'left' ? `${arrow}<span>${esc(o.label)}</span>` : `<span>${esc(o.label)}</span>${arrow}`;
@@ -180,9 +186,12 @@ function renderPlay(v, opts = {}) {
   els.speakerName.textContent = who?.name || '';
   els.face.innerHTML = who?.portrait ? `<img class="art" src="${esc(artURL('characters', who.portrait))}" alt="" draggable="false">` : '';
   els.text.textContent = v.scene.text;
-  // The answers as buttons, for screen readers only
-  els.left.textContent = describe('left', v.options.left);
-  els.right.textContent = describe('right', v.options.right);
+  els.left.innerHTML = choiceHTML(v.options.left);
+  els.right.innerHTML = choiceHTML(v.options.right);
+  els.left.classList.remove('pressed');
+  els.right.classList.remove('pressed');
+  els.left.setAttribute('aria-label', describe('left', v.options.left));
+  els.right.setAttribute('aria-label', describe('right', v.options.right));
 
   // The first scene of the first life shows how to swipe
   const hint = v.scene.phase === 'opening' && v.project.id === content.start.project && !state.collection.tutorialDone;
@@ -199,11 +208,34 @@ function renderPlay(v, opts = {}) {
   }
   peekSide = null;
   preview(null);
+  fitCard();
+}
+
+// The picture takes the height the words, the evidence and the answers
+// leave, up to square. It stays at least 2:1, the widest shape the art
+// covers, unless that would leave the words less than 140px; only then does
+// the situation scroll. The answers are always on screen.
+function fitCard() {
+  if (els.play.hidden || !els.play.clientHeight) return;
+  const gap = parseFloat(getComputedStyle(els.play).rowGap) || 0;
+  const stageGap = parseFloat(getComputedStyle(els.stage).rowGap) || 0;
+  els.situation.style.maxHeight = '';
+  const width = els.card.clientWidth;
+  const room = els.play.clientHeight - gap - els.evidence.offsetHeight - stageGap - els.choices.offsetHeight;
+  const least = Math.max(90, Math.min(width / 2, room - 140));
+  let picture = Math.min(width, room - els.situation.scrollHeight);
+  if (picture < least) {
+    picture = least;
+    els.situation.style.maxHeight = `${Math.max(48, room - picture)}px`;
+  }
+  els.bench.style.height = `${Math.floor(picture)}px`;
 }
 
 // Showing an answer never changes the game. `armed` means letting go now
 // would choose it.
 function preview(side, strength = 1, armed = false) {
+  els.left.classList.toggle('hot', side === 'left');
+  els.right.classList.toggle('hot', side === 'right');
   if (!side || !cur?.options) {
     els.peek.style.opacity = 0;
     els.peek.classList.remove('armed');
@@ -391,6 +423,7 @@ async function commit(side) {
   els.card.classList.remove('wiggle', 'nudge');
   els.hand.classList.remove('show', 'once');
   preview(side, 1, true);
+  (side === 'left' ? els.left : els.right).classList.add('pressed');
   await flingCard(side);
   const ended = res.events.find((e) => e.type === 'death')?.record;
   if (ended) {
@@ -655,9 +688,10 @@ function bindInput() {
     },
     onCancel: springBack,
     onCommit: (side) => commit(side),
-    onTap: nudge,
+    // A tap on the picture nudges the card; a tap on an answer chooses it
+    onTap: (e) => { if (!e.target.closest?.('.choice')) nudge(); },
   });
-  // The answers as buttons, for screen readers: a press has to start after this scene appeared
+  // The answers: a press has to start after this scene appeared
   for (const button of [els.left, els.right]) {
     let downAt = -1;
     button.addEventListener('pointerdown', () => { downAt = performance.now(); });
@@ -741,7 +775,7 @@ async function boot() {
   await loadGame();
   bindInput();
   render({ enter: true });
-  document.fonts?.ready.then(quietText);
+  document.fonts?.ready.then(() => { fitCard(); quietText(); });
 }
 
 boot();
