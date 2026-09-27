@@ -1,13 +1,14 @@
 // The little language writers use inside spreadsheet cells.
 //
-//   effects:     Food -10; Gods +15; tinder +2; set kept_naysayer; next stampede-2
-//   conditions:  Food < 30; has sparks; not naysayer_banished; cards >= 6
+//   effects:     danger +1; observe holds-shape; look rim-pot; look woven-pot if lined; next tut-3
+//   conditions:  has pottery; observed holds-water; problem pottery-household; not lid-habit
+//   recipes:     holds-shape + survives-heat + holds-water      (or  a + b | a + c)
 //
-// Cells are parsed into plain data here, once, when content loads. Nothing in a
-// cell is ever run as code. See content/README.md for the writer-facing guide.
+// Cells are parsed into plain data here, once, when content loads. Nothing in
+// a cell is ever run as code. See content/README.md for the writer's guide.
 
 export function normId(s) {
-  return String(s).trim().toLowerCase().replace(/[\s_]+/g, '-');
+  return String(s ?? '').trim().toLowerCase().replace(/[\s_]+/g, '-');
 }
 
 const SEP = /\s*(?:;|,|\n)\s*/;
@@ -17,16 +18,22 @@ function splitCell(cell) {
   return String(cell ?? '').split(SEP).map((s) => s.trim()).filter(Boolean);
 }
 
-// ctx: { meters: Map(normName -> role), inventions: Set, flags: Set }
-function resolveName(raw, ctx) {
-  const id = normId(raw);
-  if (ctx.meters.has(id)) return { kind: 'meter', role: ctx.meters.get(id) };
-  if (ctx.inventions.has(id)) return { kind: 'invention', id };
-  if (ctx.flags.has(id)) return { kind: 'flag', id };
-  return { kind: 'unknown', id };
+export function splitList(cell) {
+  return splitCell(cell).map(normId);
 }
 
-function parseComparison(text) {
+// ctx: sets of known ids — techs (inventions), observations, legacies,
+// failures, flags, deaths. Scene ids, looks and marks are checked later,
+// once every file is loaded.
+function known(ctx, kind, id, errors, text) {
+  if (!ctx[kind].has(id)) {
+    const what = { techs: 'invention', observations: 'observation', legacies: 'legacy', failures: 'failed design', flags: 'flag (declare it in flags.csv)', deaths: 'death' }[kind];
+    errors.push(`"${text}": no ${what} called "${id}"`);
+  }
+  return id;
+}
+
+function comparison(text) {
   for (const op of OPS) {
     const at = text.indexOf(op);
     if (at > 0) {
@@ -39,115 +46,113 @@ function parseComparison(text) {
   return null;
 }
 
+// Words that take one id after them in a condition, and what the id must be.
+const WORD_CONDITIONS = {
+  has: 'techs', observed: 'observations', problem: 'legacies', legacy: 'legacies', history: 'legacies',
+  failed: 'failures', made: 'techs', previous: null, look: null, mark: null, seen: null, era: null, project: null,
+};
+
 function parseAtom(text, ctx, errors) {
   let s = text.trim();
   let neg = false;
   if (/^not\s+/i.test(s)) { neg = true; s = s.replace(/^not\s+/i, ''); }
   else if (s.startsWith('!')) { neg = true; s = s.slice(1).trim(); }
 
-  let m;
-  if ((m = /^has\s+(.+)$/i.exec(s))) {
-    const id = normId(m[1]);
-    if (!ctx.inventions.has(id)) errors.push(`"has ${m[1]}": no invention with that id`);
-    return { t: 'has', inv: id, neg };
+  const m = /^([a-z]+)\s+(.+)$/i.exec(s);
+  if (m && Object.hasOwn(WORD_CONDITIONS, m[1].toLowerCase()) && !comparison(s)) {
+    const word = m[1].toLowerCase();
+    const id = normId(m[2]);
+    if ((word === 'made' || word === 'failed') && (id === 'any' || id === 'anything')) return { t: word, id: null, neg };
+    if (word === 'made' && id === 'nothing') return { t: 'made', id: null, neg: !neg };
+    const kind = WORD_CONDITIONS[word];
+    if (kind) known(ctx, kind, id, errors, text);
+    return { t: word, id, neg };
   }
-  if ((m = /^made\s+(.+)$/i.exec(s))) {
-    const what = normId(m[1]);
-    if (what === 'any' || what === 'anything') return { t: 'made', inv: null, neg };
-    if (what === 'nothing') return { t: 'made', inv: null, neg: !neg };
-    if (!ctx.inventions.has(what)) errors.push(`"made ${m[1]}": no invention with that id`);
-    return { t: 'made', inv: what, neg };
-  }
-  const cmp = parseComparison(s);
+  const cmp = comparison(s);
   if (cmp && cmp.error) { errors.push(`"${text}": ${cmp.error}`); return null; }
   if (cmp) {
     const key = normId(cmp.name);
-    if (key === 'cards') return { t: 'cards', op: cmp.op, n: cmp.n, neg };
-    if (key === 'life') return { t: 'life', op: cmp.op, n: cmp.n, neg };
-    const ref = resolveName(cmp.name, ctx);
-    if (ref.kind === 'meter') return { t: 'meter', role: ref.role, op: cmp.op, n: cmp.n, neg };
-    if (ref.kind === 'flag') return { t: 'flag', flag: ref.id, op: cmp.op, n: cmp.n, neg };
-    if (ref.kind === 'invention') { errors.push(`"${text}": use "has ${cmp.name}" to check for an invention`); return null; }
-    errors.push(`"${cmp.name}" isn't a meter or flag in this era`);
+    if (['danger', 'lives', 'life', 'decisions', 'step'].includes(key)) return { t: key, op: cmp.op, n: cmp.n, neg };
+    if (ctx.flags.has(key)) return { t: 'flag', flag: key, op: cmp.op, n: cmp.n, neg };
+    errors.push(`"${cmp.name}" isn't danger, step, lives, life, decisions or a flag`);
     return null;
   }
-  const ref = resolveName(s, ctx);
-  if (ref.kind === 'flag') return { t: 'flag', flag: ref.id, op: '>', n: 0, neg };
-  if (ref.kind === 'invention') { errors.push(`"${text}": use "has ${s}" to check for an invention`); return null; }
-  if (ref.kind === 'meter') { errors.push(`"${text}": compare a meter with a number, like "${s} < 30"`); return null; }
-  errors.push(`"${s}" isn't a flag (declare it in flags.csv) or a known condition`);
+  const id = normId(s);
+  if (ctx.flags.has(id)) return { t: 'flag', flag: id, op: '>', n: 0, neg };
+  errors.push(`"${s}" isn't a flag (declare it in flags.csv) or a condition I know`);
   return null;
 }
 
-// Returns { all: [clause], once: bool, oncePerLife: bool, repeat: bool, errors }.
-// A clause is { any: [atom] }; every clause must hold, and one atom per clause.
+// Returns { all: [{ any: [atom] }], once, errors }. Every clause must hold;
+// within a clause, one of the alternatives ("a | b" or "a or b").
 export function parseConditions(cell, ctx) {
   const errors = [];
-  const out = { all: [], once: false, repeat: false, errors };
+  const out = { all: [], once: false, errors };
   for (const part of splitCell(cell)) {
-    const key = normId(part);
-    if (key === 'once') { out.once = true; continue; }
-    if (key === 'repeat' || key === 'repeatable') { out.repeat = true; continue; }
+    if (normId(part) === 'once') { out.once = true; continue; }
     const alts = part.split(/\s+or\s+|\s*\|\s*/i).map((a) => parseAtom(a, ctx, errors)).filter(Boolean);
     if (alts.length) out.all.push({ any: alts });
   }
   return out;
 }
 
+// Verbs that take one id, what the id must be (checked now when we can), and the op they make.
+const VERBS = {
+  observe: ['observations', 'observe'], look: [null, 'look'], mark: [null, 'mark'], unmark: [null, 'unmark'],
+  legacy: ['legacies', 'legacy'], commit: ['techs', 'commit'], fail: ['failures', 'fail'], next: [null, 'next'],
+  because: ['techs', 'because'], death: ['deaths', 'death'], ending: [null, 'ending'],
+};
+
 // Returns { ops: [op], errors }.
 export function parseEffects(cell, ctx) {
   const errors = [];
   const ops = [];
-  for (const part of splitCell(cell)) {
-    let m;
-    if ((m = /^(set|clear)\s+(.+)$/i.exec(part))) {
-      const id = normId(m[2]);
-      if (!ctx.flags.has(id)) errors.push(`"${part}": no flag called "${m[2]}" in flags.csv`);
-      ops.push({ t: 'flag', flag: id, op: '=', n: m[1].toLowerCase() === 'set' ? 1 : 0 });
-      continue;
+  for (const whole of splitCell(cell)) {
+    // "effect if condition" only happens when the condition holds
+    const [part, when] = whole.split(/\s+if\s+/i);
+    const before = ops.length;
+    parseEffect(part, ctx, ops, errors);
+    if (when != null) {
+      const cond = parseConditions(when, ctx);
+      errors.push(...cond.errors);
+      for (let i = before; i < ops.length; i++) ops[i].when = cond;
     }
-    if ((m = /^(invent|use|next|die)\s+(.+)$/i.exec(part))) {
-      const verb = m[1].toLowerCase();
-      const id = normId(m[2]);
-      if ((verb === 'invent' || verb === 'use') && !ctx.inventions.has(id)) {
-        errors.push(`"${part}": no invention with id "${m[2]}"`);
-      }
-      // next/die targets are checked once every card and death is loaded.
-      if (verb === 'invent') ops.push({ t: 'invent', inv: id });
-      if (verb === 'use') ops.push({ t: 'use', inv: id });
-      if (verb === 'next') ops.push({ t: 'next', card: id });
-      if (verb === 'die') ops.push({ t: 'die', death: id });
-      continue;
-    }
-    if ((m = /^(.+?)\s*([+-])\s*(\d+)$/.exec(part)) || (m = /^(.+?)\s*(=)\s*(-?\d+)$/.exec(part))) {
-      const n = m[2] === '-' ? -Number(m[3]) : Number(m[3]);
-      const op = m[2] === '=' ? '=' : '+';
-      const ref = resolveName(m[1], ctx);
-      if (ref.kind === 'meter') ops.push({ t: 'meter', role: ref.role, op, n });
-      else if (ref.kind === 'invention' && op === '+') ops.push({ t: 'points', inv: ref.id, n });
-      else if (ref.kind === 'flag') ops.push({ t: 'flag', flag: ref.id, op, n });
-      else if (ref.kind === 'invention') errors.push(`"${part}": invention points can only go up or down (+ or -)`);
-      else errors.push(`"${m[1].trim()}" isn't a meter, invention or flag in this era`);
-      continue;
-    }
-    errors.push(`"${part}" isn't an effect I understand`);
   }
   return { ops, errors };
 }
 
-// "sparks right" / "sparks (right)" / "right: sparks" -> { inv, side }
-export function parseTrigger(cell, ctx) {
-  const s = String(cell ?? '').trim();
-  if (!s) return { value: null, errors: [] };
-  const m = /^(left|right)\b\s*:?\s*(.+)$/i.exec(s) || /^(.+?)\s*\(?\s*\b(left|right)\s*\)?$/i.exec(s);
-  if (!m) return { value: null, errors: [`trigger "${s}" needs an invention and a side, like "tinder right"`] };
-  const [a, b] = m.slice(1);
-  const side = /^(left|right)$/i.test(a) ? a.toLowerCase() : b.toLowerCase();
-  const inv = normId(/^(left|right)$/i.test(a) ? b : a);
-  const errors = ctx.inventions.has(inv) ? [] : [`trigger: no invention with id "${inv}"`];
-  return { value: { inv, side }, errors };
+function parseEffect(part, ctx, ops, errors) {
+  let m;
+  if ((m = /^(set|clear)\s+(.+)$/i.exec(part))) {
+    const id = known(ctx, 'flags', normId(m[2]), errors, part);
+    ops.push({ t: 'flag', flag: id, op: '=', n: m[1].toLowerCase() === 'set' ? 1 : 0 });
+    return;
+  }
+  if ((m = /^([a-z]+)\s+([a-z0-9][\w\s-]*)$/i.exec(part)) && Object.hasOwn(VERBS, m[1].toLowerCase())) {
+    const [kind, t] = VERBS[m[1].toLowerCase()];
+    const id = normId(m[2]);
+    if (kind) known(ctx, kind, id, errors, part);
+    ops.push({ t, id });
+    return;
+  }
+  if ((m = /^(.+?)\s*([+-])\s*(\d+)$/.exec(part)) || (m = /^(.+?)\s*(=)\s*(-?\d+)$/.exec(part))) {
+    const name = normId(m[1]);
+    const n = m[2] === '-' ? -Number(m[3]) : Number(m[3]);
+    const op = m[2] === '=' ? '=' : '+';
+    if (name === 'danger') { ops.push({ t: 'danger', op, n }); return; }
+    if (ctx.flags.has(name)) { ops.push({ t: 'flag', flag: name, op, n }); return; }
+    errors.push(`"${m[1].trim()}" isn't danger or a flag`);
+    return;
+  }
+  errors.push(`"${part}" isn't an effect I understand`);
 }
 
-export function splitList(cell) {
-  return splitCell(cell).map(normId);
+// "holds-shape + survives-heat + holds-water", or alternatives joined by "|".
+// Returns { any: [[observation ids]], errors }: any one list, all of its ids.
+export function parseRecipe(cell, ctx) {
+  const errors = [];
+  const any = String(cell ?? '').split('|').map((alt) => alt.split('+').map(normId).filter(Boolean)).filter((a) => a.length);
+  for (const alt of any) for (const id of alt) known(ctx, 'observations', id, errors, cell);
+  if (!any.length) errors.push('A recipe needs at least one observation');
+  return { any, errors };
 }

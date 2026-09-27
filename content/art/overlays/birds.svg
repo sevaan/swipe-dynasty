@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240">
+  <!-- Overlay: two birds perched on the rack -->
+  <!-- two birds, one on each end of the rack, eyeing the food -->
+  <g transform="translate(90 94.5) scale(1 1)">
+    <path fill="#6d5440" d="M-8-8L-24-2-22 1-7-3Z"/>
+    <clipPath id="bd-a"><ellipse cx="-1" cy="-11" rx="11.5" ry="9" transform="rotate(-14 -1 -11)"/></clipPath>
+    <ellipse cx="-1" cy="-11" rx="11.5" ry="9" transform="rotate(-14 -1 -11)" fill="#9a7a5a"/>
+    <g clip-path="url(#bd-a)"><ellipse cx="3" cy="-6" rx="9" ry="6" fill="#e4d6bd"/></g>
+    <path fill="#6d5440" d="M-12-12C-7-19 3-19 7-13C1-9-7-8-13-9Z"/>
+    <path fill="#e4d6bd" opacity=".5" d="M-6-13.5l4-1.5-1 2.5z M0-15l4-1-1 2.5z"/>
+    <circle cx="8" cy="-19" r="7" fill="#9a7a5a"/>
+    <path fill="#7d6048" d="M2-21C3-26 11-28 14.5-23C10-24 6-23 2-21Z"/>
+    <path fill="#e0a53a" d="M13.8-21 21-18.6 13.8-16.2Z"/>
+    <!-- a white eye, looking down at the food -->
+    <circle cx="10" cy="-20" r="2.6" fill="#fff"/><circle cx="11" cy="-19" r="1.4" fill="#24150e"/>
+    <path fill="#24150e" d="M-3.5-3h1.8v3.5h-1.8z M1.5-3h1.8v3.5H1.5z"/>
+  </g>
+  <g transform="translate(230 94.5) scale(-1 1)">
+    <path fill="#6d5440" d="M-8-8L-24-2-22 1-7-3Z"/>
+    <clipPath id="bd-b"><ellipse cx="-1" cy="-11" rx="11.5" ry="9" transform="rotate(-14 -1 -11)"/></clipPath>
+    <ellipse cx="-1" cy="-11" rx="11.5" ry="9" transform="rotate(-14 -1 -11)" fill="#9a7a5a"/>
+    <g clip-path="url(#bd-b)"><ellipse cx="3" cy="-6" rx="9" ry="6" fill="#e4d6bd"/></g>
+    <path fill="#6d5440" d="M-12-12C-7-19 3-19 7-13C1-9-7-8-13-9Z"/>
+    <path fill="#e4d6bd" opacity=".5" d="M-6-13.5l4-1.5-1 2.5z M0-15l4-1-1 2.5z"/>
+    <circle cx="8" cy="-19" r="7" fill="#9a7a5a"/>
+    <path fill="#7d6048" d="M2-21C3-26 11-28 14.5-23C10-24 6-23 2-21Z"/>
+    <path fill="#e0a53a" d="M13.8-21 21-18.6 13.8-16.2Z"/>
+    <!-- a white eye, looking down at the food -->
+    <circle cx="10" cy="-20" r="2.6" fill="#fff"/><circle cx="11" cy="-19" r="1.4" fill="#24150e"/>
+    <path fill="#24150e" d="M-3.5-3h1.8v3.5h-1.8z M1.5-3h1.8v3.5H1.5z"/>
+  </g>
+</svg>

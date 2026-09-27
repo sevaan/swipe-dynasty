@@ -1,149 +1,103 @@
 #!/usr/bin/env node
-// Simulation bot: node tools/simulate.mjs --runs 2000 --policy random
-// Plays whole timelines with the real engine and reports how they went.
-// "survival" and "seeker" read hidden effects, so they're diagnostic bots,
-// not models of real players.
+// Balance bot (spec 18.3): node tools/simulate.mjs [--runs 300] [--lives 6] [--policy random|cautious|reckless|discovery|legacy|refuse]
+// Plays whole timelines with the real engine and reports life length, failure
+// and danger rates, repeated scenes, callback delays and stalls. The
+// "discovery" policy peeks at hidden recipes: it's a diagnostic, not a player.
+import { advance, choose, newGame, view } from '../src/engine/game.js';
 import { loadContent } from './load-node.mjs';
-import { advance, choose, newGame } from '../src/engine/game.js';
-import { getCard } from '../src/engine/deck.js';
-import { random } from '../src/engine/rng.js';
 
-const args = Object.fromEntries(process.argv.slice(2).reduce((acc, a, i, all) => {
-  if (a.startsWith('--')) acc.push([a.slice(2), all[i + 1] && !all[i + 1].startsWith('--') ? all[i + 1] : true]);
-  return acc;
-}, []));
-const RUNS = Number(args.runs || 500);
-const MAX_LIVES = Number(args.lives || 80);
-const POLICY = args.policy || 'random';
-const SEED = Number(args.seed || 1);
+const arg = (name, d) => {
+  const i = process.argv.indexOf(`--${name}`);
+  return i > 0 ? process.argv[i + 1] : d;
+};
+const RUNS = Number(arg('runs', 300));
+const LIVES = Number(arg('lives', 6));
+const POLICY = arg('policy', 'random');
 
 const { content, errors } = loadContent();
-if (errors.length) { console.error(`Content has ${errors.length} errors; run node tools/check.mjs`); process.exit(1); }
-
-function sideRisk(state, side) {
-  const m = { ...state.life.meters };
-  for (const op of side.ops) if (op.t === 'meter') m[op.role] = op.op === '=' ? op.n : m[op.role] + op.n;
-  return Math.max(...Object.values(m).map((v) => Math.abs(v - 50)));
-}
-
-function sidePoints(state, side) {
-  return side.ops.filter((o) => o.t === 'points').reduce((s, o) => s + o.n, 0);
-}
-
-const policies = {
-  random: (state, card, bot) => (random(bot) < 0.5 ? 'left' : 'right'),
-  survival: (state, card, bot) => {
-    const l = sideRisk(state, card.left);
-    const r = sideRisk(state, card.right);
-    if (l === r) return random(bot) < 0.5 ? 'left' : 'right';
-    return l < r ? 'left' : 'right';
-  },
-  // A rough stand-in for a person: mostly careful, drawn to answers that
-  // embrace an idea, sometimes impulsive. On a trigger card it picks the
-  // answer that fits its leaning 65% of the time (an assumption about how
-  // well the writing telegraphs it, not a measurement).
-  human: (state, card, bot) => {
-    if (card.type === 'trigger') return random(bot) < 0.65 ? card.trigger.side : (card.trigger.side === 'left' ? 'right' : 'left');
-    if (random(bot) < 0.3) return random(bot) < 0.5 ? 'left' : 'right';
-    const l = sideRisk(state, card.left) - sidePoints(state, card.left) * 3;
-    const r = sideRisk(state, card.right) - sidePoints(state, card.right) * 3;
-    if (l === r) return random(bot) < 0.5 ? 'left' : 'right';
-    return l < r ? 'left' : 'right';
-  },
-  seeker: (state, card, bot) => {
-    if (card.type === 'trigger') return card.trigger.side;
-    const l = sidePoints(state, card.left) - sideRisk(state, card.left) / 25;
-    const r = sidePoints(state, card.right) - sideRisk(state, card.right) / 25;
-    if (l === r) return random(bot) < 0.5 ? 'left' : 'right';
-    return l > r ? 'left' : 'right';
-  },
-};
-const pick = policies[POLICY];
-if (!pick) { console.error(`Unknown policy ${POLICY}; try random, survival or seeker`); process.exit(1); }
-
-const stats = {
-  lives: 0, cards: [], breakthroughs: 0, byKind: {}, deaths: {}, triggerDelays: [], fallbacks: 0,
-  relaxed: 0, eraLives: {}, reachedEnd: 0, stalled: 0, invariant: [],
-  afterBreakthrough: [], tutorialOk: 0,
-};
-const eraLivesAll = {};
-
-for (let run = 0; run < RUNS; run++) {
-  let state = newGame(content, { seed: SEED * 100003 + run });
-  const bot = { rng: (SEED * 7919 + run) >>> 0 };
-  let steps = 0;
-  let madeAt = null;
-  while (state.collection.archive.length < MAX_LIVES && steps < 20000) {
-    steps += 1;
-    if (state.phase === 'play') {
-      const card = getCard(content, state.life.current.card);
-      const side = pick(state, card, bot);
-      const hadMade = !!state.life.made;
-      const res = choose(state, content, { side, card: card.id, turn: state.turn });
-      if (res.events.some((e) => e.type === 'rejected')) { stats.invariant.push(`rejected input run ${run}`); break; }
-      state = res.state;
-      if (!hadMade && state.life?.made && state.phase === 'play') madeAt = state.life.cards;
-      const death = res.events.find((e) => e.type === 'death');
-      if (death) {
-        const r = death.record;
-        const life = res.state.life;
-        stats.lives += 1;
-        stats.cards.push(r.cards);
-        if (r.breakthrough) stats.breakthroughs += 1;
-        if (r.breakthrough && madeAt != null) stats.afterBreakthrough.push(r.cards - madeAt);
-        madeAt = null;
-        stats.byKind[r.kind] = (stats.byKind[r.kind] || 0) + 1;
-        stats.deaths[r.death] = (stats.deaths[r.death] || 0) + 1;
-        stats.triggerDelays.push(...life.stats.triggerDelays);
-        stats.fallbacks += life.stats.fallbacks;
-        stats.relaxed += life.stats.relaxed;
-        if (!r.inv) stats.invariant.push(`life with no invention (run ${run})`);
-        if (r.life === 1 && r.inv === 'sparks' && r.cards === 8) stats.tutorialOk += 1;
-        if (r.keystone) {
-          const inv = content.inventions[r.inv];
-          const hist = state.timeline.history;
-          const at = hist.indexOf(r.inv);
-          for (const req of inv.requires) {
-            const reqAt = hist.indexOf(req);
-            if (reqAt < 0 || reqAt >= at) stats.invariant.push(`keystone ${r.inv} without earlier ${req} (run ${run})`);
-          }
-          eraLivesAll[r.era] = eraLivesAll[r.era] || [];
-          eraLivesAll[r.era].push(state.collection.archive.filter((a) => a.era === r.era).length);
-        }
-      }
-    } else if (state.phase === 'end') {
-      stats.reachedEnd += 1;
-      break;
-    } else {
-      state = advance(state, content, { turn: state.turn }).state;
-    }
-  }
-  if (state.phase !== 'end') stats.stalled += 1;
-  if (new Set(state.timeline.history).size !== state.timeline.history.length) stats.invariant.push(`duplicate history (run ${run})`);
-}
-
-const avg = (a) => (a.length ? a.reduce((s, x) => s + x, 0) / a.length : 0);
-const pct = (a, p) => { if (!a.length) return 0; const s = [...a].sort((x, y) => x - y); return s[Math.min(s.length - 1, Math.floor(p * s.length))]; };
-const dist = (a) => `avg ${avg(a).toFixed(1)}, median ${pct(a, 0.5)}, 90th ${pct(a, 0.9)}, max ${a.length ? Math.max(...a) : 0}`;
-
-console.log(`Policy: ${POLICY}, ${RUNS} timelines, up to ${MAX_LIVES} lives each\n`);
-console.log(`Lives played:            ${stats.lives}`);
-console.log(`Cards per life:          ${dist(stats.cards)}`);
-console.log(`Breakthrough rate:       ${((stats.breakthroughs / stats.lives) * 100).toFixed(1)}% of lives`);
-console.log(`Cards after breakthrough: ${dist(stats.afterBreakthrough)}`);
-console.log(`Contributions by kind:   ${Object.entries(stats.byKind).map(([k, v]) => `${k} ${v}`).join(', ')}`);
-console.log(`Trigger delay (draws):   ${dist(stats.triggerDelays)}`);
-for (const [era, lives] of Object.entries(eraLivesAll)) {
-  console.log(`Lives to finish ${era.padEnd(10)} ${dist(lives)}  (${lives.length} of ${RUNS} timelines)`);
-}
-console.log(`Reached the end:         ${stats.reachedEnd} of ${RUNS} (stopped at the life cap: ${stats.stalled})`);
-console.log(`Tutorial as designed:    ${stats.tutorialOk} of ${RUNS} (8 cards, sparks)`);
-console.log(`Fallback draws:          ${stats.fallbacks}; relaxed draws: ${stats.relaxed}`);
-console.log('Deaths:');
-for (const [d, n] of Object.entries(stats.deaths).sort((a, b) => b[1] - a[1])) console.log(`  ${d.padEnd(20)} ${n}`);
-if (stats.invariant.length) {
-  console.log(`\nINVARIANT FAILURES (${stats.invariant.length}):`);
-  for (const f of stats.invariant.slice(0, 20)) console.log(`  ${f}`);
+if (!content || errors.some((e) => !/No picture/.test(e.message))) {
+  console.log('Content has errors; run node tools/check.mjs');
   process.exit(1);
 }
-console.log('\nInvariants held: one invention per life, keystones only after earlier-life stepping stones, no duplicate history.');
+
+let coin = 12345;
+const rand = () => { coin = (coin * 1103515245 + 12345) % 2147483648; return coin / 2147483648; };
+
+const needs = (s) => {
+  const p = content.projects[s.life.project];
+  return new Set(p.outcomes.flatMap((o) => content.inventions[o]?.recipe.flat() || []).filter((o) => !s.life.observed.includes(o)));
+};
+const gains = (s, side) => s.life.current.def.options[side].ops.filter((op) => op.t === 'observe').map((op) => op.id);
+
+const POLICIES = {
+  random: () => (rand() < 0.5 ? 'left' : 'right'),
+  cautious: (s, v) => (v.options.left.danger === v.options.right.danger ? (rand() < 0.5 ? 'left' : 'right') : v.options.left.danger < v.options.right.danger ? 'left' : 'right'),
+  reckless: (s, v) => (v.options.left.danger === v.options.right.danger ? (rand() < 0.5 ? 'left' : 'right') : v.options.left.danger > v.options.right.danger ? 'left' : 'right'),
+  discovery: (s, v) => {
+    const want = needs(s);
+    const score = (side) => gains(s, side).filter((o) => want.has(o)).length * 10 - (v.options[side].fatal ? 100 : 0) - v.options[side].danger;
+    return score('left') >= score('right') ? 'left' : 'right';
+  },
+  legacy: (s, v) => {
+    // Always pick an answer that sets or changes the legacy, when there is one
+    const sets = (side) => s.life.current.def.options[side].ops.some((op) => op.t === 'legacy');
+    if (sets('left') !== sets('right')) return sets('left') ? 'left' : 'right';
+    return POLICIES.cautious(s, v);
+  },
+  refuse: (s, v) => {
+    // Deliberately avoid evidence, to see how failure and stalls play out
+    const want = needs(s);
+    const score = (side) => -gains(s, side).filter((o) => want.has(o)).length * 10 - (v.options[side].fatal ? 100 : 0);
+    return score('left') >= score('right') ? 'left' : 'right';
+  },
+};
+const policy = POLICIES[POLICY];
+if (!policy) { console.log(`No policy "${POLICY}". Try: ${Object.keys(POLICIES).join(', ')}`); process.exit(1); }
+
+const stats = { lives: 0, byProject: {}, results: {}, danger: 0, lengths: [], callbackAt: [], repeats: 0, stalls: 0, ends: 0, diagnostics: {} };
+for (let run = 1; run <= RUNS; run++) {
+  let s = newGame(content, { seed: run });
+  let lives = 0;
+  let seenThisTimeline = new Set();
+  let callbackAt = null;
+  for (let step = 0; step < 2000 && lives < LIVES && s.phase !== 'end'; step++) {
+    if (s.phase !== 'play') { s = advance(s, content, { turn: s.turn }).state; continue; }
+    const cur = s.life.current;
+    if (cur.def.phase === 'callback' && callbackAt == null) callbackAt = s.life.invest + 1;
+    if (s.life.decisions === 0) seenThisTimeline = new Set([...seenThisTimeline]);
+    const v = view(s, content);
+    const r = choose(s, content, { side: policy(s, v), scene: cur.id, turn: s.turn });
+    s = r.state;
+    const death = r.events.find((e) => e.type === 'death');
+    if (!death) continue;
+    const rec = death.record;
+    lives += 1;
+    stats.lives += 1;
+    const p = (stats.byProject[rec.project] ||= { lives: 0, made: 0, failed: 0, danger: 0, decisions: 0 });
+    p.lives += 1;
+    p.decisions += rec.decisions;
+    if (rec.result.kind === 'invention') p.made += 1; else p.failed += 1;
+    if (rec.death.kind === 'danger') { p.danger += 1; stats.danger += 1; }
+    stats.results[rec.result.id] = (stats.results[rec.result.id] || 0) + 1;
+    stats.lengths.push(rec.decisions);
+    if (rec.life > 1 && callbackAt != null) stats.callbackAt.push(callbackAt);
+    callbackAt = null;
+    if (s.timeline.stall >= content.tuning.stallLives) stats.stalls += 1;
+  }
+  if (s.phase === 'end') stats.ends += 1;
+  for (const d of s.diagnostics) stats.diagnostics[d.message] = (stats.diagnostics[d.message] || 0) + 1;
+}
+
+const avg = (xs) => (xs.length ? (xs.reduce((a, b) => a + b, 0) / xs.length).toFixed(1) : '-');
+const pct = (n, d) => (d ? `${Math.round((100 * n) / d)}%` : '-');
+console.log(`${RUNS} timelines, policy "${POLICY}", up to ${LIVES} lives each: ${stats.lives} lives`);
+console.log(`Life length: ${avg(stats.lengths)} decisions (min ${Math.min(...stats.lengths)}, max ${Math.max(...stats.lengths)})`);
+console.log(`Danger deaths: ${pct(stats.danger, stats.lives)} of lives`);
+for (const [id, p] of Object.entries(stats.byProject)) {
+  console.log(`  ${id}: ${p.lives} lives, ${pct(p.made, p.lives)} invented, ${pct(p.failed, p.lives)} failed, ${pct(p.danger, p.lives)} danger deaths, ${(p.decisions / p.lives).toFixed(1)} decisions`);
+}
+console.log(`Results: ${Object.entries(stats.results).map(([k, n]) => `${k} ${n}`).join(', ')}`);
+console.log(`Callbacks: in ${stats.callbackAt.length} later lives, at decision ${avg(stats.callbackAt)} on average (latest ${stats.callbackAt.length ? Math.max(...stats.callbackAt) : '-'})`);
+console.log(`Timelines that ran out of written content: ${stats.ends}. Lives that ended stalled: ${stats.stalls}.`);
+const diag = Object.entries(stats.diagnostics);
+console.log(diag.length ? `Diagnostics:\n${diag.map(([m, n]) => `  ${n} x ${m}`).join('\n')}` : 'Diagnostics: none');

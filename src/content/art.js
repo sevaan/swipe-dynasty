@@ -6,8 +6,12 @@
 export const ART_KINDS = {
   characters: { w: 288, h: 360 },
   inventions: { w: 64, h: 64 },
-  meters: { w: 48, h: 48 },
   ui: { w: 48, h: 48 },
+  // The workbench: an era's backdrop, the prototype's states (one folder per
+  // project) and reusable overlays, all stacked on the same 320 x 240 canvas.
+  benches: { w: 320, h: 240 },
+  objects: { w: 320, h: 240 },
+  overlays: { w: 320, h: 240 },
 };
 
 // Pieces the interface itself draws with.
@@ -51,21 +55,18 @@ export function artProblems(kind, text) {
 
 // Every picture the content refers to, with where the reference is and
 // whether a missing file breaks the game ('error') or just shows a question mark ('warn').
-export function artReferences(content, paths = {}) {
+export function artReferences(content) {
   const refs = [];
-  const charPath = paths.characters || 'characters.csv';
-  const invPath = paths.inventions || 'inventions.csv';
+  const add = (kind, id, file, line, column, what, level = 'error') => refs.push({ kind, id, file, line, column, level, what });
   for (const ch of Object.values(content.characters)) {
-    refs.push({ kind: 'characters', id: ch.portrait, file: charPath, line: ch.line, column: 'portrait', level: 'error', what: `the portrait for ${ch.id}` });
+    if (ch.portrait) add('characters', ch.portrait, 'characters.csv', ch.line, 'portrait', `the portrait for ${ch.id}`);
   }
-  for (const era of Object.values(content.eras)) {
-    for (const [role, m] of Object.entries(era.meters)) {
-      refs.push({ kind: 'meters', id: m.icon, file: 'world.json', line: 0, column: `eras.${era.id}.meters.${role}.icon`, level: 'error', what: `the "${m.label}" meter` });
-    }
+  for (const era of Object.values(content.eras)) add('benches', era.bench, 'world.json', 0, `eras.${era.id}.bench`, `the ${era.name} workbench`);
+  add('benches', 'exhibit', 'world.json', 0, '', 'the exhibit plinth on the death screen');
+  for (const [project, looks] of Object.entries(content.looks)) {
+    for (const [look, where] of Object.entries(looks)) add('objects', `${project}/${look}`, where.file, where.line, where.column, `the "${look}" look of ${project}`);
   }
-  for (const inv of Object.values(content.inventions)) {
-    refs.push({ kind: 'inventions', id: inv.icon, file: invPath, line: inv.line, column: 'icon', level: 'warn', what: `${inv.id} (the Museum shows a question mark)` });
-  }
-  for (const id of UI_ART) refs.push({ kind: 'ui', id, file: 'art/ui', line: 0, column: '', level: 'error', what: 'the interface' });
+  for (const [mark, where] of Object.entries(content.marks)) add('overlays', mark, where.file, where.line, where.column, `the "${mark}" overlay`);
+  for (const id of UI_ART) add('ui', id, 'art/ui', 0, '', 'the interface');
   return refs;
 }

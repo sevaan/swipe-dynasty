@@ -1,15 +1,17 @@
 // Shows the SVG pictures in content/art (see content/art/README.md).
-// Colour pictures (portraits, invention icons, the hand) are plain images.
-// One-colour glyphs (meters, interface pieces) are CSS masks painted with the
-// current colour, so they follow each era's colours.
+// Colour pictures (portraits, workbenches, objects, overlays, the hand) are
+// plain images. One-colour glyphs (interface pieces) are CSS masks painted
+// with the current colour, so they follow each era's colours.
 
 let base = new URL('content/', document.baseURI);
 
 // Where content/ lives, for pages outside the site root (tools/art.html).
 export function setArtBase(path) { base = new URL(path, document.baseURI); }
 
+// An id can name a subfolder, like objects/vessel/fired-pot
 export function artURL(kind, id) {
-  return new URL(`art/${kind}/${encodeURIComponent(id || 'unknown')}.svg`, base).href;
+  const path = String(id || 'unknown').split('/').map(encodeURIComponent).join('/');
+  return new URL(`art/${kind}/${path}.svg`, base).href;
 }
 
 const attr = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -27,20 +29,22 @@ export function setGlyph(el, kind, id) {
   el.style.setProperty('--art', `url('${artURL(kind, id)}')`);
 }
 
-// A picture that fails to load (a typo in a CSV, say) becomes a question mark.
+// A picture that fails to load (a typo in a CSV, say) becomes a question
+// mark. The layers the game reuses (the workbench, the object, the exhibit)
+// stay in place, hidden, so the next picture can still load into them.
 document.addEventListener('error', (e) => {
   const img = e.target;
   if (!(img instanceof HTMLImageElement) || !img.classList.contains('art') || img.dataset.missing) return;
-  if (img.id === 'portrait') {
-    // The card keeps its element; it just shows a question mark until the next card.
-    img.hidden = true;
-    img.closest('.card-face')?.classList.add('missing');
-    return;
-  }
+  console.warn(`Missing picture: ${img.src}`);
+  if (img.closest('.bench, .exhibit, .pic, .marks')) { img.classList.add('broken'); return; }
   img.dataset.missing = '1';
   const mark = document.createElement('span');
   mark.className = `glyph missing ${img.className.replace(/\bart\b/, '')}`;
   mark.style.setProperty('--art', `url('${artURL('ui', 'unknown')}')`);
   if (img.width) { mark.style.width = `${img.width}px`; mark.style.height = `${img.height || img.width}px`; }
   img.replaceWith(mark);
+}, true);
+
+document.addEventListener('load', (e) => {
+  if (e.target instanceof HTMLImageElement) e.target.classList.remove('broken');
 }, true);

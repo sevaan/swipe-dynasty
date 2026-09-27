@@ -1,16 +1,16 @@
-id,name,portrait,per life,notes
-narrator,,narrator,,Scene cards with no speaker
-tutorial-guy,A guy with a rock,tutorial-guy,,The tutorial. Dies on card 3 and is worshipped for the rest of the game.
-mother,Your mother,mother,1,"Every era, same question: are you eating?"
-naysayer,The Naysayer,naysayer,2,It'll never catch on. Right exactly once in the whole game.
-advisor,A stranger,advisor,1,Clearly from the future. Only at his three appointments.
-animal,,animal,1,"No text, never explained. (Priya insists it's a goose.)"
-elder,The elder,elder,,
-cousin,Your cousin,cousin,,Every era has a cousin. It's never the same cousin.
-shaman,The shaman,shaman,,
-kid,A kid,kid,,
-mammoths,The mammoths,mammoths,,Stampede scene
-neighbours,The neighbours,neighbours,,Another tribe already did the thing. Everyone is looking at you.
-farmer,A farmer,farmer,,
-priest,A priest,priest,,
-ox,An ox,ox,,
+id,name,portrait,role,notes
+cousin,Your cousin,cousin,assistant,The practical assistant. Every era has a cousin. It's never the same cousin.
+elder,The elder,elder,patron,The Stone Age patron. Useful things should include him.
+neighbours,The neighbours,neighbours,rival,Across the river. They were about to invent it too.
+naysayer,The Naysayer,naysayer,skeptic,It'll never catch on. Right exactly once in the whole game.
+mother,Your mother,mother,family,"Every era, same question: are you eating?"
+animal,The goose,animal,story,Never explained.
+advisor,A stranger,advisor,stranger,Clearly from the future. Saved for the time machine.
+kid,A kid,kid,story,
+shaman,The shaman,shaman,story,
+farmer,A farmer,farmer,story,Farming era
+priest,A priest,priest,story,Farming era
+ox,An ox,ox,story,Farming era
+mammoths,The mammoths,mammoths,story,
+tutorial-guy,A guy with a rock,tutorial-guy,story,From the first draft. Waiting for a comeback.
+narrator,The curator,narrator,curator,"The framing voice. Dry, concise, capable of affection."

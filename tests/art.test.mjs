@@ -13,7 +13,8 @@ test('a clean picture with the right canvas passes', () => {
 });
 
 test('the wrong canvas, a missing viewBox, or a cut-off file is reported', () => {
-  assert.match(artProblems('meters', svg('0 0 64 64'))[0], /"0 0 48 48"/);
+  assert.match(artProblems('ui', svg('0 0 64 64'))[0], /"0 0 48 48"/);
+  assert.match(artProblems('objects', svg('0 0 288 360'))[0], /"0 0 320 240"/);
   assert.match(artProblems('ui', '<svg xmlns="http://www.w3.org/2000/svg"><rect/></svg>')[0], /no viewBox/);
   assert.match(artProblems('ui', '<svg viewBox="0 0 48 48"><rect/>').join(' '), /cut off/);
   assert.match(artProblems('ui', '<png>')[0], /isn't an SVG/);
@@ -33,7 +34,7 @@ test('scripts, text, embedded images and outside links are not allowed', () => {
 const real = loadContent();
 const art = readArtFiles();
 
-test('every portrait, meter, invention icon and interface piece has a picture, and every picture is clean', () => {
+test('every portrait, workbench, object state, overlay and interface piece has a picture, and every picture is clean', () => {
   const missing = artReferences(real.content).map((r) => artPath(r.kind, r.id)).filter((p) => art[p] == null);
   assert.deepEqual([...new Set(missing)], []);
   for (const id of UI_ART) assert.ok(art[artPath('ui', id)], `ui/${id}`);

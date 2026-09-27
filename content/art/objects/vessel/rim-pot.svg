@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240">
+  <!-- A raw clay pot with a rolled rim -->
+  <ellipse cx="160" cy="197" rx="36" ry="5" fill="#000" opacity=".2"/>
+  <!-- a slimmer raw clay pot with a rolled, reinforced rim -->
+  <clipPath id="rp-pot"><path d="M138 196C123 190 114 172 114 150C114 127 123 110 135 102C136 100 136 98 135 95H185C184 98 184 100 185 102C197 110 206 127 206 150C206 172 197 190 182 196Z"/></clipPath>
+  <path fill="#8d7b6a" d="M138 196C123 190 114 172 114 150C114 127 123 110 135 102C136 100 136 98 135 95H185C184 98 184 100 185 102C197 110 206 127 206 150C206 172 197 190 182 196Z"/>
+  <g clip-path="url(#rp-pot)">
+    <path fill="#76665a" d="M186 76H232V200H178Z"/>
+    <path fill="#a08e7c" d="M123 141C123 128 128 117 137 110C131 119 128 129 128 142Z"/>
+    <path fill="#665749" d="M127 93A33 7.5 0 0 0 193 93L190 98A30 7 0 0 1 130 98Z"/>
+  </g>
+  <!-- the rolled rim: a coil of clay pressed on round the mouth -->
+  <clipPath id="rp-band"><path d="M126 84A34 7.5 0 0 1 194 84A4.5 4.5 0 0 1 194 93A34 7.5 0 0 1 126 93A4.5 4.5 0 0 1 126 84Z"/></clipPath>
+  <path fill="#a08e7c" d="M126 84A34 7.5 0 0 1 194 84A4.5 4.5 0 0 1 194 93A34 7.5 0 0 1 126 93A4.5 4.5 0 0 1 126 84Z"/>
+  <g clip-path="url(#rp-band)">
+    <path fill="#8d7b6a" d="M120 89.5A40 7.5 0 0 0 200 89.5V100H120Z"/>
+    <path fill="#8d7b6a" d="M186 70H204V104H184Z"/>
+    <path fill="#76665a" d="M186 89.5H204V104H184Z"/>
+  </g>
+  <ellipse cx="160" cy="84" rx="29.5" ry="5.9" fill="#b09e8b"/>
+  <ellipse cx="160" cy="84.5" rx="24.5" ry="4.6" fill="#4f4339"/>
+  <path fill="#bfae9b" d="M131 86c1-2 4-3.5 8-4.5-3 1.5-5 3-6 5z"/>
+</svg>

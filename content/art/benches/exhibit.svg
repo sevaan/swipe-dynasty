@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240">
+  <!-- The museum exhibit: the finished object on a plinth under a spotlight -->
+  <!-- a gallery wall, a spotlight from above, and a plinth whose top is at y = 196 -->
+  <rect width="320" height="240" fill="#25221f"/>
+  <rect y="210" width="320" height="4" fill="#302c28"/>
+  <rect y="214" width="320" height="26" fill="#1a1816"/>
+  <!-- the spotlight: three stepped, translucent cones -->
+  <g fill="#fff4dc">
+    <path opacity=".035" d="M142 8H178L270 196H50Z"/>
+    <path opacity=".04" d="M146 8H174L242 196H78Z"/>
+    <path opacity=".05" d="M150 8H170L214 196H106Z"/>
+  </g>
+  <path fill="#141210" d="M144 0H176V5C176 8 173 10 170 10H150C147 10 144 8 144 5Z"/>
+  <rect x="149" y="8.5" width="22" height="2.5" rx="1.2" fill="#f3e6c8"/>
+  <!-- the plinth: a cap, a body, a hard shadow on the right -->
+  <clipPath id="ex-cap"><rect x="64" y="196" width="192" height="9"/></clipPath>
+  <rect x="70" y="205" width="180" height="35" fill="#b3aa9c"/>
+  <path fill="#9d9486" d="M218 205H250V240H212Z"/>
+  <rect x="70" y="205" width="180" height="4" fill="#000" opacity=".16"/>
+  <rect x="64" y="196" width="192" height="9" fill="#d3cbbe"/>
+  <g clip-path="url(#ex-cap)"><path fill="#bcb3a5" d="M226 196H256V205H224Z"/><path fill="#e9e3d8" d="M64 196H256V198.5H64Z"/><path fill="#fff" opacity=".22" d="M110 196H210V205H110Z"/></g>
+</svg>

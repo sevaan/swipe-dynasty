@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240">
+  <!-- Overlay: salt scattered round the base -->
+  <!-- salt crystals scattered on the bench round the base -->
+  <g transform="translate(98 193) rotate(20)"><rect x="-4" y="-4" width="8" height="8" fill="#f4f1ea"/><path fill="#d3cec4" d="M4 -4V4H-4Z"/></g>
+  <g transform="translate(106 197) rotate(50)"><rect x="-3" y="-3" width="6" height="6" fill="#f4f1ea"/><path fill="#d3cec4" d="M3 -3V3H-3Z"/></g>
+  <g transform="translate(114 191) rotate(10)"><rect x="-3.5" y="-3.5" width="7" height="7" fill="#f4f1ea"/><path fill="#d3cec4" d="M3.5 -3.5V3.5H-3.5Z"/></g>
+  <g transform="translate(124 195) rotate(35)"><rect x="-4.5" y="-4.5" width="9" height="9" fill="#f4f1ea"/><path fill="#d3cec4" d="M4.5 -4.5V4.5H-4.5Z"/></g>
+  <g transform="translate(132 199) rotate(70)"><rect x="-3" y="-3" width="6" height="6" fill="#f4f1ea"/><path fill="#d3cec4" d="M3 -3V3H-3Z"/></g>
+  <g transform="translate(190 196) rotate(15)"><rect x="-4" y="-4" width="8" height="8" fill="#f4f1ea"/><path fill="#d3cec4" d="M4 -4V4H-4Z"/></g>
+  <g transform="translate(198 192) rotate(60)"><rect x="-3.2" y="-3.2" width="6.4" height="6.4" fill="#f4f1ea"/><path fill="#d3cec4" d="M3.2 -3.2V3.2H-3.2Z"/></g>
+  <g transform="translate(206 197) rotate(30)"><rect x="-4.4" y="-4.4" width="8.8" height="8.8" fill="#f4f1ea"/><path fill="#d3cec4" d="M4.4 -4.4V4.4H-4.4Z"/></g>
+  <g transform="translate(216 193) rotate(5)"><rect x="-3.4" y="-3.4" width="6.8" height="6.8" fill="#f4f1ea"/><path fill="#d3cec4" d="M3.4 -3.4V3.4H-3.4Z"/></g>
+  <g transform="translate(224 198) rotate(45)"><rect x="-3" y="-3" width="6" height="6" fill="#f4f1ea"/><path fill="#d3cec4" d="M3 -3V3H-3Z"/></g>
+  <g transform="translate(146 201) rotate(25)"><rect x="-2.8" y="-2.8" width="5.6" height="5.6" fill="#f4f1ea"/><path fill="#d3cec4" d="M2.8 -2.8V2.8H-2.8Z"/></g>
+  <g transform="translate(174 202) rotate(55)"><rect x="-3" y="-3" width="6" height="6" fill="#f4f1ea"/><path fill="#d3cec4" d="M3 -3V3H-3Z"/></g>
+  <g transform="translate(110 199) rotate(0)"><path fill="#f4f1ea" d="M0 -4.3L3.6 2.9H-3.6Z"/><path fill="#d3cec4" d="M0 -4.3L3.6 2.9H0Z"/></g>
+  <g transform="translate(182 199) rotate(20)"><path fill="#f4f1ea" d="M0 -4.6L3.8 3H-3.8Z"/><path fill="#d3cec4" d="M0 -4.6L3.8 3H0Z"/></g>
+  <g transform="translate(212 202) rotate(-10)"><path fill="#f4f1ea" d="M0 -3.6L3 2.4H-3Z"/><path fill="#d3cec4" d="M0 -3.6L3 2.4H0Z"/></g>
+  <g transform="translate(138 193) rotate(10)"><path fill="#f4f1ea" d="M0 -3.6L3 2.4H-3Z"/><path fill="#d3cec4" d="M0 -3.6L3 2.4H0Z"/></g>
+</svg>

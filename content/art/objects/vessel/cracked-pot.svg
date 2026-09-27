@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240">
+  <!-- The first firing: the big pot cracked open; the small cup came through whole -->
+  <!-- contact shadows: the broken pot, a shard, the little cup -->
+  <ellipse cx="128" cy="197" rx="36" ry="5" fill="#000" opacity=".2"/>
+  <ellipse cx="232" cy="197" rx="21" ry="3.5" fill="#000" opacity=".2"/>
+  <!-- the big pot, split open and leaning on a fallen shard -->
+  <path fill="#9a4f2e" d="M152 196C154 190 160 186 168 185L176 185C179 187 180 192 179 196Z"/>
+  <path fill="#cf7e52" d="M154 192c3-3 8-5 14-5-5 1-10 3-12 6z"/>
+  <g transform="translate(-24 0) rotate(-12 134 196)">
+    <clipPath id="kp-pot"><path d="M134 196C118 191 106 173 106 150C106 125 119 108 131 101C134 99 131 94 126 91V84H194V91C189 94 186 99 189 101C201 108 214 125 214 150C214 173 202 191 186 196Z"/></clipPath>
+    <path fill="#b8643c" d="M134 196C118 191 106 173 106 150C106 125 119 108 131 101C134 99 131 94 126 91V84H194V91C189 94 186 99 189 101C201 108 214 125 214 150C214 173 202 191 186 196Z"/>
+    <g clip-path="url(#kp-pot)">
+      <path fill="#9a4f2e" d="M190 70H232V200H181Z"/>
+      <path fill="#cf7e52" d="M118 137C118 123 124 112 134 106C128 115 124 125 123 138Z"/>
+      <path fill="#7e3f24" d="M126 90A34 7.5 0 0 0 194 90L191 95.5A31 7 0 0 1 129 95.5Z"/>
+    </g>
+    <clipPath id="kp-rim"><ellipse cx="160" cy="84" rx="34" ry="7.5"/></clipPath>
+    <ellipse cx="160" cy="84" rx="34" ry="7.5" fill="#cf7e52"/>
+    <path clip-path="url(#kp-rim)" fill="#b8643c" d="M189 70H200V100H187Z"/>
+    <ellipse cx="160" cy="84.6" rx="27.5" ry="5.6" fill="#5a2a17"/>
+    <!-- the crack: open at the rim, closing to a hairline -->
+    <path fill="#5a2a17" d="M168 86.5L164 97L172 108L165 121L171 134L166 148L169 160L169 160L167.6 148L174.5 134L170.3 121L179.1 108L172.6 97L178 86.5Z"/>
+    <path fill="#cf7e52" d="M179.8 86.5L174.4 97L180.9 108L172.1 121L176.3 134L169.4 148L170.8 160L169 160L167.6 148L174.5 134L170.3 121L179.1 108L172.6 97L178 86.5Z"/>
+    <path fill="#7e3f24" d="M167 158l3.5 1-4 15 3 11-4-11z"/>
+  </g>
+  <!-- the smaller piece, which survived: a little cup -->
+  <clipPath id="kp-cup"><path d="M222 196C215 190 213 180 214 170C214.5 164 215.5 160 215.5 158H248.5C248.5 160 249.5 164 250 170C251 180 249 190 242 196Z"/></clipPath>
+  <path fill="#b8643c" d="M222 196C215 190 213 180 214 170C214.5 164 215.5 160 215.5 158H248.5C248.5 160 249.5 164 250 170C251 180 249 190 242 196Z"/>
+  <g clip-path="url(#kp-cup)"><path fill="#9a4f2e" d="M241 150H258V200H237Z"/><path fill="#cf7e52" d="M219 176C218.5 169 220 164 223.5 161C221.5 166 221 171 222 177Z"/></g>
+  <ellipse cx="232" cy="158" rx="16.5" ry="4" fill="#cf7e52"/>
+  <ellipse cx="232" cy="158.4" rx="13" ry="2.7" fill="#5a2a17"/>
+</svg>

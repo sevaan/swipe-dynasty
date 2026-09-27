@@ -1,41 +1,39 @@
-// Swipe input. Dragging previews an answer; letting go past the threshold
-// (or flicking) commits it; letting go early cancels. Nothing here changes
-// the game: it only reports what the finger did.
+// Swipe input (spec 12.2–12.4). Dragging the workbench sideways previews an
+// answer; letting go past about 28% of its width commits it, and anything
+// less cancels. There is no flick shortcut, and a mostly vertical drag never
+// commits. Nothing here changes the game: it only reports what the finger did.
+
+export const COMMIT_FRACTION = 0.28;
 
 export function bindSwipe(el, { canStart, onMove, onCancel, onCommit }) {
   let drag = null;
-  const threshold = () => Math.min(110, el.offsetWidth * 0.34);
+  const threshold = () => el.offsetWidth * COMMIT_FRACTION;
 
   el.addEventListener('pointerdown', (e) => {
-    if (drag || !canStart()) return;
+    if (drag || !canStart(e)) return;
     if (e.pointerType === 'mouse' && e.button !== 0) return;
-    drag = { id: e.pointerId, x: e.clientX, y: e.clientY, t: performance.now(), dx: 0, lastX: e.clientX, lastT: performance.now(), v: 0 };
-    try { el.setPointerCapture(e.pointerId); } catch { /* some browsers refuse; drag still works */ }
-    e.preventDefault();
+    drag = { id: e.pointerId, x: e.clientX, y: e.clientY, dx: 0, dy: 0, axis: null };
+    try { el.setPointerCapture(e.pointerId); } catch { /* the drag still works without capture */ }
   });
 
   el.addEventListener('pointermove', (e) => {
     if (!drag || e.pointerId !== drag.id) return;
-    const now = performance.now();
-    drag.v = (e.clientX - drag.lastX) / Math.max(now - drag.lastT, 1);
-    drag.lastX = e.clientX;
-    drag.lastT = now;
     drag.dx = e.clientX - drag.x;
-    onMove(drag.dx, e.clientY - drag.y, threshold());
+    drag.dy = e.clientY - drag.y;
+    // Decide once whether this is a sideways drag or a vertical one
+    if (!drag.axis && Math.hypot(drag.dx, drag.dy) > 10) drag.axis = Math.abs(drag.dx) > Math.abs(drag.dy) ? 'x' : 'y';
+    if (drag.axis === 'y') return;
+    e.preventDefault();
+    onMove(drag.dx, drag.dy, threshold());
   });
 
   const finish = (e, cancelled) => {
     if (!drag || e.pointerId !== drag.id) return;
-    const { dx, v, lastT } = drag;
+    const { dx, axis } = drag;
     drag = null;
-    // A flick only counts if the finger was still moving when it let go;
-    // pausing to read the preview and then releasing is a cancel.
-    const moving = performance.now() - lastT < 90;
-    const flick = moving && Math.abs(dx) > 40 && Math.abs(v) > 0.55 && Math.sign(v) === Math.sign(dx);
-    if (!cancelled && (Math.abs(dx) >= threshold() || flick)) onCommit(dx < 0 ? 'left' : 'right');
+    if (!cancelled && axis === 'x' && Math.abs(dx) >= threshold()) onCommit(dx < 0 ? 'left' : 'right');
     else onCancel();
   };
-
   el.addEventListener('pointerup', (e) => finish(e, false));
   el.addEventListener('pointercancel', (e) => finish(e, true));
   el.addEventListener('lostpointercapture', (e) => finish(e, true));
@@ -44,13 +42,18 @@ export function bindSwipe(el, { canStart, onMove, onCancel, onCommit }) {
   window.addEventListener('pointercancel', (e) => finish(e, true));
 }
 
-export function bindTap(el, handler, { guardMs = 450 } = {}) {
+// A tap that only counts if it started after the element appeared or its
+// contents last changed, so the press that ended the last screen can't also
+// answer this one (spec 12.4).
+export function bindTap(el, handler, { guardMs = 350 } = {}) {
   let shownAt = 0;
+  let downAt = -1;
   const observer = new MutationObserver(() => { if (!el.hidden) shownAt = performance.now(); });
-  observer.observe(el, { attributes: true, attributeFilter: ['hidden'] });
+  observer.observe(el, { attributes: true, attributeFilter: ['hidden'], childList: true });
+  el.addEventListener('pointerdown', (e) => { downAt = e.timeStamp; });
   el.addEventListener('pointerup', (e) => {
     if (e.pointerType === 'mouse' && e.button !== 0) return;
-    if (performance.now() - shownAt < guardMs) return; // the swipe that ended a life isn't a tap
-    handler();
+    if (downAt < shownAt || performance.now() - shownAt < guardMs) return;
+    handler(e);
   });
 }

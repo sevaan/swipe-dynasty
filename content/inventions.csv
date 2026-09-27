@@ -1,15 +1,3 @@
-id,era,type,name,requires,threshold,related,museum,hint,notes
-sparks,stone-age,stepping stone,sparks,,4,,"Hit a rock with a rock. Lose a finger. Change everything.",Some fool will hit two rocks together. Won't work.,The tutorial guarantees it on every branch.
-tinder,stone-age,stepping stone,tinder,,4,,"A pile of dry grass that catches sparks. Do not sleep on it.",Dry grass is for sitting on. Everyone knows that.,
-cave-art,stone-age,stepping stone,art,,4,,"A mammoth on the cave wall. Future generations will read it wrong.",Pictures on walls? Kids' stuff.,Carries into Farming as the mammoth planting guide.
-firemaking,stone-age,keystone,fire,sparks; tinder,5,,"Fire whenever you want it. The tribe finally sleeps warm.",Fire comes from lightning. You can't make lightning.,Keystone: ends the Stone Age.
-rock-pillow,stone-age,bad idea,the rock pillow,,,tinder,"Firm support. Brief use.",Someone will try to sleep on a rock. They'll wake up.,
-pet-rock,stone-age,bad idea,the pet rock,,,cave-art; sparks,"It never ran away. It never did anything.",A rock with a name is still a rock.,
-fire-insurance,stone-age,bad idea,fire insurance,,,firemaking,"Premiums paid in meat. Nobody had a fire to insure.",Paying for fire you don't have? Bold.,
-sharp-tools,farming,stepping stone,sharp tools,,4,,"A stick with a point. Farming's first power tool.",Pointy sticks are for poking. Not dirt.,
-tame-ox,farming,stepping stone,the tame ox,,4,,"An ox that stays. It was going to stay anyway.",You can't ask an ox to do things.,
-counting,farming,stepping stone,counting,,4,,"Marks for grain. Also, the tax collector.","Numbers? We have a lot, and a little. Plenty.",
-wheel,farming,stepping stone,the wheel,,4,,"Round. Rolls. Leaves.",Round things roll away. That's the whole problem.,Its trigger answer is fatal: the breakthrough still counts.
-plough,farming,keystone,the plough,sharp-tools; tame-ox,5,,"Ox pulls stick. People walk behind it. Civilisation.",Dragging a stick through dirt won't feed anybody.,Keystone: ends Farming (the end of this build).
-square-wheel,farming,bad idea,the square wheel,,,wheel,"Very stable. Won't roll away. Won't roll.",Square is the best shape. It stays where you put it.,
-grain-hat,farming,bad idea,the grain hat,,,sharp-tools; counting,"Fashionable. Birds loved it.",A hat made of lunch. Sure.,
+id,era,type,name,project,requires,recipe,legacies,made,look,capability,museum,hint,notes
+pottery,stone,stepping stone,fired vessels,vessel,,holds-shape + survives-heat + holds-water,pottery-household; pottery-communal,Invented fired vessels.,fired-pot,fired vessels,"Clay that fire made permanent. It holds water, grain and grudges.",Your containers leak. The clay by the river does not.,Stepping stone. Enables sealed storage.
+preservation,stone,stepping stone,preserved provisions,provisions,pottery,sealed + dried | sealed + salted,preservation-larders; preservation-stockpile,Invented preserved provisions.,larder,preserved provisions,"Food that waits. Dried, salted, sealed in a pot and forgotten until it's needed.",Your containers survive the winter. Their contents do not.,Stepping stone. Needs pottery.

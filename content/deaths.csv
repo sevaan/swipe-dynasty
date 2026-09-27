@@ -1,18 +1,18 @@
-id,era,meter,end,text,epitaph,scene,notes
-sa-tribe-low,stone-age,Tribe,low,The tribe left to follow someone with fewer ideas. You kept the cave. It kept you.,Outvoted.,,
-sa-tribe-high,stone-age,Tribe,high,The whole tribe crowded into your corner of the cave to be near you. You were at the bottom.,Loved to death.,,
-sa-food-low,stone-age,Food,low,You forgot to eat. Your mother was right. She will bring it up at the funeral.,Your mother was right.,,
-sa-food-high,stone-age,Food,high,The tribe had never had so much meat. You were first in line and last to stop.,Ate well. Once.,,
-sa-gods-low,stone-age,Gods,low,Nobody believed in the Gods anymore. The Gods noticed. Lightning found you in the open.,Smitten.,storm,
-sa-gods-high,stone-age,Gods,high,The tribe decided you were a god. Gods live in the volcano.,Promoted.,volcano,The tutorial's guaranteed death.
-sa-fire-low,stone-age,Fire,low,The fire went out. Then the nights got longer. Then the wolves got braver.,Eaten in the dark.,night,
-sa-fire-high,stone-age,Fire,high,The fire grew until it made its own weather. You made the mistake of standing near it.,Warm at last.,fire,
-fa-village-low,farming,Village,low,Everyone moved to the village over. They had the round thing.,Left behind.,,
-fa-village-high,farming,Village,high,The village grew so big it needed someone to blame for everything. It picked you.,Chosen.,,
-fa-harvest-low,farming,Harvest,low,The harvest failed. You ate next year's seeds. Next year did not go well.,Ate the future.,dust,
-fa-harvest-high,farming,Harvest,high,So much grain the barn burst. You were in the barn.,Buried in success.,harvest,
-fa-priests-low,farming,Priests,low,"The priests declared you cursed. Nobody would trade with you, look at you, or feed you.","Cursed, officially.",,
-fa-priests-high,farming,Priests,high,The priests adored you so much they built you into the temple wall. For luck.,Built in.,,
-fa-neighbours-low,farming,The Neighbours,low,The neighbours came over the hill. They brought the round thing. It had spikes on now.,Neighbourly.,dust,
-fa-neighbours-high,farming,The Neighbours,high,The neighbours admired you so much they moved in. All of them. Into your house.,Crowded out.,,
-fa-wheel-chase,farming,,,"It rolled away. You chased it downhill, into the river.",Chased it.,,Special death from the wheel's trigger answer.
+id,kind,project,text,conditions,weight,notes
+vessel-kiln,danger,vessel,You checked on the kiln from the inside.,,,
+vessel-old,natural,vessel,"You lived to a great age, which in this era was thirty-one. They buried you with a pot, in case you got thirsty.",,,
+vessel-old-lid,natural,vessel,"You died at a great age, still arguing about lids.",lid-habit,2,
+vessel-old-guarded,natural,vessel,"You died rich in pots, which nobody else was allowed to make.",guarded,2,
+prov-died-jar,danger,provisions,"The swollen jar went off while you were leaning over it, which was brave and brief.",,0,"Named by the sealing answers (prov-swollen, prov-cb-lid)"
+prov-died-journey,danger,provisions,"The far side of the hills had bears. The bears had never tasted preserved food, or you.",,0,"Named by ""Go with them"" in prov-after-travel"
+prov-died-smoke,danger,provisions,"You kept the smoking fire going for three days straight. On the fourth, it kept you.",,,
+prov-died-taste,danger,provisions,You tasted one experiment too many. It tasted you back.,,,
+prov-died-salt,danger,provisions,"You boiled the sea for another month, to be sure. The sea was fine. You were not.",,0,"Named by ""Boil seawater yourself"" in prov-salt"
+prov-died-goose,danger,provisions,"The goose won the rematch. It still guards your jar, and now your grave.",,0,"Named by ""Negotiate with the goose"" in prov-goose"
+prov-died-share,danger,provisions,"You were flattened in the rush for the last jar. The neighbours sent flowers, and a bag.",,0,"Named by ""Share the stores"" in prov-after-share"
+prov-died-count,danger,provisions,You were counting the top shelf when the top shelf came down to be counted.,,0,"Named by ""Count them yourself"" in prov-after-count"
+prov-died-winter,danger,provisions,"You won your winter against the Naysayer, then challenged the next one on your own. It won.",,0,"Named by ""Challenge him to a winter"" in prov-after-naysayer"
+prov-old,natural,provisions,"You lived a long life and never once went hungry, which in your family was a first.",made preservation,,
+prov-old-failed,natural,provisions,"You lived a long life, eating everything the day you got it. Your funeral feast was eaten at a sprint.",made nothing,,A life that left a failed design: the food still rots
+prov-old-stockpile,natural,provisions,"You died in winter, well fed, while the elder counted the jars at your funeral.",legacy preservation-stockpile,2,
+prov-old-larder,natural,provisions,"You died at a great age, in your own house, beside a full larder. The neighbours got there first.",legacy preservation-larders,2,

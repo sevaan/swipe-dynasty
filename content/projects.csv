@@ -1,0 +1,3 @@
+id,era,name,problem,outcomes,failures,start look,requires,investigation,weight,notes
+vessel,stone,A vessel that lasts,The basket leaks,pottery,absorbent-cup,basket,,4,,The tutorial (spec 10.1): every branch reaches pottery
+provisions,stone,Food that survives storage,Stored food rots,preservation,fragrant-larder; salt-mountain; bird-feeder; bucket-of-regret,rotting-pot,pottery,6-8,,Life 2 (spec 10.3). Later: fermentation as a second outcome

@@ -26,6 +26,8 @@ picture the game uses, and `node tools/check.mjs` reports missing or broken ones
   on its right side, with straight, hard edges (a shade of the same colour, or
   black at 10–12% opacity). A small lighter highlight on the left is optional.
 - **Few colours.** A character uses about 6–9 colours, an icon 2–5.
+- **Benches bleed.** A bench keeps its `0 0 320 240` viewBox but draws 80 units
+  past it above and below (y = -80 to 320), because the bench can be shown up to square.
 
 ### Characters (288 × 360)
 

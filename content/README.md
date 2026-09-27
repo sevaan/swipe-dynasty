@@ -1,106 +1,156 @@
 # Writing content
 
-Everything in the game is data in this folder. The CSV files open in any spreadsheet app, and each row is one card, invention, death, flag or character. Edit a file, push to `main`, and the change is live on the phone a minute later. There's no build step.
+Everything in the game is data in this folder. The CSV files open in any spreadsheet app. Each row is one scene, project, invention, legacy, failed design, death, observation, flag or character. Edit a file, push to `main`, and the change is live on the phone about a minute later. There's no build step.
 
-Before pushing, run `node tools/check.mjs`. It lists errors (the game won't start) and warnings (worth a look) with the file, row and column. If you push content with errors anyway, the game shows the same list instead of starting.
+Before pushing, run `node tools/check.mjs`. It lists errors (the game won't start) and warnings (worth a look), each with its file, row and column. If you push content with errors anyway, the game shows the same list instead of starting.
+
+`spec.md` at the top of the repo is the design. This guide is only about how to write it down.
+
+## How a life plays
+
+- Each inventor works one **project** (`projects.csv`), a practical problem such as "The basket leaks".
+- A life has three phases. It starts with an **opening**, then **investigation** (6 to 8 decisions; the first life has 4). Next comes one **proof** decision and three **aftermath** decisions. Then the epitaph, one line of inheritance, and the next inventor.
+- Answers establish **observations** (`observations.csv`), such as "Holds its shape". The last three show as chips under the object.
+- An **invention**'s recipe is a set of observations. Once a recipe is met, the proof scene can commit that invention. With nothing committed, the life leaves a **failed design** (`failures.csv`) instead. Either way, it's exactly one contribution per life.
+- Each invention has two **legacy packages** (`legacies.csv`): two ways it could spread. Answers pick one with `legacy <id>`, and the last pick wins. The chosen legacy becomes the next life's **featured problem**. Scenes check it with `problem <legacy>`.
+- **Danger** runs from 0 to 6. `danger +1` raises it, and at 6 the inventor dies. An answer that would reach 6 is marked Fatal before you choose.
+- The object on the workbench has a **look** (one picture per state) and **marks** (overlays such as smoke or drips).
 
 ## Files
 
-| File | One row per | Key columns |
+| File | One row per | Columns |
 |---|---|---|
-| `world.json` | (not a CSV) | Eras, their four meter labels and icons, keystone, next era, colours, inventor names; tuning values |
-| `characters.csv` | Speaker | `id`, `name`, `portrait` (a picture in `art/characters/`; defaults to the character's id), `per life` (cap per life, blank for none) |
+| `world.json` | (not a CSV) | The file list, the starting era and project, tuning values, eras (name, intro, required and optional discoveries, keystone, next era, workbench, colours, skies, inventor names), weather, and which overlays last one scene |
+| `characters.csv` | Character | `id`, `name` (as shown, like "Your cousin"), `portrait` (a picture in `art/characters/`), `role` |
 | `flags.csv` | Remembered fact | `id`, `scope` (`life`, `timeline` or `forever`), `default` |
-| `inventions.csv` | Invention | `type` (keystone, stepping stone, bad idea), `name` (as in "Invented ___"), `requires`, `threshold`, `related` (bad ideas only), `icon` (a picture in `art/inventions/`; defaults to the invention's id), `museum`, `hint` (the Naysayer's Museum hint) |
-| `art/*/*.svg` | Picture | One SVG per picture (see `art/README.md`) |
-| `deaths.csv` | Death card | `meter` + `end` (low or high) for the 8 meter deaths per era; blank for special deaths used with `die`. `epitaph` is the punchline after "Invented X." `scene` sets the weather on the gravestone screen |
-| `cards/*.csv` | Card | See below |
+| `observations.csv` | Observation | `id`, `project`, `text` (the chip: short, plain, no score) |
+| `projects.csv` | Project | `id`, `era`, `name`, `problem` (shown under the inventor's name), `outcomes` (inventions it can make), `failures` (failed designs it can leave), `start look`, `requires` (inventions that must exist first), `investigation` (a number like `4` or a range like `6-8`), `weight` |
+| `inventions.csv` | Invention | `id`, `era`, `type` (`stepping stone`, `optional` or `keystone`), `name` (as in "Invented ___"), `project`, `requires`, `recipe` (below), `legacies` (its two packages), `made` (the epitaph's first line, if not "Invented ___."), `look` (its picture in History), `capability` (for "Possible because of ___"), `museum`, `hint` |
+| `legacies.csv` | Legacy package | `id`, `invention`, `adoption` (how it spread, in a few words), `problem` (what it leaves behind), `inherit` (the one line the next inventor inherits), `epitaph` (the epitaph's third line), `change` (a note on how it changes the next life) |
+| `failures.csv` | Failed design | `id`, `project`, `name` (as in "Invented ___"), `conditions` (the first one whose conditions hold is used), `epitaph`, `inherit`, `look` (the exhibit) |
+| `deaths.csv` | Death | `id`, `kind` (`danger` or `natural`), `project` (blank for any), `text` (the epitaph's second line), `conditions`, `weight` |
+| `scenes/*.csv` | Scene | Below |
 
-Ids are forgiving: case doesn't matter, and spaces, `_` and `-` are the same (`kept_naysayer` = `kept naysayer`). A row whose first cell starts with `#` is a comment.
+Ids are forgiving: case doesn't matter, and spaces, `_` and `-` are the same (`lid_habit` = `lid habit` = `lid-habit`). A row whose first cell starts with `#` is a comment, and every table can have a `notes` column the game ignores.
 
-## Card columns
+## Scene columns
 
 | Column | Holds |
 |---|---|
-| `id` | Unique across all card files |
-| `era` | The era id, like `stone-age` |
-| `type` | Blank for an ordinary card. `script` for cards reached only by a `next` effect (scenes, the tutorial). Cards with a `trigger for` are triggers automatically |
-| `speaker` | A character id from `characters.csv` |
-| `text` | The question. House style: 25 words or fewer. About 100 characters fills the three lines kept for it on a phone; longer still works, it just nudges the card down |
-| `left answer`, `right answer` | 5 words or fewer each |
-| `left effects`, `right effects` | What each answer does (syntax below) |
-| `conditions` | When the card can appear (syntax below) |
-| `weight` | How likely it is when eligible. Default 1; the unexplained animal is 0.4 |
-| `trigger for` | The invention this card can trigger and the matching side, like `tinder right` |
-| `epitaph` | Optional: how the epitaph phrases this breakthrough, like `Invented tinder, using a cousin.` |
-| `scene` | Optional: the weather while this card is up, like `rain` (see Scenes below) |
-| `notes` | For writers; the game ignores it |
+| `id` | Unique across all scene files |
+| `project` | The project it belongs to (blank for a scene any project can use) |
+| `phase` | `opening`, `investigation`, `callback`, `proof` or `aftermath` (below) |
+| `speaker` | A character id, or blank for no speaker |
+| `shows` | What the object looks like when the scene appears, before any answer: `look`, `mark` and `unmark`, like `look rotting-pot; mark smell`. Each can take `if`: `look store-jar if legacy pottery-communal` |
+| `text` | The situation. Aim for 20 to 45 words |
+| `left`, `right` | The two answers, 2 to 8 words each |
+| `left preview`, `right preview` | A few words under each answer, shown before choosing |
+| `left result`, `right result` | What happened, shown above the next scene. 5 to 20 words |
+| `left effects`, `right effects` | What each answer does (below) |
+| `conditions` | When the scene can appear (below) |
+| `weight` | How likely it is when several fit. Default 1 |
+| `weather` | Optional weather from `world.json`, like `rain` |
+
+## When scenes appear
+
+- **opening**: the first scene of a life. Usually conditioned on the featured problem, like `problem pottery-household`.
+- **investigation**: the working scenes. The game prefers one that can establish an observation the project still needs.
+- **callback**: at most one per life, by the third decision at the latest. It's the scene where the last life's choices come back, gated on what actually happened (`lid-habit`, `previous absorbent-cup`, `history pottery-communal`).
+- **proof**: one decision. A proof scene only appears if both its answers can resolve. An answer with `commit pottery` needs the recipe met. An answer with `fail absorbent-cup` always resolves. Give each project at least one proof whose answers both `fail`, for lives that didn't get there.
+- **aftermath**: three decisions after a success. `step = 0`, `step = 1` and `step = 2` pick which one. The last usually offers the legacy choice.
+- `next <scene>` in an answer makes that scene come next, if its conditions still hold.
+- No scene repeats within a life. `once` in the conditions means once per timeline.
+- The game prefers a different speaker from the last scene's.
 
 ## Effects
 
-Separate effects with `;`.
+Separate effects with `;`. Add `if <condition>` to make one conditional: `look woven-pot if lined`.
 
 | Write | Does |
 |---|---|
-| `Food -10`, `Gods +15` | Moves a meter, by this era's label or its role (`people`, `resources`, `belief`, `power`) |
-| `Gods = 100` | Sets a meter (100 or 0 kills) |
-| `tinder +2` | Adds hidden points toward an invention |
-| `set kept_naysayer`, `clear kept_naysayer` | Turns a flag on or off |
-| `refused_wheel +1` | Counts on a flag |
-| `use sparks` | Marks the answer as using an ancestor's invention (shows a badge) |
-| `next stampede-2` | Forces the next card (scenes) |
-| `die fa-wheel-chase` | A special death from `deaths.csv` |
-| `invent sparks` | Commits an invention outright (scripted moments like the tutorial) |
+| `danger +1`, `danger -1`, `danger = 0` | Moves Danger (it never goes below 0; 6 kills) |
+| `observe holds-water` | Establishes an observation |
+| `look fired-pot` | Changes the object to `art/objects/<project>/fired-pot.svg` |
+| `mark smoke`, `unmark smoke` | Adds or removes the overlay `art/overlays/smoke.svg` |
+| `commit pottery` | In a proof scene: this life invented pottery (if its recipe is met) |
+| `fail fragrant-larder` | In a proof scene: this life leaves that failed design |
+| `legacy pottery-household` | In a proof or aftermath scene: how the invention spreads (the last pick wins) |
+| `because pottery` | Marks the answer "Possible because of" that invention's capability. Gate the scene with `has pottery` |
+| `next prov-loose` | The next scene |
+| `death vessel-kiln` | If this answer kills, use this death |
+| `set taught`, `clear taught`, `count +1` | Flags (declare them in `flags.csv`) |
 
 ## Conditions
 
-Separate conditions with `;`. All must hold. Use `or` for alternatives within one condition.
+Separate conditions with `;`. All must hold. Use `or` or `|` for alternatives within one condition, and `not` in front of any of them.
 
 | Write | Means |
 |---|---|
-| `Food < 30`, `Gods >= 70` | Meter comparisons (`<`, `<=`, `>`, `>=`, `=`, `!=`) |
-| `kept_naysayer`, `not kept_naysayer` | A flag is on or off |
-| `refused_wheel >= 2` | A counting flag |
-| `has cave-art`, `not has cave-art` | An invention exists in this timeline (made in an earlier life) |
-| `made tinder`, `made any`, `made nothing` | What this life has invented so far (for aftermath cards) |
-| `cards < 3`, `life >= 2` | Cards played this life; which life this is within the era |
+| `has pottery` | That invention exists in this timeline |
+| `observed sealed` | This life has established that observation |
+| `made pottery`, `made any`, `made nothing` | What this life's proof committed |
+| `failed bird-feeder`, `failed any` | This life's failed design |
+| `problem pottery-household` | The featured problem this life inherited |
+| `legacy preservation-larders` | This life's current legacy choice |
+| `history pottery-communal` | Any earlier invention in this timeline spread that way |
+| `previous absorbent-cup` | What the last life left (an invention or a failed design) |
+| `look drying-rack`, `mark salt` | The object's current look, or an overlay on it |
+| `seen tut-6` | That scene has already come up in this life |
+| `era stone`, `project provisions` | Where and what |
+| `danger >= 4`, `step = 2`, `decisions < 3`, `life = 1`, `lives >= 2` | Comparisons (`<`, `<=`, `>`, `>=`, `=`, `!=`). `step` counts decisions within the current phase; `life` is this inventor's number and `lives` the lives finished in the timeline |
+| `taught`, `not taught`, `count >= 2` | Flags |
 | `once` | Only once per timeline |
-| `repeat` | May come back within the same life (cards normally don't) |
 
-## How inventions work (the short version)
+## Recipes
 
-- Answers add hidden points toward inventions.
-- After 6 cards, once an invention's points reach its `threshold` and its `requires` were invented in earlier lives, one of its trigger cards appears within 3 draws.
-- Swipe the matching side and that's this life's invention, revealed on the epitaph. Swipe the other side and it's off the table for the rest of the life.
-- Die without a breakthrough and you get a bad idea from this era, leaning toward what you earned points for.
-- Inventing an era's keystone ends the era: "Centuries pass", then the next one.
+A recipe lists observations joined by `+`, and all of them are needed. Alternatives are joined by `|`, and any one set will do: `sealed + dried | sealed + salted`.
 
-Tuning values (the 6 cards, the 3 draws, dot sizes) live in `world.json` under `tuning`.
+## Names in text
 
-## Art
+| Write | Becomes |
+|---|---|
+| `{name}` | This inventor |
+| `{previous}` | The last inventor |
+| `{maker}` | In `legacies.csv` and `failures.csv`: whoever made it |
+| `{maker:pottery}` | Whoever first made that invention in this timeline |
 
-There are no emoji in this game. Every picture is flat vector art, one SVG file per picture in `art/`, and the checker rejects emoji anywhere in the content. `art/README.md` covers the house style, the canvas sizes and where each kind of picture goes. Open `tools/art.html` (on the live site too) to see every picture at once.
+## Pictures
 
-- A new character needs `art/characters/<portrait>.svg`, a 288 × 360 card face.
-- A new invention's icon is `art/inventions/<icon>.svg` at 64 × 64. A missing icon shows as a question mark and the checker warns you.
-- A new era's meters need four one-colour glyphs in `art/meters/`, each 48 × 48.
+There are no emoji in this game. Every picture is flat vector art, one SVG file per picture in `art/`, and the checker rejects emoji anywhere in the content. `art/README.md` covers the house style and the canvas sizes. Open `tools/art.html` (on the live site too) to see every picture stacked the way the game stacks them.
 
-## Scenes: skies and weather
+- Every look a scene names needs `art/objects/<project>/<look>.svg`. Every mark needs `art/overlays/<mark>.svg`. The checker lists anything missing, with the row that asked for it.
+- Marks listed under `transient` in `world.json` (a glint, steam, a puff of smoke) last for one scene, then clear themselves.
+- A new era needs a workbench in `art/benches/`. A new character needs a portrait in `art/characters/`.
 
-The background changes as you play. Each era in `world.json` has a `sky` list (day, dusk, night, dawn); the sky moves on every `skyEvery` cards (in `tuning`), and each inventor starts at a different time of day. Night skies can bring their own effects, like stars.
+## Skies and weather
 
-A card or death can set a scene in its `scene` column. Scenes live in `world.json`:
+Each era in `world.json` has a `sky` list (day, dusk, night, dawn). The sky moves on every `skyEvery` decisions (in `tuning`), and each inventor starts at a different time of day.
+
+A scene can set weather in its `weather` column. Weather lives in `world.json`:
 
 ```json
-"scenes": {
-  "rain":    { "bg": "#18222c", "fx": ["rain"] },
-  "volcano": { "bg": "#2d1210", "fx": ["embers", "smoke", "shake"] },
-  "sparks":  { "fx": ["sparks"] }
+"weather": {
+  "rain":  { "bg": "#18222c", "fx": ["rain"] },
+  "fire":  { "bg": "#2c170c", "fx": ["flames", "embers"] },
+  "birds": { "fx": ["birds"] }
 }
 ```
 
-- `bg` changes the sky while the scene is up. Leave it out to keep the time of day (and add the scene's effects to it).
-- `fx` picks from these effects: `rain`, `lightning`, `embers`, `smoke`, `flames`, `sparks`, `dust`, `stars`, `fireflies`, `grain`, `birds`, `shake`. A new effect needs code in `src/ui/fx.js`; a new scene is just data.
-- Keep skies dark: the text is light. The checker warns when a sky doesn't leave enough contrast.
-- To see a scene without playing to it, open the game with `?dev`, then Dev, pick a scene, Preview scene.
+- `bg` changes the sky while the scene is up. Leave it out to keep the time of day, and add the effects to it.
+- `fx` picks from these effects: `rain`, `lightning`, `embers`, `smoke`, `flames`, `sparks`, `dust`, `stars`, `fireflies`, `grain`, `birds`, `shake`. A new effect needs code in `src/ui/fx.js`; new weather is just data.
+- Keep skies dark, because the text is light. The checker warns when a sky doesn't leave enough contrast.
+- To preview weather without playing to it, open `tools/fx.html`, or the game with `?dev`, then Dev, then Preview weather.
 
+## House style
+
+The budgets are spec 14.4's, and the checker warns past them. They're editorial targets, not a reason to write fragments.
+
+- Scene: 20 to 45 words. Answer: 2 to 8. Result: 5 to 20. Epitaph lines: 15 to 40 together.
+- Every callback must be gated by something that actually happened. The epitaph's joke must agree with the recorded events.
+- The humour targets decisions, institutions, ambition and unintended consequences, never the people for having simpler tools. Include real wonder and competent collaboration. Occasionally, something should work beautifully.
+
+## Checking your work
+
+- `node tools/check.mjs`: errors and warnings, as above.
+- `npm test`: the engine's rules, including every tutorial branch.
+- `node tools/simulate.mjs --runs 300 --policy random`: plays thousands of lives and reports how they went. The policies are `random`, `cautious`, `reckless`, `discovery`, `legacy` and `refuse`.

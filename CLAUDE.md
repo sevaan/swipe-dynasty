@@ -1,35 +1,35 @@
-# Swipe Dynasty
+# One Bright Idea
 
-A mobile-first swipe card game modeled on Reigns, where the dynasty is the history of technology. "Swipe Dynasty" is the repo's codename; the game is "Untitled Swipe Game" until it has a name.
+A mobile-first narrative invention game: one life, one invention, and everyone else deals with it. Each inventor works one project through investigation, proof and aftermath, swiping between two approaches. Their contribution changes what the next inventor inherits. "Swipe Dynasty" is the repo's codename; the working title is One Bright Idea.
 
-Read `design-notes.md` before doing anything. It is the source of truth for the design: approved Decisions, then Pending proposals and Implementation notes near the end. It came out of a brainstorm on claude.ai (Sep 25, 2026) that was run as a comedy writers' room. If brainstorming continues in the Claude Doc, re-sync `design-notes.md` from it before building on the new material.
+Read `spec.md` before doing anything: it is the source of truth (v1.0, Sep 26, 2026, written by Sevaan). Then read the "Decisions since the spec" section at the top of `design-notes.md`. The rest of design-notes is the earlier Reigns-style design, kept as history and as a mine for jokes. Where the two disagree, the spec wins.
 
 ## Tech constraints
 
 - Plain HTML, CSS and JavaScript modules. No build step, no dependencies. GitHub Pages serves `main` as-is.
-- Phone first: real touch swiping, with the card tilting and previewing which meters each choice affects. Swipe is the only input (arrow keys work on desktop, for testing).
-- Content lives in `content/` as spreadsheet-style CSV plus `world.json`, separate from engine code, so new cards never need logic changes. `content/README.md` is the writer's guide to the cell syntax.
+- Phone first. Swiping the workbench left or right previews an answer, and releasing past about 28% of its width commits it (there's no flick shortcut). Two visible answer buttons and the arrow keys do the same thing (spec §12).
+- Content lives in `content/` as spreadsheet-style CSV plus `world.json`, separate from engine code, so new scenes and projects never need logic changes. `content/README.md` is the writer's guide to the cell syntax.
 - `src/engine/` has no DOM code. The browser, `tools/simulate.mjs` and the tests all run the same engine.
-- Saves and settings persist in localStorage.
+- The game saves after every choice: a snapshot in IndexedDB (localStorage if that's unavailable), with the one before it kept. Each write checks a revision number, so a stale second tab can't overwrite a newer game. Settings live in localStorage. Export and import in Settings move a save by hand.
 - No emoji anywhere (Sevaan's call). Every picture is flat vector art like Reigns: one SVG per picture in `content/art/`, drawn to the house style in `content/art/README.md`. `tools/art.html` shows them all, and the checker validates them (the canvas size, and no scripts, text or outside links).
 - Text is Atkinson Hyperlegible Next, chosen for legibility. Keep the readability rules in design-notes.md: nothing players need to read is italic, faded or blinking, and secondary text uses `--muted` (at least 6:1).
-- Skies and weather are data: scenes in `content/world.json`, picked by a card's or death's `scene` column, and drawn as flat shapes by `src/ui/fx.js`. Preview any scene from the `?dev` panel or `tools/fx.html`.
+- Skies and weather are data: `weather` in `content/world.json`, picked by a scene's `weather` column, and drawn as flat shapes by `src/ui/fx.js`. Preview any weather from the `?dev` panel or `tools/fx.html`.
 
 ## Before pushing
 
 - `npm test` (Node 18+, no install needed).
 - `node tools/check.mjs` must show 0 errors.
-- For balance changes, `node tools/simulate.mjs --runs 300 --policy human` and compare lives per era with the 3–6 target.
+- For balance changes, run `node tools/simulate.mjs --runs 300` with `--policy random` and with `--policy cautious`. Check life length (spec §5.5: 10–12 choices, 8 in the first life), how often lives invent, fail or die in danger, and that the inherited-history callback lands by decision 3.
 
 ## Phone workflow
 
-- The live test build is https://sevaan.github.io/swipe-dynasty/, rebuilt about a minute after each push to `main`. Add `?dev` for the debug panel (state, hidden points, skip ahead).
+- The live test build is https://sevaan.github.io/swipe-dynasty/, rebuilt about a minute after each push to `main`. Add `?dev` for the debug panel (state, observations, skip to proof, grant an invention, preview weather).
 - Sevaan sometimes codes from a phone through Claude Code sessions on this repo. Those sessions work on a branch, and nothing is testable on the phone until it's merged to `main`. On "ship it", run the checks above, then merge to `main` and push.
 - A service worker (`sw.js`) makes phones fetch fresh files on every load. Keep it small; don't add caching strategies to it without a reason.
 
-## Writing cards
+## Writing scenes
 
-Comedy first. Short, punchy card text: 25 words or fewer per question, 5 or fewer per answer. Death cards carry the biggest jokes. The recurring cast (the Naysayer, your mother, the time-traveling advisor, the tutorial guy, the unexplained animal, the neighbours) is described in design-notes.md.
+Comedy first, from conflicting reasonable desires (spec §14). Budgets from spec §14.4: a scene 20–45 words, answers 2–8, results 5–20, an epitaph 15–40; the checker warns past them. Every callback is gated by something that actually happened, and the epitaph's joke agrees with the recorded events. The old cast carries over as roles (see "Decisions since the spec" in design-notes.md): the cousin is the practical assistant, the elder the patron, the neighbours the rival, the Naysayer the skeptic, and the stranger the time-machine setup. `content/README.md` is the writer's guide to the tables and cell syntax.
 
 ## Working agreement
 

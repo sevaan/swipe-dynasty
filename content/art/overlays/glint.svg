@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240">
+  <!-- Overlay: a glint of success -->
+  <!-- bright four-point sparkles at the top edges -->
+  <path fill="#fffaf0" d="M120 69Q122 78 131 80Q122 82 120 91Q118 82 109 80Q118 78 120 69ZM203 88.5Q204.3 94.7 210.5 96Q204.3 97.3 203 103.5Q201.7 97.3 195.5 96Q201.7 94.7 203 88.5ZM188 57Q188.9 61.1 193 62Q188.9 62.9 188 67Q187.1 62.9 183 62Q187.1 61.1 188 57Z"/>
+  <g fill="#f2c94c"><circle cx="110" cy="96" r="1.8"/><circle cx="214" cy="84" r="1.5"/></g>
+</svg>

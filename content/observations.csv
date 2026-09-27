@@ -1,0 +1,7 @@
+id,project,text,notes
+holds-shape,vessel,Holds its shape,
+survives-heat,vessel,Survives heating,
+holds-water,vessel,Keeps water inside,
+dried,provisions,Drying makes it last,
+salted,provisions,Salt draws the water out,
+sealed,provisions,Sealing keeps the air out,

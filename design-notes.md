@@ -1,8 +1,21 @@
-# Untitled Swipe Game — Writers' Room Notes
+# One Bright Idea — Writers' Room Notes
 
 Sep 25, 2026 · @Sevaan Franks
 
-_Synced from the Claude Doc (rev 49) on Sep 25, 2026, replacing an earlier, out-of-date export. This file is the source of truth for the build: record new decisions here, and move dropped ideas to the Graveyard instead of deleting them. If brainstorming continues in the Claude Doc, re-sync this file before building on it._
+**Read `spec.md` first.** Since Sep 26, 2026 the game is **One Bright Idea**, and `spec.md` (v1.0, written by Sevaan) is the source of truth for how it works. This file keeps the decisions made since the spec (next section), the Graveyard, and the history: everything below "Decisions since the spec" comes from the earlier Reigns-style design (the Claude Doc, rev 49). Where the old notes and the spec disagree, the spec wins; the old material stays as a mine for jokes, characters and eras. Record new decisions in the next section, and move dropped ideas to the Graveyard instead of deleting them.
+
+## Decisions since the spec
+
+- **The spec replaces the Reigns-style structure (Sep 26, Sevaan).** The pieces it drops are in the Graveyard under "The Reigns-style design".
+- **Art stays flat vector (Sep 26, Sevaan).** The spec's §13.1 asks for pixel-art objects. The flat, Reigns-like style chosen the same day wins: workbench objects, overlays and scenes are SVG in `content/art/`, drawn to `content/art/README.md`. The character portraits become the small figures beside the object.
+- **The old cast carries over as roles (Sep 26, Sevaan).** The old cards are retired, and the characters map onto the spec's voices where they fit:
+  - The cousin is the practical assistant ("Every era has a cousin. It's never the same cousin.").
+  - The elder is the Stone Age patron. The neighbours are the rival.
+  - The Naysayer is the recurring skeptic.
+  - The stranger from the future sets up the time-machine ending.
+  - The mother still asks if you're eating, which fits the food lives.
+  - The goose stays as story material.
+- **Milestone 1 first (Sep 26).** Build the spec's Milestone 1, the pottery-to-preservation causal prototype, then stop for Sevaan's playtest against its exit condition.
 
 ## The pitch
 
@@ -431,6 +444,20 @@ Meters: Harvest, Village, Priests, The Neighbours.
 
 Discarded, but kept in case something here comes back.
 
+**The Reigns-style design (Sep 25–26), replaced by `spec.md`**
+
+- **Four survival meters per era** (Tribe, Food, Gods, Fire and their era renames), with death at either end. Replaced by one visible Danger track.
+- **Hidden invention points** that built up from answers, and random trigger cards that offered the breakthrough once points passed a threshold. Replaced by visible observations, recipes and a guaranteed proof scene.
+- **Random bad ideas at death** ("Invented the rock pillow"). Replaced by failed designs of the active project.
+- **The deck of character portraits** as the main picture. Replaced by the changing object on a workbench.
+- **The Family Tree.** Replaced by a causal history of contributions.
+- **The first 11-era route** (Stone Age with fire as the keystone, then Farming with the plough). Replaced by the spec's campaign map.
+- **The first content:** the fire tutorial, and the Stone Age and Farming decks (about 90 cards).
+  - They're in git history, before the "One Bright Idea" commit.
+  - Jokes worth salvaging: the mother's "You look like a stick with hair", the Naysayer's Museum hints, "Promoted.", the tutorial guy who dies on card 3, and the rock pillow.
+- **The P1–P8 plan-review proposals** under "Pending proposals". The spec settles those questions differently.
+- **Dice** (Sep 26, pitched and cut): rolling to choose for the player. The spec cuts dice from the core game.
+
 **8-bit pixel art (the first look, Sep 25–26)**
 
 - The first builds drew every picture as 16- and 24-pixel sprites written as text, one character per pixel from a shared palette, with stepped corners and chunky pixel weather.
@@ -505,6 +532,8 @@ A sixth mock, a flat Reigns-like version of the current layout, was then chosen 
 
 ## Pending proposals
 
+_Superseded by `spec.md` (Sep 26): kept for the record only._
+
 These are the defaults the first build uses where the Decisions above are silent. They come from the Sep 25 plan review (`swipe-game-plan-proposed.md`) and are not approved Decisions yet. Confirm or change each one, or move it to the Graveyard.
 
 - **Dying without a breakthrough (P1):** you get a bad idea related to what your choices leaned toward, never a free stepping stone or keystone. Once all of an era's bad ideas have been used in this timeline, a life can "reinvent" one ("Invented the rock pillow, again"). Reinventions add no Museum entry and count toward nothing.
@@ -523,18 +552,32 @@ These are the defaults the first build uses where the Decisions above are silent
 
 ## Implementation notes
 
+Updated Sep 26 for the One Bright Idea engine (Milestone 1).
+
 - **Stack:** plain HTML, CSS and JavaScript modules with no build step. GitHub Pages serves `main` at https://sevaan.github.io/swipe-dynasty/.
-- **Content:** CSV files in `content/`, one row per card, per the authoring Decision. The browser parses them at load time with the same code the checker uses. The syntax is in `content/README.md`.
-- **Engine:** `src/engine/` has no page code, so the game, the tests and the simulation bot all run the same rules. Each swipe resolves in one atomic step, then autosaves.
-- **Tuning values:** the trigger window, minimum cards before a breakthrough, dot sizes and character caps live in `content/world.json`, not in code.
-- **Scenes:** `world.json` lists the scenes (a sky colour plus effects) and each era's four skies; cards and deaths pick a scene in their `scene` column. The effects are drawn in `src/ui/fx.js` as smooth flat shapes at about 30 frames a second, behind the cards. `tools/fx.html` previews any scene. Reduce motion freezes them, and Settings can turn them off. The checker warns when a sky is too light for the era's text.
-- **Text:**
-  - The font loads from Google Fonts (a link in `index.html`); offline, the system font takes over.
-  - The question keeps three lines of room above the card, so the card holds still between cards. The card shrinks to fit short screens, using a container query on the deck.
-  - `fx.setQuiet()` gets the boxes around the words from `app.js` and fades the weather inside them.
+- **Content:** CSV tables plus `world.json` in `content/`: projects, observations, inventions, legacy packages, failed designs, deaths, flags, characters, and one scene file per project. The browser parses them at load time with the same code the checker uses. The cell syntax is in `content/README.md`.
+- **Engine:**
+  - `src/engine/` has no page code, so the game, the tests and the simulation bot all run the same rules.
+  - State has three scopes: life, timeline and collection.
+  - Each choice resolves in one atomic step, in spec §16.6's order, then saves.
+  - A scene's definition is frozen into the save when it's shown, so a content update never changes a scene while it waits for an answer.
+  - Randomness is seeded and saved, so a reload never rerolls anything.
+- **Scheduling (§16.5):**
+  - Follow-ups come first, then one inherited-history callback per life (by decision 3 at the latest). After that, a scene that can establish missing evidence, then anything that fits.
+  - A proof scene is only chosen if both its answers resolve to something real.
+- **Tuning values:** Danger's maximum, the investigation and aftermath lengths, the callback deadline, the stall rule and the sky's pace live under `tuning` in `content/world.json`, not in code.
+- **Saves (§16.7):** each save is an IndexedDB snapshot, with the one before it kept. A revision check stops a stale tab from overwriting a newer game. localStorage stands in when IndexedDB isn't available, and export and import are in Settings.
+- **Screen (§12):**
+  - The layers, top to bottom: context, the workbench (bench, object, overlays), evidence chips, Danger and the phase, the situation, and two answer buttons.
+  - To answer, swipe the workbench past 28% of its width, tap a button, or press an arrow key.
+  - The workbench is 4:3 on short screens and grows up to square on tall ones. Workbench art paints 80 units of bleed above and below its frame, so the taller box still looks finished.
+  - With large text on a small screen, the situation scrolls; the answers never leave the screen.
+- **Between lives (§12.6):** the epitaph (the object as an exhibit, then the three-part placard), then one line of inheritance, then the next life. History (Discoveries, Lives, Connections) is in the menu and never forced.
+- **Weather:** `world.json` has each era's skies and a `weather` list, and scenes pick weather in their `weather` column. `src/ui/fx.js` draws it as flat shapes at about 30 frames a second. `fx.setQuiet()` thins it behind the words, reduce motion freezes it, and Settings can turn it off. `tools/fx.html` previews any weather.
+- **Text:** the font loads from Google Fonts (a link in `index.html`); offline, the system font takes over.
 - **Art:**
-  - Every picture is an SVG in `content/art/` (characters 288 × 360, invention icons 64 × 64, meter glyphs and interface pieces 48 × 48), named after the id that uses it. The house style is in `content/art/README.md`.
-  - The browser shows colour art as images and one-colour glyphs as CSS masks, so meters and icons take each era's text colour.
-  - The checker reads every file. It reports missing pictures, the wrong canvas size, and anything unsafe or unportable: scripts, `<text>`, embedded images, outside links.
-  - `tools/art.html` shows them all. The Museum draws an unfound invention as a pale silhouette of its icon.
+  - Every picture is an SVG in `content/art/`: characters at 288 × 360; workbenches, object states (one folder per project) and overlays at 320 × 240; interface pieces at 48 × 48. The house style is in `content/art/README.md`.
+  - The browser shows colour art as images and one-colour glyphs as CSS masks.
+  - The checker reads every file. It reports missing pictures, the wrong canvas size, and anything unsafe or unportable (scripts, `<text>`, embedded images, outside links).
+  - `tools/art.html` shows them all, stacked the way the game stacks them.
   - This is first-draft art, and there's no sound yet.

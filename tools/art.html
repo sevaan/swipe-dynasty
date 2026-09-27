@@ -8,27 +8,29 @@
   <style>
     body { margin: 0; padding: 16px; background: #2a1c14; color: #f4e7cd; font: 14px/1.4 "Atkinson Hyperlegible Next", system-ui, sans-serif; }
     h1 { font-size: 18px; margin: 0 0 4px; }
-    h2 { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; opacity: .75; margin: 24px 0 10px; }
-    p { margin: 0 0 8px; opacity: .85; }
+    h2 { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #d9ccb3; margin: 24px 0 10px; }
+    p { margin: 0 0 8px; color: #e6d9bf; }
     .grid { display: flex; flex-wrap: wrap; gap: 14px; }
-    figure { margin: 0; display: grid; justify-items: center; gap: 6px; }
-    figcaption { font: 12px ui-monospace, Menlo, monospace; opacity: .8; }
+    figure { margin: 0; display: grid; justify-items: center; align-content: start; gap: 6px; }
+    figcaption { font: 12px ui-monospace, Menlo, monospace; color: #e6d9bf; text-align: center; max-width: 220px; }
     .card { width: 144px; height: 180px; border-radius: 12px; overflow: hidden; background: #3b2a1e; box-shadow: 0 4px 0 rgb(0 0 0 / 30%); }
     .card img { display: block; width: 100%; height: 100%; }
+    /* The workbench stack, as the game draws it: 4:3 on short phones, up to square on tall ones */
+    .bench { position: relative; width: 200px; height: 150px; border-radius: 12px; overflow: hidden; background: #3b2a1e; box-shadow: 0 4px 0 rgb(0 0 0 / 30%); }
+    .bench.square { height: 200px; }
+    .bench img { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .pair { display: flex; gap: 10px; align-items: flex-start; }
     .tile { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 12px; background: #3b2a1e; }
-    .ghost { filter: brightness(0) invert(1); opacity: .22; }
     .glyph { position: relative; width: 48px; height: 48px; }
-    .glyph span { position: absolute; inset: 0; -webkit-mask: var(--art) center / contain no-repeat; mask: var(--art) center / contain no-repeat; }
-    .glyph .g { background: rgb(244 231 205 / 24%); }
-    .glyph .f { background: #f4e7cd; clip-path: inset(40% 0 0 0); }
+    .glyph span { position: absolute; inset: 0; background: #f4e7cd; -webkit-mask: var(--art) center / contain no-repeat; mask: var(--art) center / contain no-repeat; }
     .small { width: 22px; height: 22px; }
-    .missing { outline: 2px solid #ff8a7a; }
+    .missing { outline: 2px solid #ff8a7a; outline-offset: -2px; }
     .errors { white-space: pre-wrap; font: 12px ui-monospace, Menlo, monospace; color: #ffb4a8; }
   </style>
 </head>
 <body>
   <h1>Art gallery</h1>
-  <p>Every picture the game uses, from <code>content/art/</code> (see its README). Meters show at 60% full. A red outline means the file is missing.</p>
+  <p>Every picture the game uses, from <code>content/art/</code> (see its README), stacked the way the game stacks them. Workbenches show at 4:3 and at square, the tallest the game draws them. A red outline means a file is missing.</p>
   <div id="out"></div>
   <script type="module">
     import { loadContentWeb } from '../src/content/load-web.js';
@@ -40,13 +42,36 @@
     if (errors.length) out.insertAdjacentHTML('beforeend', `<div class="errors">${errors.map((e) => `${e.file}:${e.line} ${e.message}`).join('\n')}</div>`);
     const refs = artReferences(content);
     const ids = (kind) => [...new Set(refs.filter((r) => r.kind === kind).map((r) => r.id))];
-    const img = (kind, id, attrs = '') => `<img src="${artURL(kind, id)}" alt="" ${attrs} onerror="this.classList.add('missing')">`;
-    const mask = (kind, id, cls = '') => `<div class="glyph ${cls}" style="--art: url('${artURL(kind, id)}')"><span class="g"></span><span class="f"></span></div>`;
+    const img = (kind, id, attrs = '') => `<img src="${artURL(kind, id)}" alt="" ${attrs} onerror="this.parentElement.classList.add('missing')">`;
+    const mask = (kind, id, cls = '') => `<div class="glyph ${cls}"><span style="--art: url('${artURL(kind, id)}')"></span></div>`;
     const section = (title, cells) => out.insertAdjacentHTML('beforeend', `<h2>${title}</h2><div class="grid">${cells.join('')}</div>`);
+    const stack = (layers, cls = '') => `<div class="bench ${cls}">${layers.map(([kind, id]) => img(kind, id)).join('')}</div>`;
+    const benchOf = (project) => content.eras[content.projects[project]?.era]?.bench || content.eras[content.eraOrder[0]].bench;
+
+    section('Workbenches (320 × 240, with bleed above and below)', ids('benches').map((id) => `<figure><div class="pair">${stack([['benches', id]])}${stack([['benches', id]], 'square')}</div><figcaption>${id}</figcaption></figure>`));
+
+    for (const project of content.projectOrder) {
+      const looks = ids('objects').filter((id) => id.startsWith(`${project}/`));
+      const bench = benchOf(project);
+      section(`${content.projects[project].name}: object states (${project})`, looks.map((id) => `<figure>${stack([['benches', bench], ['objects', id]])}<figcaption>${id.slice(project.length + 1)}</figcaption></figure>`));
+    }
+
+    // Each overlay over the starting state of the first project that uses it
+    const firstProject = (mark) => {
+      for (const sid of content.sceneOrder) {
+        const s = content.scenes[sid];
+        const ops = [...(s.shows || []), ...s.options.left.ops, ...s.options.right.ops];
+        if (ops.some((o) => o.t === 'mark' && o.id === mark)) return s.project;
+      }
+      return content.projectOrder[0];
+    };
+    section('Overlays (320 × 240)', ids('overlays').map((id) => {
+      const p = firstProject(id);
+      return `<figure>${stack([['benches', benchOf(p)], ['objects', `${p}/${content.projects[p].look}`], ['overlays', id]])}<figcaption>${id}${content.transient.includes(id) ? ' · lasts one scene' : ''}</figcaption></figure>`;
+    }));
+
     const who = (id) => Object.values(content.characters).filter((c) => c.portrait === id).map((c) => c.name || c.id).join(', ');
     section('Characters (288 × 360)', ids('characters').map((id) => `<figure><div class="card">${img('characters', id)}</div><figcaption>${id}${who(id) ? ` · ${who(id)}` : ''}</figcaption></figure>`));
-    section('Inventions (64 × 64)', ids('inventions').map((id) => `<figure><div class="tile">${img('inventions', id, 'width="64" height="64"')}${img('inventions', id, 'width="20" height="20"')}${img('inventions', id, 'width="40" height="40" class="ghost"')}</div><figcaption>${id}</figcaption></figure>`));
-    section('Meters (48 × 48)', content.eraOrder.flatMap((e) => Object.values(content.eras[e].meters).map((m) => `<figure><div class="tile">${mask('meters', m.icon)}</div><figcaption>${m.icon} · ${m.label}</figcaption></figure>`)));
     section('Interface (48 × 48)', UI_ART.map((id) => `<figure><div class="tile">${id === 'hand' ? `<div style="background:#ecd9b4;border-radius:8px;padding:6px">${img('ui', id, 'width="48" height="48"')}</div>` : `${mask('ui', id)}${mask('ui', id, 'small')}`}</div><figcaption>${id}</figcaption></figure>`));
   </script>
 </body>

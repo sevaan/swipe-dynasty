@@ -1,60 +1,33 @@
-// The game state machine. Everything that changes the game goes through
-// newGame, choose or advance; each takes a state and returns a new one plus
-// events for the UI to animate. No DOM, no clock, no Math.random: the same
-// seed and the same swipes always give the same game.
+// The game: three scopes of state (life, timeline, collection), the phases of
+// a life, and one atomic step per choice (spec 5, 8 and 16). No page code, so
+// the browser, the tests and the simulation bot all run exactly this.
 
-import { applyEffects, conditionsHold } from './rules.js';
-import { drawNext, getCard, inventionReady, present, refreshTriggerQueue } from './deck.js';
-import { random, seedFrom } from './rng.js';
+import { pickWeighted, seedFrom } from './rng.js';
+import { applyEffects, conditionsHold, viable } from './rules.js';
+import { pickScene, present } from './schedule.js';
 
-export const SAVE_VERSION = 1;
-const ROLE_ORDER = ['people', 'resources', 'belief', 'power'];
+export const SAVE_VERSION = 2;
+const clone = (x) => JSON.parse(JSON.stringify(x));
 
-const clone = (x) => (typeof structuredClone === 'function' ? structuredClone(x) : JSON.parse(JSON.stringify(x)));
-const tune = (content, key, fallback) => (typeof content.tuning?.[key] === 'number' ? content.tuning[key] : fallback);
-
-export function inventionName(content, id) {
-  return content.inventions[id]?.name || 'nothing in particular';
+function note(state, message) {
+  state.diagnostics.push({ turn: state.turn, message });
+  if (state.diagnostics.length > 30) state.diagnostics.shift();
 }
 
-function pickName(state, content, era) {
-  const names = content.eras[era].names;
-  let unused = names.filter((n) => !state.timeline.names.includes(n));
-  if (!unused.length) { state.timeline.names = []; unused = names; }
-  const name = unused[Math.floor(random(state) * unused.length)];
-  state.timeline.names.push(name);
-  return name;
+function reject(state, reason) {
+  return { state, events: [{ type: 'rejected', reason }] };
 }
 
-function startLife(state, content, events) {
-  const { timeline } = state;
-  const era = content.eras[timeline.era];
-  const start = tune(content, 'startMeter', 50);
-  state.life = {
-    n: timeline.lives + 1,
-    eraLife: timeline.eraLives + 1,
-    era: era.id,
-    name: pickName(state, content, era.id),
-    meters: Object.fromEntries(ROLE_ORDER.map((r) => [r, start])),
-    cards: 0,
-    seen: {}, recent: [], speakers: {}, lastSpeaker: null,
-    points: {}, made: null, suppressed: [], queue: null,
-    flags: {}, next: null, current: null, uses: [],
-    stats: { triggerDelays: [], fallbacks: 0, relaxed: 0 },
-  };
-  state.phase = 'play';
-  state.pending = null;
-  state.transition = null;
-
-  if (timeline.lives === 0 && era.id === content.start.era && content.cards[content.start.card]) {
-    present(state, content, content.start.card, 'start');
-  } else if (era.opener && !timeline.openers[era.id] && content.cards[era.opener]) {
-    timeline.openers[era.id] = true;
-    present(state, content, era.opener, 'opener');
-  } else {
-    drawNext(state, content, events);
-  }
-  events.push({ type: 'life', name: state.life.name, era: era.id, n: state.life.n });
+// {name} is this inventor, {previous} the last one, {maker} whoever made the
+// thing a legacy line is about, {maker:pottery} whoever first made pottery.
+export function fillText(text, state, extra = {}) {
+  const archive = state.collection.archive;
+  return String(text ?? '').replace(/\{(name|previous|maker)(?::([a-z0-9-]+))?\}/g, (whole, key, id) => {
+    if (key === 'name') return state.life?.name ?? extra.name ?? 'you';
+    if (key === 'previous') return state.timeline.previous?.name ?? 'someone';
+    if (id) return archive[(state.timeline.makers[id] || 0) - 1]?.name ?? 'someone';
+    return extra.maker ?? 'someone';
+  });
 }
 
 export function newGame(content, { seed } = {}) {
@@ -68,175 +41,298 @@ export function newGame(content, { seed } = {}) {
     phase: 'play',
     timeline: {
       n: 1, era: content.start.era, lives: 0, eraLives: 0,
-      history: [], flags: {}, seen: {}, names: [], openers: {}, done: false,
+      techs: [], makers: {}, legacies: {}, problem: null, previous: null,
+      flags: {}, seen: {}, names: [], failures: {}, stall: 0, ending: null,
     },
     life: null,
-    collection: { found: {}, deaths: {}, flags: {}, meters: {}, archive: [] },
+    collection: { found: {}, failures: {}, endings: {}, archive: [], flags: {}, tutorialDone: false },
     pending: null,
     transition: null,
     diagnostics: [],
   };
-  startLife(state, content, []);
+  startLife(state, content, [], content.start.project || null);
   return state;
 }
 
-// Which meter killed you, if any. Ties go to the bigger overshoot, then role order.
-function terminal(state) {
-  let worst = null;
-  const causes = [];
-  for (const role of ROLE_ORDER) {
-    const v = state.life.meters[role];
-    let over = null;
-    if (v <= 0) over = { role, end: 'low', by: -v };
-    if (v >= 100) over = { role, end: 'high', by: v - 100 };
-    if (over) {
-      causes.push(over);
-      if (!worst || over.by > worst.by) worst = over;
-    }
+// Projects the next inventor could take on: in this era, prerequisites met,
+// and something left to make. After a stall, prefer a missing required
+// discovery (spec 9.4); a project invited by the featured problem comes first.
+function chooseProject(state, content) {
+  const { timeline } = state;
+  const era = content.eras[timeline.era];
+  const open = content.projectOrder.map((id) => content.projects[id]).filter((p) => p.era === era.id
+    && p.requires.every((r) => timeline.techs.includes(r))
+    && p.outcomes.some((o) => !timeline.techs.includes(o)));
+  if (!open.length) return null;
+  let pool = open;
+  if (timeline.stall >= content.tuning.stallLives) {
+    const missing = new Set([...era.required, era.keystone].filter((x) => x && !timeline.techs.includes(x)));
+    const helpful = open.filter((p) => p.outcomes.some((o) => missing.has(o)));
+    if (helpful.length) pool = helpful;
   }
-  return worst ? { ...worst, causes } : null;
+  const invited = (p) => timeline.problem && Object.values(content.scenes).some((s) => s.project === p.id && s.phase === 'opening'
+    && s.cond.all.some((c) => c.any.some((a) => a.t === 'problem' && a.id === timeline.problem.legacy && !a.neg)));
+  return pickWeighted(state, pool, (p) => p.weight * (invited(p) ? 4 : 1));
 }
 
-// Dying without a breakthrough gives a bad idea, leaning toward what this
-// life earned points for. Never a stepping stone or keystone (proposal P1).
-function fallbackBadIdea(state, content) {
-  const bad = content.inventionOrder.map((id) => content.inventions[id])
-    .filter((i) => i.era === state.life.era && i.type === 'bad');
-  if (!bad.length) return { inv: null, again: false };
-  const fresh = bad.filter((i) => !state.timeline.history.includes(i.id));
-  const pool = fresh.length ? fresh : bad;
-  const pts = state.life.points;
-  const score = (i) => (pts[i.id] || 0) + i.related.reduce((sum, r) => sum + (pts[r] || 0), 0);
-  const top = Math.max(...pool.map(score));
-  const best = pool.filter((i) => score(i) === top);
-  const pick = best.length === 1 ? best[0] : best[Math.floor(random(state) * best.length)];
-  return { inv: pick.id, again: fresh.length === 0 };
+function pickName(state, era) {
+  const used = new Set(state.timeline.names);
+  const fresh = era.names.filter((n) => !used.has(n));
+  const pool = fresh.length ? fresh : era.names;
+  return pickWeighted(state, pool, () => 1);
 }
 
-function finishLife(state, content, deathId, cause, events) {
+function startLife(state, content, events, forcedProject = null) {
+  const { timeline } = state;
+  const era = content.eras[timeline.era];
+  const project = forcedProject ? content.projects[forcedProject] : chooseProject(state, content);
+  if (!project) {
+    state.phase = 'end';
+    state.life = null;
+    events.push({ type: 'end' });
+    return;
+  }
+  state.life = {
+    n: timeline.lives + 1, eraLife: timeline.eraLives + 1,
+    name: pickName(state, era), era: era.id, project: project.id,
+    phase: 'investigation', invest: 0, after: 0, decisions: 0, danger: 0,
+    observed: [], look: project.look, marks: [], markAge: {},
+    legacy: null, made: null, failed: null,
+    flags: {}, queue: [], seen: [], lastSpeaker: null, current: null,
+  };
+  state.phase = 'play';
+  events.push({ type: 'life', name: state.life.name, project: project.id });
+  if (!nextScene(state, content, {})) {
+    note(state, `Project ${project.id} has no scenes at all`);
+    finishLife(state, content, { kind: 'natural' }, events);
+  }
+}
+
+// Picks and presents the next scene. If an investigation runs out of scenes it
+// goes to proof; returns false when nothing can be shown (the life concludes).
+function nextScene(state, content, carry) {
+  const diag = (m) => note(state, m);
+  let picked = pickScene(state, content, diag);
+  if (!picked && state.life.phase === 'investigation') {
+    diag(`Ran out of investigation scenes for ${state.life.project}, so it goes to proof early`);
+    state.life.phase = 'proof';
+    state.life.queue = [];
+    picked = pickScene(state, content, diag);
+  }
+  if (!picked) {
+    if (state.life.phase === 'proof') diag(`No proof scene fits ${state.life.project}`);
+    return false;
+  }
+  present(state, content, picked.scene, picked.how, carry);
+  return true;
+}
+
+// The failed design a life leaves when nothing was committed: the first of
+// its project's failures whose conditions hold.
+function fallbackFailure(state, content) {
+  const project = content.projects[state.life.project];
+  const list = project.failures.map((id) => content.failures[id]).filter(Boolean);
+  return (list.find((f) => conditionsHold(f.cond, state, content)) || list[0])?.id || null;
+}
+
+function pickDeath(state, content, cause) {
+  if (cause.death && content.deaths[cause.death]) return content.deaths[cause.death];
+  const kind = cause.kind === 'danger' ? 'danger' : 'natural';
+  // A death with weight 0 is only used when the fatal answer names it
+  const list = content.deathOrder.map((id) => content.deaths[id])
+    .filter((d) => d.kind === kind && d.weight > 0 && (!d.project || d.project === state.life.project) && conditionsHold(d.cond, state, content));
+  const specific = list.filter((d) => d.project);
+  const pool = specific.length ? specific : list;
+  if (!pool.length) {
+    return { id: null, kind, text: kind === 'danger' ? 'The work got more dangerous than you did.' : 'You grew old, then older, then history.' };
+  }
+  return pickWeighted(state, pool, (d) => d.weight);
+}
+
+// A life ends: exactly one contribution is recorded, and its technology and
+// legacy (if it made anything real) are published to the timeline.
+function finishLife(state, content, cause, events) {
   const { life, timeline, collection } = state;
   const era = content.eras[life.era];
-  let inv;
-  let again = false;
-  let line;
+  let result;
   if (life.made) {
-    inv = life.made.inv;
-    line = life.made.epitaph || `Invented ${inventionName(content, inv)}.`;
+    result = { kind: 'invention', id: life.made.inv, status: timeline.techs.includes(life.made.inv) ? 'reinvention' : 'original' };
   } else {
-    ({ inv, again } = fallbackBadIdea(state, content));
-    line = `Invented ${inventionName(content, inv)}${again ? ', again' : ''}.`;
+    const id = life.failed || fallbackFailure(state, content);
+    result = { kind: 'failure', id, status: (timeline.failures[id] || 0) > 0 ? 'reinvention' : 'failed' };
   }
-  const death = content.deaths[deathId] || { id: deathId, text: 'You died.', epitaph: 'Died.' };
-  const kind = content.inventions[inv]?.type || 'bad';
+  const inv = result.kind === 'invention' ? content.inventions[result.id] : null;
+  const fail = result.kind === 'failure' ? content.failures[result.id] : null;
+  const legacyId = inv ? (life.legacy || inv.legacies[0] || null) : null;
+  const legacy = legacyId ? content.legacies[legacyId] : null;
+  const death = pickDeath(state, content, cause);
+  const i = collection.archive.length + 1;
 
+  const refs = [];
+  if (inv) for (const r of inv.requires) if (timeline.makers[r]) refs.push({ record: timeline.makers[r], why: 'enabled' });
+  if (timeline.problem?.from) refs.push({ record: timeline.problem.from, why: 'problem' });
+
+  const made = inv
+    ? (inv.made || `Invented ${inv.name}.`)
+    : `Invented ${fail?.name || 'something'}${result.status === 'reinvention' ? ', again' : ''}.`;
   const record = {
-    i: collection.archive.length + 1,
-    timeline: timeline.n, life: life.n, eraLife: life.eraLife, era: life.era,
-    name: life.name, inv, again, kind,
-    breakthrough: !!life.made,
-    death: death.id, cause, cards: life.cards,
-    line, epitaph: `${line} ${death.epitaph}`.trim(), deathText: death.text,
-    keystone: !!inv && inv === era.keystone && !again,
-    newFind: false, newDeath: false,
+    i, timeline: timeline.n, life: life.n, eraLife: life.eraLife, era: life.era, project: life.project,
+    name: life.name, result, legacy: legacyId,
+    death: { kind: death.kind, id: death.id, text: fillText(death.text, state) },
+    epitaph: {
+      made: fillText(made, state),
+      ended: fillText(death.text, state),
+      legacy: fillText(legacy ? legacy.epitaph : fail?.epitaph || '', state),
+    },
+    inherit: '',
+    closing: fillText(cause.result || '', state),
+    // A legacy changed by the very last choice is announced on the epitaph (spec 8.4)
+    notice: cause.notice && content.legacies[cause.notice.to] ? { changed: !!cause.notice.from, text: content.legacies[cause.notice.to].adoption } : null,
+    look: (fail && fail.look) || life.look, marks: [...life.marks], observed: [...life.observed],
+    danger: life.danger, decisions: life.decisions, refs,
+    keystone: !!inv && era.keystone === inv.id && result.status === 'original',
+    newFind: false,
   };
-  if (inv && !again && !timeline.history.includes(inv)) timeline.history.push(inv);
-  if (inv && !collection.found[inv]) { collection.found[inv] = { first: record.i }; record.newFind = true; }
-  if (!collection.deaths[death.id]) record.newDeath = true;
-  collection.deaths[death.id] = (collection.deaths[death.id] || 0) + 1;
-  collection.archive.push(record);
+
+  if (inv && result.status === 'original') {
+    timeline.techs.push(inv.id);
+    timeline.makers[inv.id] = i;
+    timeline.legacies[inv.id] = legacyId;
+    timeline.problem = { legacy: legacyId, from: i };
+    if (!collection.found[inv.id]) { collection.found[inv.id] = { first: i }; record.newFind = true; }
+  } else if (fail) {
+    // The world's problem stays; the next life hears about the attempt (spec 8.5).
+    timeline.failures[fail.id] = (timeline.failures[fail.id] || 0) + 1;
+    if (!collection.failures[fail.id]) record.newFind = true;
+    collection.failures[fail.id] = (collection.failures[fail.id] || 0) + 1;
+  }
+  const required = inv && result.status === 'original' && (era.required.includes(inv.id) || era.keystone === inv.id);
+  timeline.stall = required ? 0 : timeline.stall + 1;
+  timeline.previous = { kind: result.kind, id: result.id, record: i, name: life.name };
+  record.inherit = fillText(legacy ? legacy.inherit : fail?.inherit || '', state, { maker: life.name });
   timeline.lives += 1;
   timeline.eraLives += 1;
+  timeline.names.push(life.name);
+  if (life.project === content.start.project && life.n === 1) collection.tutorialDone = true;
+  collection.archive.push(record);
 
   state.pending = record;
   state.phase = 'epitaph';
   life.current = null;
-  life.queue = null;
   events.push({ type: 'death', record });
 }
 
-function reject(state, reason) {
-  return { state, events: [{ type: 'rejected', reason }] };
-}
-
-// Resolves one swipe, atomically (see design-notes.md, Implementation notes):
-// effects, then a breakthrough, then death, then the next card.
+// Resolves one choice, atomically, in the spec's order (16.6):
+// validate, effects, proof commitment, danger death, phase, contribution, next scene.
 export function choose(prev, content, action) {
   if (prev.phase !== 'play' || !prev.life?.current) return reject(prev, 'not playing');
-  if (action.turn !== prev.turn || action.card !== prev.life.current.card) return reject(prev, 'stale input');
+  if (action.turn !== prev.turn || action.scene !== prev.life.current.id) return reject(prev, 'stale input');
   if (action.side !== 'left' && action.side !== 'right') return reject(prev, 'bad side');
 
   const state = clone(prev);
   const events = [];
-  const { life, collection } = state;
-  const card = getCard(content, life.current.card);
-  const offer = life.current;
-  const res = applyEffects(card[action.side].ops, state, content, events);
-  life.cards += 1;
+  const { life } = state;
+  const opt = life.current.def.options[action.side];
+  life.decisions += 1;
+  events.push({ type: 'choice', scene: life.current.id, side: action.side });
 
-  for (const e of [...events]) {
-    if (e.type === 'meter' && !collection.meters[e.role]) {
-      collection.meters[e.role] = true;
-      events.push({ type: 'lit', role: e.role });
+  const out = applyEffects(opt.ops, state, content, events);
+
+  // A breakthrough commits before death is checked, so a fatal proof still counts.
+  if (life.phase === 'proof' && !life.made && !life.failed) {
+    if (out.commit && viable(state, content, out.commit)) {
+      life.made = { inv: out.commit };
+      events.push({ type: 'commit', inv: out.commit });
+    } else if (out.commit) {
+      note(state, `A proof answer tried to commit ${out.commit} without its recipe; it counts as a failed design`);
+      life.failed = fallbackFailure(state, content);
+    } else if (out.fail) {
+      life.failed = out.fail;
+      events.push({ type: 'fail', id: out.fail });
     }
+  } else if (out.commit || out.fail) {
+    note(state, `Ignored "${out.commit ? `commit ${out.commit}` : `fail ${out.fail}`}": only a proof scene can decide the result, once`);
   }
 
-  // A breakthrough commits before death is checked, so a fatal one still counts.
-  if (!life.made) {
-    let inv = null;
-    if (res.invent) inv = res.invent;
-    else if (card.type === 'trigger' && offer.trigger) {
-      if (action.side === card.trigger.side) inv = card.trigger.inv;
-      else life.suppressed.push(card.trigger.inv);
-    }
-    if (inv) {
-      life.made = { inv, card: card.id, epitaph: card.epitaph };
-      if (random(state) < tune(content, 'tellChance', 0.5)) events.push({ type: 'tell' });
+  // The legacy choice, which must belong to what this life made. The latest
+  // explicit choice wins, and the screen says so when it changes (spec 8.4).
+  let notice = null;
+  if (out.legacy) {
+    const leg = content.legacies[out.legacy];
+    if (leg && life.made && leg.invention === life.made.inv) {
+      if (life.legacy !== out.legacy) notice = { from: life.legacy, to: out.legacy };
+      life.legacy = out.legacy;
+      events.push({ type: 'legacy', id: out.legacy, changed: !!notice?.from });
+    } else {
+      note(state, `Legacy ${out.legacy} doesn't belong to what this life made`);
     }
   }
-  if (card.type === 'trigger') life.queue = null;
+  if (out.ending) state.timeline.ending = out.ending;
 
-  const t = res.die ? null : terminal(state);
-  if (res.die || t) {
-    const deathId = res.die || content.deathIndex[life.era]?.[t.role]?.[t.end];
-    finishLife(state, content, deathId, t ? { role: t.role, end: t.end, all: t.causes } : { scripted: res.die }, events);
+  // Danger death
+  if (life.danger >= content.tuning.dangerMax) {
+    finishLife(state, content, { kind: 'danger', death: out.death, result: opt.result, notice }, events);
     state.turn += 1;
     return { state, events };
   }
 
-  if (res.next) life.next = res.next;
-  refreshTriggerQueue(state, content);
-  drawNext(state, content, events);
+  // Advance the phase
+  const project = content.projects[life.project];
+  let conclude = false;
+  if (life.phase === 'investigation') {
+    life.invest += 1;
+    const ready = project.outcomes.some((o) => viable(state, content, o));
+    if (life.invest >= project.investigation.max || (life.invest >= project.investigation.min && ready)) {
+      life.phase = 'proof';
+      life.queue = [];
+      events.push({ type: 'phase', phase: 'proof' });
+    }
+  } else if (life.phase === 'proof') {
+    if (!life.made && !life.failed) life.failed = fallbackFailure(state, content);
+    if (life.made) {
+      life.phase = 'aftermath';
+      life.queue = [];
+      events.push({ type: 'phase', phase: 'aftermath' });
+    } else {
+      conclude = true;
+    }
+  } else if (life.phase === 'aftermath') {
+    life.after += 1;
+    if (life.after >= content.tuning.aftermath) conclude = true;
+  }
+
+  if (!conclude && !nextScene(state, content, { result: fillText(opt.result, state), notice })) conclude = true;
+  if (conclude) {
+    if (life.phase === 'investigation' || (life.phase === 'proof' && !life.made && !life.failed)) life.failed = life.failed || fallbackFailure(state, content);
+    finishLife(state, content, { kind: 'natural', result: opt.result, notice }, events);
+  }
   state.turn += 1;
   return { state, events };
 }
 
-// Moves past the epitaph or the "Centuries pass" screen.
+// Moves past the epitaph, the inheritance line, or the era transition.
 export function advance(prev, content, action = {}) {
   if (action.turn != null && action.turn !== prev.turn) return reject(prev, 'stale input');
   const state = clone(prev);
   const events = [];
-  const { timeline } = state;
-
   if (state.phase === 'epitaph') {
-    const record = state.pending;
-    const era = content.eras[timeline.era];
-    if (record?.keystone && era.next && content.eras[era.next]) {
-      state.transition = { from: era.id, to: era.next, keystone: record.inv };
-      timeline.era = era.next;
-      timeline.eraLives = 0;
-      timeline.names = [];
+    state.phase = 'inherit';
+  } else if (state.phase === 'inherit') {
+    const rec = state.pending;
+    const era = content.eras[state.timeline.era];
+    if (rec?.keystone && era.next && content.eras[era.next]) {
+      state.transition = { from: era.id, to: era.next, record: rec.i };
+      state.timeline.era = era.next;
+      state.timeline.eraLives = 0;
       state.phase = 'transition';
-      state.pending = null;
       events.push({ type: 'era', from: era.id, to: era.next });
-    } else if (record?.keystone && !era.next) {
-      timeline.done = true;
-      state.phase = 'end';
-      state.pending = null;
-      events.push({ type: 'end' });
     } else {
+      state.pending = null;
       startLife(state, content, events);
     }
-  } else if (state.phase === 'transition' || state.phase === 'end') {
+  } else if (state.phase === 'transition') {
+    state.transition = null;
+    state.pending = null;
     startLife(state, content, events);
   } else {
     return reject(prev, 'nothing to advance');
@@ -245,113 +341,117 @@ export function advance(prev, content, action = {}) {
   return { state, events };
 }
 
-function dotSize(content, delta) {
-  const d = Math.abs(delta);
-  const dots = content.tuning?.dots || {};
-  if (d <= (dots.small ?? 6)) return 1;
-  if (d <= (dots.medium ?? 12)) return 2;
-  return 3;
-}
-
-function previewSide(state, content, side) {
-  const deltas = {};
-  for (const op of side.ops) {
-    if (op.t !== 'meter') continue;
-    const cur = state.life.meters[op.role] + (deltas[op.role] || 0);
-    deltas[op.role] = (deltas[op.role] || 0) + (op.op === '=' ? op.n - cur : op.n);
-  }
-  return {
-    label: side.label,
-    dots: Object.entries(deltas).filter(([, d]) => d !== 0).map(([role, d]) => ({ role, size: dotSize(content, d) })),
-    uses: side.uses.filter((inv) => state.timeline.history.includes(inv)),
-  };
-}
-
+// The sky for this moment: each era steps through its skies every few decisions.
 function skyFor(state, content, eraId) {
   const skies = content.eras[eraId]?.sky || [];
   if (!skies.length) return null;
   const life = state.life;
-  const every = Math.max(1, tune(content, 'skyEvery', 5));
-  const index = life ? (life.n + Math.floor(life.cards / every)) % skies.length : 0;
+  const every = Math.max(1, content.tuning.skyEvery);
+  const index = life ? (life.n + Math.floor(life.decisions / every)) % skies.length : 0;
   return skies[index];
 }
 
-export function eraView(content, eraId) {
-  const era = content.eras[eraId];
-  return {
-    id: era.id, name: era.name, when: era.when, intro: era.intro, theme: era.theme,
-    meters: ROLE_ORDER.map((role) => ({ role, ...era.meters[role] })),
-  };
+function dangerAfter(opt, state, content) {
+  let d = state.life.danger;
+  for (const op of opt.ops) {
+    if (op.t !== 'danger' || (op.when && !conditionsHold(op.when, state, content))) continue;
+    d = Math.max(0, op.op === '=' ? op.n : d + op.n);
+  }
+  return d;
 }
 
-// Everything the UI needs to draw the current moment, and nothing hidden
-// (no invention points, no trigger flags).
+function progressFor(state, content) {
+  const { life } = state;
+  const p = content.projects[life.project];
+  if (life.phase === 'investigation') {
+    const step = life.invest + 1;
+    return { phase: 'investigation', label: 'Investigating', step, min: p.investigation.min, max: p.investigation.max,
+      text: step <= p.investigation.min ? `${step} of ${p.investigation.min}` : 'still testing' };
+  }
+  if (life.phase === 'proof') return { phase: 'proof', label: 'Proving', text: 'one decision' };
+  const left = content.tuning.aftermath - life.after;
+  return { phase: 'aftermath', label: 'Aftermath', remaining: left, text: `${left} left` };
+}
+
+function charView(content, id) {
+  const c = id ? content.characters[id] : null;
+  return c ? { id: c.id, name: c.name, portrait: c.portrait, role: c.role } : null;
+}
+
+// Everything the screen needs to draw this moment, and nothing hidden:
+// no recipes, no pending follow-ups (spec 3.5).
 export function view(state, content) {
-  const eraId = state.life?.era || state.timeline.era;
-  const era = eraView(content, eraId);
+  const life = state.life;
+  const eraId = life?.era || state.timeline.era;
+  const era = content.eras[eraId];
   const out = {
     phase: state.phase,
     turn: state.turn,
-    era,
-    meters: era.meters.map((m) => ({
-      ...m,
-      value: state.life ? Math.max(0, Math.min(100, state.life.meters[m.role])) : 50,
-      lit: !!state.collection.meters[m.role],
-    })),
-    life: state.life && { n: state.life.n, eraLife: state.life.eraLife, name: state.life.name, cards: state.life.cards },
-    card: null,
-    pending: state.pending,
-    transition: null,
-    // Presentation: the time-of-day sky (it steps every few cards and each
-    // inventor starts at a different time) and the scene the card or death sets.
+    era: { id: era.id, name: era.name, theme: era.theme, bench: era.bench, intro: era.intro },
     sky: skyFor(state, content, eraId),
-    scene: null,
+    timeline: { lives: state.timeline.lives, techs: state.timeline.techs.map((t) => ({ id: t, name: content.inventions[t]?.name || t })) },
   };
-  if (state.phase === 'play' && state.life?.current) {
-    const card = getCard(content, state.life.current.card);
-    const who = content.characters[card.speaker] || { name: '', portrait: '?' };
-    out.card = {
-      id: card.id,
-      speaker: { id: card.speaker, name: who.name, portrait: who.portrait },
-      text: card.text,
-      left: previewSide(state, content, card.left),
-      right: previewSide(state, content, card.right),
-      hint: card.id === content.start.card && state.timeline.lives === 0,
+  if (state.phase === 'play' && life?.current) {
+    const def = life.current.def;
+    const project = content.projects[life.project];
+    out.inventor = { name: life.name, n: life.n, eraLife: life.eraLife };
+    out.project = { id: project.id, name: project.name, problem: fillText(project.problem, state) };
+    out.object = { project: life.project, look: life.look, marks: [...life.marks] };
+    out.evidence = life.observed.slice(-3).map((id) => ({ id, text: content.observations[id]?.text || id }));
+    out.danger = { value: life.danger, max: content.tuning.dangerMax };
+    out.progress = progressFor(state, content);
+    out.scene = {
+      id: def.id, phase: def.phase, text: fillText(def.text, state), speaker: charView(content, def.speaker),
+      result: life.current.result, weather: def.weather ? content.weather[def.weather] || null : null,
     };
-    out.scene = content.scenes?.[card.scene] || null;
+    const notice = life.current.notice;
+    if (notice && content.legacies[notice.to]) {
+      out.scene.notice = { changed: !!notice.from, text: content.legacies[notice.to].adoption };
+    }
+    out.options = {};
+    for (const side of ['left', 'right']) {
+      const opt = def.options[side];
+      const after = dangerAfter(opt, state, content);
+      out.options[side] = {
+        label: opt.label, preview: opt.preview,
+        danger: after - life.danger, fatal: after >= content.tuning.dangerMax,
+        because: opt.because.map((tech) => content.inventions[tech]?.capability || tech),
+      };
+    }
+    out.legacy = life.legacy ? { id: life.legacy, text: content.legacies[life.legacy]?.adoption || '' } : null;
+    out.made = life.made ? content.inventions[life.made.inv]?.name : null;
   }
-  if (state.phase === 'epitaph' && state.pending) {
-    out.scene = content.scenes?.[content.deaths[state.pending.death]?.scene] || null;
-  }
+  if ((state.phase === 'epitaph' || state.phase === 'inherit') && state.pending) out.record = state.pending;
   if (state.phase === 'transition' && state.transition) {
-    out.transition = {
-      from: eraView(content, state.transition.from),
-      to: eraView(content, state.transition.to),
-      carried: state.timeline.history.map((id) => ({ id, name: inventionName(content, id), icon: content.inventions[id]?.icon || id })),
-      skies: content.eras[state.transition.to].sky,
-    };
+    const to = content.eras[state.transition.to];
+    out.transition = { from: content.eras[state.transition.from]?.name, to: to?.name, intro: to?.intro, theme: to?.theme, skies: to?.sky || [] };
   }
   return out;
 }
 
-// A save made with older content: keep everything valid, redraw a card that
-// no longer exists, and drop inventions the content no longer has.
+// A loaded save, checked against today's content. A scene waiting for an
+// answer keeps its frozen definition; anything that no longer exists gets a
+// fresh start at a safe boundary.
 export function reconcile(saved, content) {
+  if (!saved || saved.save !== SAVE_VERSION) {
+    return { state: null, problem: saved ? "Your save is from an older version of the game, so a new timeline has started." : null };
+  }
   const state = clone(saved);
-  const events = [];
-  state.timeline.history = state.timeline.history.filter((id) => content.inventions[id]);
-  if (!content.eras[state.timeline.era]) state.timeline.era = content.start.era;
-  if (state.life && !content.eras[state.life.era]) {
-    state.life = null;
-    startLife(state, content, events);
+  state.diagnostics ||= [];
+  if (!content.eras[state.timeline.era]) {
+    return { state: null, problem: 'Your save refers to an era that no longer exists, so a new timeline has started.' };
   }
-  if (state.phase === 'play' && state.life?.current && !getCard(content, state.life.current.card)) {
-    state.life.current = null;
-    drawNext(state, content, events);
+  if (state.phase === 'play' && state.life) {
+    if (!content.projects[state.life.project]) {
+      note(state, `Project ${state.life.project} no longer exists; a new life begins`);
+      startLife(state, content, []);
+    } else if (!state.life.current) {
+      if (!nextScene(state, content, {})) finishLife(state, content, { kind: 'natural' }, []);
+    }
   }
-  if (state.phase === 'play' && !state.life?.current) startLife(state, content, events);
+  if (state.phase === 'play' && !state.life) startLife(state, content, []);
   state.content = content.hash;
-  return state;
+  return { state, problem: null };
 }
 
 // Developer shortcuts for testing on a phone (?dev). They bend the rules on
@@ -359,31 +459,26 @@ export function reconcile(saved, content) {
 export function devAction(prev, content, action) {
   const state = clone(prev);
   const events = [];
-  const { timeline, life } = state;
+  const { life, timeline } = state;
   switch (action.kind) {
     case 'grant':
-      if (content.inventions[action.inv] && !timeline.history.includes(action.inv)) {
-        timeline.history.push(action.inv);
-        state.collection.found[action.inv] ||= { first: 0 };
-      }
+      if (content.inventions[action.inv] && !timeline.techs.includes(action.inv)) timeline.techs.push(action.inv);
       break;
-    case 'points':
-      if (life) life.points[action.inv] = (life.points[action.inv] || 0) + (action.n || 5);
+    case 'observe':
+      if (life) for (const o of Object.values(content.observations)) if (o.project === life.project && !life.observed.includes(o.id)) life.observed.push(o.id);
+      break;
+    case 'danger':
+      if (life) life.danger = Math.max(0, Number(action.n) || 0);
+      break;
+    case 'proof':
+      if (state.phase === 'play' && life && life.phase === 'investigation') {
+        life.phase = 'proof';
+        life.queue = [];
+        if (!nextScene(state, content, {})) finishLife(state, content, { kind: 'natural' }, events);
+      }
       break;
     case 'kill':
-      if (state.phase === 'play' && life) {
-        const deathId = content.deathIndex[life.era]?.people?.low;
-        finishLife(state, content, deathId, { role: 'people', end: 'low', dev: true }, events);
-      }
-      break;
-    case 'era':
-      if (content.eras[action.era]) {
-        timeline.era = action.era;
-        timeline.eraLives = 0;
-        timeline.names = [];
-        if (timeline.lives === 0) timeline.lives = 1; // skip the tutorial
-        startLife(state, content, events);
-      }
+      if (state.phase === 'play' && life) finishLife(state, content, { kind: 'danger' }, events);
       break;
     default:
       return reject(prev, 'unknown dev action');
@@ -391,5 +486,3 @@ export function devAction(prev, content, action) {
   state.turn += 1;
   return { state, events };
 }
-
-export { conditionsHold, inventionReady };

@@ -1,8 +1,9 @@
-/* Untitled Swipe Game. Phone first, flat like Reigns: every picture is an SVG
-   in content/art (simple shapes, one hard shadow, no outlines), corners are
+/* One Bright Idea. Phone first, flat like Reigns: every picture is an SVG in
+   content/art (simple shapes, one hard shadow, no outlines), corners are
    rounded, motion is smooth. Each era sets its own colours on :root. Text
    stays in a readable font, at readable sizes and contrast: nothing a player
-   needs to read is italic, faded or blinking. */
+   needs to read is italic, faded or blinking. The screen's layers follow
+   spec 12.1: context, object, evidence, situation, choices. */
 
 :root {
   --bg: #2a1c14;
@@ -11,7 +12,8 @@
   --ink: #2a1c14;
   --text: #f4e7cd;
   --accent: #e8793a;
-  /* Secondary text: at least 6:1 on every sky, panel and gravestone */
+  --danger: #e4574a;
+  /* Secondary text: at least 6:1 on every sky and panel */
   --muted: color-mix(in srgb, var(--text) 80%, transparent);
   --sky: var(--bg);
   --scale: 1;
@@ -23,15 +25,6 @@
      drawn for legibility: I, l and 1 all differ, and it stays clear at small
      sizes. Without a connection it falls back to the system font. */
   --font: "Atkinson Hyperlegible Next", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  /* The question, and the room kept for it above the card (three lines
-     holds every current question on a 375px phone) */
-  --q-size: calc(1.3rem * var(--scale));
-  --q-lh: 1.34;
-  --q-lines: 3;
-  /* The gravestone is stone in every era */
-  --stone: #a99c8d;
-  --stone-ink: #231710;
-  --stone-soft: #3b2c22;
   color-scheme: dark;
 }
 
@@ -55,6 +48,8 @@ body {
   overflow: hidden;
   transition: background-color 900ms ease;
 }
+
+p { margin: 0; }
 
 /* Weather and ambient effects (src/ui/fx.js), behind everything else */
 .fx {
@@ -106,400 +101,453 @@ img.art {
   max-width: 480px;
   margin: 0 auto;
   display: grid;
-  grid-template-rows: auto 1fr auto;
-  padding: calc(env(safe-area-inset-top) + 10px) 16px calc(env(safe-area-inset-bottom) + 8px);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 8px;
+  padding: calc(env(safe-area-inset-top) + 10px) 14px calc(env(safe-area-inset-bottom) + 10px);
   position: relative;
   z-index: 1;
   user-select: none;
   -webkit-user-select: none;
 }
 
-/* Meters: a faint glyph, filled from the bottom to the meter's level */
+/* 1. Context: the inventor, the era, and the problem */
 
-.meters {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  padding-bottom: 6px;
+.context {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
 }
 
-.meter {
-  display: grid;
-  justify-items: center;
-  gap: 4px;
-  transition: opacity 500ms ease;
-}
-
-.meter .dot-slot {
-  height: 14px;
-  display: grid;
-  place-items: center;
-}
-
-.meter .dot {
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: var(--text);
-  transition: width 120ms ease, height 120ms ease;
-}
-
-.meter .dot[data-size="1"] { width: 6px; height: 6px; }
-.meter .dot[data-size="2"] { width: 10px; height: 10px; }
-.meter .dot[data-size="3"] { width: 14px; height: 14px; }
-
-.meter .icon {
-  position: relative;
-  width: 48px;
-  height: 48px;
-}
-
-.meter .icon span {
-  position: absolute;
-  inset: 0;
-  -webkit-mask: var(--art) center / contain no-repeat;
-  mask: var(--art) center / contain no-repeat;
-}
-
-.meter .icon .ghost { background: color-mix(in srgb, var(--text) 24%, transparent); }
-.meter .icon .fill {
-  background: var(--text);
-  clip-path: inset(var(--empty, 50%) 0 0 0);
-  transition: clip-path 480ms var(--ease-out);
-}
-
-.meter.unlit .fill { opacity: 0; }
-.meter.unlit .ghost { opacity: 0.45; }
-.meter.unlit .label { opacity: 0.3; }
-
-.meter .icon.danger .fill { animation: blink 0.9s steps(1, end) infinite; }
-.meter .icon.up { animation: bump-up 360ms var(--ease-out); }
-.meter .icon.down { animation: bump-down 360ms var(--ease-out); }
-.meter.just-lit .icon { animation: light-up 800ms var(--ease-out); }
-
-.meter .label {
-  font-size: calc(0.82rem * var(--scale));
-  font-weight: 600;
-  letter-spacing: 0.02em;
+.context .who { flex: 1; min-width: 0; }
+.context .line { font-size: calc(1rem * var(--scale)); line-height: 1.25; text-shadow: var(--lift); }
+.context .line strong { font-weight: 800; }
+.context .sep, .context #era { color: var(--muted); }
+.context .problem {
+  margin-top: 2px;
+  font-size: calc(0.86rem * var(--scale));
+  line-height: 1.3;
   color: var(--muted);
-  text-align: center;
-  line-height: 1.15;
-  max-width: 100%;
   text-shadow: var(--lift);
 }
 
-@keyframes blink { 50% { opacity: 0.35; } }
-@keyframes bump-up { 40% { transform: translateY(-6px); } }
-@keyframes bump-down { 40% { transform: translateY(6px); } }
-@keyframes light-up {
-  0% { transform: scale(0.75); }
-  50% { transform: scale(1.25); }
-}
-
-/* Stage: the question sits right on top of its card, the speaker's name sits
-   under it, and all three are centred together between the meters and the
-   footer. */
-
-.stage {
-  position: relative;
+.menu-btn, .close-btn {
   display: grid;
-  min-height: 0;
+  place-items: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--panel);
+  cursor: pointer;
 }
 
-.deck[hidden] { display: none; }
+.menu-btn .glyph { width: 26px; height: 26px; }
+.close-btn { width: 44px; height: 44px; border-radius: 12px; }
+.close-btn .glyph { width: 22px; height: 22px; }
 
-.deck {
-  /* A size container, so the card can shrink to fit short screens */
-  container-type: size;
+button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* The play area */
+
+.play {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  gap: 8px;
   min-height: 0;
-  padding-bottom: 6px;
-  --q-room: calc(var(--q-size) * var(--q-lh) * var(--q-lines) + 18px);
-  --name-room: calc(1.05rem * var(--scale) * 1.3 + 18px);
 }
 
-/* Room for three lines is kept whatever the length, and the text sits at the
-   bottom of it, so the card holds still between short and long questions. */
-.question {
-  flex: none;
-  align-self: stretch;
-  display: grid;
-  align-content: end;
-  min-height: var(--q-room);
-  margin: 0;
-  padding: 0 6px 18px;
-  font-size: var(--q-size);
-  font-weight: 500;
-  line-height: var(--q-lh);
-  text-align: center;
-  text-wrap: balance;
-}
+.play[hidden], .choices[hidden], .context[hidden] { display: none; }
 
-.pile {
-  position: relative;
+/* 2. The object on its workbench. It takes the room the rest leaves: 4:3 on
+   a short screen, up to square on a tall one (cq units measure the room it
+   has). The art is drawn on a 4:3 frame; workbenches paint past its top and
+   bottom edges, so the taller box still looks finished. */
+.bench-wrap {
+  flex: 1 1 0;
+  min-height: 132px;
+  container-type: size;
   display: grid;
   place-items: center;
 }
 
-.card {
+.bench {
   position: relative;
-  grid-area: 1 / 1;
-  /* 100cqh is the deck's height: what's left for the card once the question
-     and the name have their room, less the card behind and the shadow */
-  width: min(74vw, 310px, max(150px, (100cqh - var(--q-room) - var(--name-room) - 20px) * 0.8));
-  aspect-ratio: 4 / 5;
-  touch-action: none;
-  cursor: grab;
-  will-change: transform;
-  filter: drop-shadow(0 6px 0 rgb(0 0 0 / 30%));
-  -webkit-touch-callout: none;
-}
-
-.card:active { cursor: grabbing; }
-
-/* The face is the character's picture, edge to edge */
-.card-face {
-  position: relative;
-  height: 100%;
+  width: min(100cqw, 100cqh * 4 / 3);
+  height: min(100cqh, 100cqw);
   border-radius: 18px;
   overflow: hidden;
   background: var(--panel);
-  color: var(--ink);
+  box-shadow: 0 6px 0 rgb(0 0 0 / 30%);
+  touch-action: none;
+  cursor: grab;
+  will-change: transform;
 }
 
-.card-face .portrait {
+.bench:active { cursor: grabbing; }
+
+.bench .layer, .bench .marks img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
 }
 
-.card-face.missing::before {
-  content: '';
-  position: absolute;
-  inset: 30%;
-  background: var(--muted);
-  -webkit-mask: var(--missing-art) center / contain no-repeat;
-  mask: var(--missing-art) center / contain no-repeat;
+.bench #objectArt { transition: opacity 180ms ease; }
+.bench.changing #objectArt { opacity: 0.35; }
+.bench.bump { animation: bump 420ms var(--ease-out); }
+.bench.enter { animation: bench-in 320ms var(--ease-out); }
+
+@keyframes bump {
+  35% { transform: scale(1.03); }
+}
+@keyframes bench-in {
+  from { transform: translateY(10px) scale(0.96); opacity: 0.3; }
 }
 
-.card-back {
-  transform: translateY(9px) scale(0.955);
-  pointer-events: none;
-  filter: none;
-}
-
-.card-back .card-face { background: color-mix(in srgb, var(--panel) 85%, #000); }
-.card-back .card-face::after {
-  content: '';
-  position: absolute;
-  inset: 12px;
-  border-radius: 10px;
-  border: 3px solid color-mix(in srgb, var(--text) 10%, transparent);
-}
-
-.card.enter { animation: card-in 300ms var(--ease-out); }
-.card.wiggle { animation: wiggle 1.6s ease-in-out 400ms infinite; }
-
-/* A breakthrough on the last swipe: the next card flashes */
-.card.tell .card-face::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--accent);
-  opacity: 0;
-  animation: tell 900ms ease-out;
-  pointer-events: none;
-}
-
-@keyframes card-in {
-  from { transform: translateY(12px) scale(0.92); opacity: 0.2; }
-}
-@keyframes wiggle {
-  0%, 60%, 100% { transform: rotate(0); }
-  15% { transform: translateX(-14px) rotate(-5deg); }
-  35% { transform: translateX(14px) rotate(5deg); }
-}
-@keyframes tell {
-  25% { opacity: 0.45; }
-  50% { opacity: 0.15; }
-  70% { opacity: 0.35; }
-}
-
-.answer {
+/* The answer being previewed, on the edge that stays on screen */
+.peek {
   position: absolute;
   left: 0;
   right: 0;
   top: 0;
-  z-index: 1;
-  min-height: 3.2em;
-  padding: 12px 18px 10px;
-  background: color-mix(in srgb, var(--ink) 94%, transparent);
+  z-index: 2;
+  min-height: 3em;
+  padding: 11px 16px 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: color-mix(in srgb, var(--ink) 92%, transparent);
   color: var(--card);
   font-weight: 700;
-  font-size: calc(1.1rem * var(--scale));
+  font-size: calc(1.02rem * var(--scale));
   line-height: 1.2;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 7px;
   opacity: 0;
   transition: opacity 90ms linear;
+  pointer-events: none;
 }
 
-/* The card slides toward the side you pick, so each answer sits on the edge
-   that stays on screen. */
-.answer.left { align-items: flex-end; text-align: right; }
-.answer.right { align-items: flex-start; text-align: left; }
-.answer .line { display: flex; align-items: center; gap: 10px; }
-.answer .arrow { width: 22px; height: 22px; }
-.answer .uses-row { display: flex; flex-wrap: wrap; gap: 6px; }
-.answer.left .uses-row { justify-content: flex-end; }
-
-.uses {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 3px 9px 3px 4px;
-  border-radius: 999px;
-  background: var(--accent);
-  color: var(--ink);
-  font-size: 0.78em;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.uses img.art { width: 20px; height: 20px; }
-
-/* The name sits under the card, like a caption */
-.speaker {
-  flex: none;
-  margin: 18px 0 0;
-  min-height: 1.3em;
-  text-align: center;
-  font-weight: 800;
-  font-size: calc(1.05rem * var(--scale));
-  line-height: 1.3;
-  letter-spacing: 0.02em;
-  text-shadow: var(--lift);
-}
+.peek.left { justify-content: flex-end; text-align: right; }
+.peek.right { justify-content: flex-start; text-align: left; }
+.peek .glyph { width: 20px; height: 20px; }
 
 .hand {
   position: absolute;
-  bottom: 38%;
+  bottom: 18%;
   left: 50%;
-  width: 56px;
-  height: 56px;
+  z-index: 3;
+  width: 52px;
+  height: 52px;
   pointer-events: none;
   opacity: 0;
   transform: translateX(-50%);
   filter: drop-shadow(0 3px 0 rgb(0 0 0 / 25%));
 }
 
-.hand.show { animation: hand 1.6s ease-in-out 400ms infinite; }
+.hand.show { animation: hand 1.8s ease-in-out 500ms infinite; }
 
 @keyframes hand {
   0%, 100% { opacity: 0; transform: translateX(-50%); }
   10% { opacity: 1; }
-  25% { transform: translateX(-160%); opacity: 1; }
-  45% { transform: translateX(60%); opacity: 1; }
-  60% { opacity: 0; transform: translateX(-50%); }
+  28% { transform: translateX(-170%); opacity: 1; }
+  52% { transform: translateX(70%); opacity: 1; }
+  66% { opacity: 0; transform: translateX(-50%); }
 }
 
-/* Full-stage screens: epitaph, centuries pass, end */
+.bench.wiggle { animation: wiggle 1.8s ease-in-out 500ms infinite; }
 
-.screen {
+@keyframes wiggle {
+  0%, 62%, 100% { transform: rotate(0); }
+  18% { transform: translateX(-12px) rotate(-3deg); }
+  40% { transform: translateX(12px) rotate(3deg); }
+}
+
+/* 3. Evidence: up to three things this life has established */
+.evidence {
+  flex: none; /* only the workbench and the situation give up room */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  min-height: 28px;
+}
+
+.evidence li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 11px 4px 9px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--text) 14%, transparent);
+  font-size: calc(0.84rem * var(--scale));
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+/* A drawn tick, not a character */
+.evidence li::before {
+  content: '';
+  width: 5px;
+  height: 9px;
+  margin: -2px 1px 0;
+  border: solid var(--accent);
+  border-width: 0 2.5px 2.5px 0;
+  transform: rotate(45deg);
+}
+
+.evidence li.new { animation: pop 520ms var(--ease-out); background: color-mix(in srgb, var(--accent) 30%, transparent); }
+
+@keyframes pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.08); }
+}
+
+/* Danger (spec 7.1): six segments, a number and a word, not colour alone */
+.status {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2px 12px;
+  min-height: 24px;
+}
+
+.danger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: calc(0.84rem * var(--scale));
+  font-weight: 700;
+  white-space: nowrap;
+  text-shadow: var(--lift);
+}
+
+.danger .segs { display: flex; gap: 3px; }
+
+.danger .seg {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--text) 18%, transparent);
+}
+
+.danger .seg.on { background: var(--danger); }
+/* Previewing an answer: segments it would add blink, ones it would clear dim */
+.danger .seg.adds { background: var(--danger); animation: blink 0.8s steps(1, end) infinite; }
+.danger .seg.clears { background: color-mix(in srgb, var(--danger) 45%, transparent); }
+.danger.fatal .seg.adds { background: #ff8a7a; }
+
+@keyframes blink { 50% { opacity: 0.35; } }
+
+/* Small, and not styled like a resource (spec 12.1). On large text it
+   drops below Danger rather than breaking mid-phrase. */
+.phase {
+  margin-left: auto;
+  font-size: calc(0.84rem * var(--scale));
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--muted);
+  text-align: right;
+  text-shadow: var(--lift);
+}
+
+.phase b { color: var(--text); font-weight: 800; }
+
+/* 4. The situation. It may scroll on a small screen; the choices can't. */
+.situation {
+  flex: 0 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: grid;
+  gap: 7px;
+  padding-bottom: 2px;
+}
+
+.situation .result {
+  font-size: calc(0.95rem * var(--scale));
+  line-height: 1.4;
+  color: var(--muted);
+  text-shadow: var(--lift);
+}
+
+.situation .result:empty, .situation .notice:empty { display: none; }
+
+.situation .notice {
+  justify-self: start;
+  padding: 5px 11px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  font-size: calc(0.86rem * var(--scale));
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.speaker {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 30px;
+  font-size: calc(0.9rem * var(--scale));
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-shadow: var(--lift);
+}
+
+.speaker:not(.has) { display: none; }
+
+/* A small portrait of whoever is talking: a crop of their card, around the face */
+.face {
+  position: relative;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--panel);
+}
+
+.face img {
   position: absolute;
-  inset: 0;
-  z-index: 5;
+  width: 250%;
+  left: -75%;
+  top: -40%;
+}
+
+.situation .text {
+  font-size: calc(1.2rem * var(--scale));
+  font-weight: 500;
+  line-height: 1.38;
+  text-wrap: pretty;
+}
+
+/* 5. The two answers, always reachable */
+.choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.choice {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  min-height: 96px;
+  padding: 12px 13px 12px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--panel);
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 4px 0 rgb(0 0 0 / 30%);
+  transition: transform 120ms var(--ease-out), background-color 120ms linear;
+}
+
+.choice.right { text-align: right; }
+.choice .top { display: flex; align-items: flex-start; gap: 7px; }
+.choice.right .top { flex-direction: row-reverse; }
+.choice .glyph { width: 18px; height: 18px; margin-top: 2px; color: var(--muted); }
+.choice .label { font-size: calc(1rem * var(--scale)); font-weight: 800; line-height: 1.25; }
+.choice .preview { font-size: calc(0.84rem * var(--scale)); line-height: 1.3; color: var(--muted); }
+.choice .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 2px; }
+.choice.right .tags { justify-content: flex-end; }
+
+.choice .tag {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: calc(0.76rem * var(--scale));
+  font-weight: 800;
+  line-height: 1.35;
+  background: color-mix(in srgb, var(--text) 14%, transparent);
+}
+
+.choice .tag.danger { background: color-mix(in srgb, var(--danger) 26%, transparent); }
+.choice .tag.fatal { background: var(--danger); color: #fff; }
+.choice .tag.because { background: color-mix(in srgb, var(--accent) 24%, transparent); }
+
+.choice.hot { background: color-mix(in srgb, var(--accent) 34%, var(--panel)); transform: translateY(-2px); }
+.choice.pressed { transform: translateY(2px); box-shadow: 0 2px 0 rgb(0 0 0 / 30%); }
+.choice:disabled { cursor: default; }
+
+/* Between lives: the exhibit, the inheritance, a new era, the end */
+
+/* The screen takes the place of the object and the answers; the menu stays
+   reachable above it */
+.screen {
+  grid-row: 2 / 4;
+  grid-column: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  padding: 12px 8px 24px;
+  padding: 4px 4px 8px;
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: none;
   text-align: center;
-  background: transparent;
-  animation: fade-in 400ms ease;
   cursor: pointer;
 }
 
-.screen::-webkit-scrollbar { display: none; }
+.between .context .who { visibility: hidden; }
 
-/* Centred when it fits. When it doesn't (big text on a short phone) it starts
-   at the top and scrolls, instead of spilling over the meters and footer. */
+.screen::-webkit-scrollbar { display: none; }
+.screen[hidden] { display: none; }
+
+/* Centred when it fits; when it doesn't, it starts at the top and scrolls */
 .screen-in {
   margin-block: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
+  animation: fade-in 400ms ease;
 }
 
-.screen[hidden] { display: none; }
-
-/* How you died (or what the new era is): the joke, so it reads like one */
-.screen .scene {
-  margin: 0 0 4px;
-  font-size: calc(1.2rem * var(--scale));
-  font-weight: 500;
-  line-height: 1.38;
-  max-width: 20em;
+.screen .closing {
+  max-width: 22em;
+  font-size: calc(1.02rem * var(--scale));
+  line-height: 1.4;
+  color: var(--muted);
+  text-shadow: var(--lift);
   text-wrap: balance;
 }
 
-/* The gravestone: a rounded slab with one lit edge and one shaded, on a
-   mound, with the words cut into it */
-.grave {
+/* The completed object, on a museum plinth */
+.exhibit {
   position: relative;
-  padding-bottom: 16px;
-}
-
-.grave::after {
-  content: '';
-  position: absolute;
-  left: -14px;
-  right: -14px;
-  bottom: 0;
-  height: 30px;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--sky) 55%, #000);
-  z-index: -1;
-}
-
-.stone {
-  position: relative;
-  width: min(72vw, 280px);
-  padding: 30px 22px 26px;
-  border-radius: 140px 140px 14px 14px / 118px 118px 14px 14px;
-  background: var(--stone);
-  color: var(--stone-ink);
+  width: min(84vw, 330px);
+  aspect-ratio: 4 / 3;
+  border-radius: 18px;
   overflow: hidden;
+  background: var(--panel);
+  box-shadow: 0 6px 0 rgb(0 0 0 / 30%);
+}
+
+.exhibit img { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* The label beside the exhibit: what you made, how you died, what people did */
+.placard {
+  width: min(88vw, 360px);
   display: grid;
-  justify-items: center;
-  gap: 6px;
-  text-shadow: 0 1px 0 rgb(255 255 255 / 28%);
+  gap: 8px;
+  padding: 16px 18px 18px;
+  border-radius: 16px;
+  background: var(--card);
+  color: var(--ink);
+  text-align: left;
 }
 
-.stone::before, .stone::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-}
-
-.stone::before { left: 0; width: 8%; background: rgb(255 255 255 / 10%); }
-.stone::after { right: 0; width: 20%; background: rgb(0 0 0 / 11%); }
-.stone > * { position: relative; z-index: 1; }
-.stone img.art { width: 64px; height: 64px; }
-
-.stone .rip { margin-top: 4px; font-size: calc(0.8rem * var(--scale)); font-weight: 800; letter-spacing: 0.24em; color: var(--stone-soft); }
-.stone .name { font-size: calc(2rem * var(--scale)); font-weight: 800; line-height: 1.05; }
-.stone .epitaph { font-size: calc(1.15rem * var(--scale)); font-weight: 600; line-height: 1.32; text-wrap: balance; }
-.stone .meta { margin-top: 2px; font-size: calc(0.85rem * var(--scale)); color: var(--stone-soft); }
+.placard .rip { font-size: calc(0.76rem * var(--scale)); font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: color-mix(in srgb, var(--ink) 75%, transparent); }
+.placard .name { font-size: calc(1.8rem * var(--scale)); font-weight: 800; line-height: 1.05; }
+.placard .made { font-size: calc(1.15rem * var(--scale)); font-weight: 800; line-height: 1.3; }
+.placard .ended { font-size: calc(1rem * var(--scale)); line-height: 1.4; }
+.placard .legacy { font-size: calc(1rem * var(--scale)); line-height: 1.4; padding-top: 8px; border-top: 2px solid color-mix(in srgb, var(--ink) 15%, transparent); }
+.placard .meta { font-size: calc(0.82rem * var(--scale)); color: color-mix(in srgb, var(--ink) 75%, transparent); }
 
 .tags {
   display: flex;
@@ -519,35 +567,57 @@ img.art {
   background: color-mix(in srgb, var(--text) 18%, transparent);
 }
 
-.tag.keystone { background: var(--accent); color: var(--ink); }
+.tag.keystone, .tag.accent { background: var(--accent); color: var(--ink); }
 .tag.new { background: var(--text); color: var(--bg); }
+
+.screen .notice {
+  max-width: 24em;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  font-size: calc(0.9rem * var(--scale));
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.inherit .kicker, .screen .kicker {
+  font-size: calc(0.8rem * var(--scale));
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-shadow: var(--lift);
+}
+
+.inherit .statement {
+  max-width: 19em;
+  font-size: calc(1.45rem * var(--scale));
+  font-weight: 600;
+  line-height: 1.34;
+  text-wrap: balance;
+}
 
 .big {
   font-size: calc(2rem * var(--scale));
   font-weight: 800;
   line-height: 1.1;
-  margin: 0;
 }
 
 .era-name {
-  font-size: calc(2.4rem * var(--scale));
+  font-size: calc(2.2rem * var(--scale));
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--accent);
-  margin: 0;
 }
 
-.carried {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-  max-width: 26em;
+.screen .scene {
+  max-width: 20em;
+  font-size: calc(1.15rem * var(--scale));
+  font-weight: 500;
+  line-height: 1.4;
+  text-wrap: balance;
 }
-
-.carried .tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px 4px 6px; }
-.carried .tag img.art { width: 20px; height: 20px; }
 
 /* The words hold still; a small arrow after them blinks */
 .continue {
@@ -574,46 +644,6 @@ img.art {
 
 @keyframes blink-off { 50% { opacity: 0; } }
 @keyframes fade-in { from { opacity: 0; } }
-
-/* Footer */
-
-.bar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 48px;
-}
-
-/* A solid plate keeps the inventor's name readable over flames and weather */
-.who {
-  flex: 0 1 auto;
-  margin-right: auto;
-  padding: 8px 12px;
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--panel) 55%, #000);
-  font-size: calc(0.9rem * var(--scale));
-  color: var(--muted);
-  line-height: 1.3;
-}
-
-.who strong { color: var(--text); font-weight: 800; }
-
-.menu-btn, .close-btn {
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  border: 0;
-  border-radius: 14px;
-  background: var(--panel);
-  cursor: pointer;
-}
-
-.menu-btn .glyph { width: 26px; height: 26px; }
-.close-btn { width: 44px; height: 44px; border-radius: 12px; }
-.close-btn .glyph { width: 22px; height: 22px; }
-
-button:focus-visible { background: var(--accent); color: var(--ink); outline: none; }
 
 /* Menu panel */
 
@@ -643,7 +673,7 @@ button:focus-visible { background: var(--accent); color: var(--ink); outline: no
 
 .tabs {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 6px;
   margin: 6px 0 10px;
 }
@@ -653,7 +683,7 @@ button:focus-visible { background: var(--accent); color: var(--ink); outline: no
   border: 0;
   border-radius: 12px;
   background: var(--panel);
-  font-size: calc(0.8rem * var(--scale));
+  font-size: calc(0.86rem * var(--scale));
   font-weight: 800;
   cursor: pointer;
 }
@@ -677,12 +707,12 @@ button:focus-visible { background: var(--accent); color: var(--ink); outline: no
   color: var(--muted);
 }
 
-.panel-body .summary { color: var(--muted); font-size: calc(0.95rem * var(--scale)); margin: 4px 0 0; }
+.panel-body .summary { color: var(--muted); font-size: calc(0.95rem * var(--scale)); margin: 4px 0 0; line-height: 1.4; }
 
 .item {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 4px 14px;
+  gap: 3px 14px;
   padding: 12px 14px;
   margin-bottom: 8px;
   border-radius: 14px;
@@ -691,16 +721,15 @@ button:focus-visible { background: var(--accent); color: var(--ink); outline: no
   line-height: 1.4;
 }
 
-.item .pic { grid-row: span 2; align-self: center; width: 40px; height: 40px; display: grid; place-items: center; }
-.item .pic img.art { width: 40px; height: 40px; }
-.item .pic .glyph { width: 34px; height: 34px; }
-/* Unfound: a pale silhouette */
-.item .pic img.ghost { filter: brightness(0) invert(1); opacity: 0.22; }
-.item .pic .glyph.ghost { opacity: 0.22; }
+.item .pic { grid-row: span 3; align-self: center; position: relative; width: 64px; height: 48px; border-radius: 8px; overflow: hidden; background: color-mix(in srgb, var(--text) 8%, transparent); }
+.item .pic img { position: absolute; inset: 0; width: 100%; height: 100%; }
 .item .title { font-weight: 800; }
 .item .body { color: var(--muted); text-wrap: pretty; }
-.item .by { white-space: nowrap; }
-.item.locked .title { letter-spacing: 0.2em; }
+.item .link { font-size: calc(0.86rem * var(--scale)); color: var(--muted); }
+.item .link b { color: var(--text); }
+.item.chain { grid-template-columns: 1fr; gap: 6px; }
+.item.chain .body { color: var(--text); }
+.item.chain b { font-weight: 800; }
 
 .row {
   display: flex;
@@ -743,10 +772,11 @@ textarea.save-box {
 }
 
 .fine { color: var(--muted); font-size: calc(0.88rem * var(--scale)); line-height: 1.45; }
-.screen .fine { margin: 0; text-shadow: var(--lift); }
+.panel a { color: var(--text); font-weight: 700; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
 
-/* A picture that didn't load shows as a question mark */
+/* A picture that didn't load shows as a question mark, or not at all */
 .glyph.missing { opacity: 0.4; }
+img.art.broken { visibility: hidden; }
 
 /* Banner and errors */
 
@@ -792,7 +822,7 @@ textarea.save-box {
 .dev-btn {
   position: fixed;
   right: 10px;
-  bottom: calc(env(safe-area-inset-bottom) + 70px);
+  bottom: calc(env(safe-area-inset-bottom) + 132px);
   z-index: 25;
   padding: 8px 10px;
   border: 0;
@@ -811,7 +841,7 @@ textarea.save-box {
 
 .dev-actions { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
 
-/* Reduced motion: no flying, tilting or wiggling; quick changes instead */
+/* Reduced motion: no sliding, wiggling or popping; quick changes instead */
 
 .reduce-motion *, .reduce-motion *::before, .reduce-motion *::after {
   animation-duration: 1ms !important;
@@ -829,14 +859,10 @@ textarea.save-box {
   }
 }
 
-@media (max-height: 720px) {
-  .screen { padding-bottom: 12px; }
-  .screen-in { gap: 10px; }
-  .stone { padding: 18px 16px 18px; gap: 4px; }
-  .speaker { margin-top: 14px; }
-}
-
-@media (max-height: 640px) {
-  :root { --q-size: calc(1.15rem * var(--scale)); }
-  .meter .icon { width: 32px; height: 32px; }
+/* Short phones: tighter spacing, so the answers never leave the screen */
+@media (max-height: 700px) {
+  .app { gap: 6px; }
+  .play { gap: 6px; }
+  .choice { min-height: 84px; padding: 10px 11px; }
+  .situation .text { font-size: calc(1.1rem * var(--scale)); }
 }

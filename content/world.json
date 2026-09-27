@@ -1,112 +1,166 @@
 {
-  "title": "Untitled Swipe Game",
+  "title": "One Bright Idea",
   "files": {
     "characters": "characters.csv",
     "flags": "flags.csv",
+    "observations": "observations.csv",
+    "projects": "projects.csv",
     "inventions": "inventions.csv",
+    "legacies": "legacies.csv",
+    "failures": "failures.csv",
     "deaths": "deaths.csv",
-    "cards": ["cards/tutorial.csv", "cards/stone-age.csv", "cards/farming.csv"]
+    "scenes": [
+      "scenes/vessel.csv",
+      "scenes/provisions.csv"
+    ]
   },
   "start": {
-    "era": "stone-age",
-    "card": "tutorial-1"
+    "era": "stone",
+    "project": "vessel"
   },
   "tuning": {
-    "startMeter": 50,
-    "minCardsBeforeBreakthrough": 6,
-    "triggerWindow": 3,
-    "recentCards": 6,
-    "tellChance": 0.5,
-    "dots": {
-      "small": 6,
-      "medium": 12
-    },
-    "skyEvery": 5
+    "dangerMax": 6,
+    "investigationMin": 6,
+    "investigationMax": 8,
+    "aftermath": 3,
+    "callbackBy": 3,
+    "stallLives": 2,
+    "skyEvery": 4
   },
   "eras": [
     {
-      "id": "stone-age",
-      "name": "Stone Age",
-      "when": "A very long time ago",
-      "keystone": "firemaking",
+      "id": "stone",
+      "name": "The Stone Age",
+      "intro": "Small settlements, big ideas, and nowhere to keep anything.",
+      "required": [
+        "pottery",
+        "preservation"
+      ],
+      "optional": [
+        "rope",
+        "fermentation"
+      ],
+      "keystone": "seed-store",
       "next": "farming",
-      "fallback": "sa-nothing",
-      "theme": { "bg": "#2a1c14", "panel": "#3b2a1e", "card": "#ecd9b4", "ink": "#2a1c14", "text": "#f4e7cd", "accent": "#e8793a" },
-      "sky": [
-        { "name": "day", "bg": "#2a1c14" },
-        { "name": "dusk", "bg": "#331a22" },
-        { "name": "night", "bg": "#121828", "fx": ["stars"] },
-        { "name": "dawn", "bg": "#2e2317" }
-      ],
-      "meters": {
-        "people": {
-          "label": "Tribe",
-          "icon": "tribe"
-        },
-        "resources": {
-          "label": "Food",
-          "icon": "food"
-        },
-        "belief": {
-          "label": "Gods",
-          "icon": "gods"
-        },
-        "power": {
-          "label": "Fire",
-          "icon": "fire"
-        }
+      "bench": "stone",
+      "theme": {
+        "bg": "#2a1c14",
+        "panel": "#3b2a1e",
+        "card": "#ecd9b4",
+        "ink": "#2a1c14",
+        "text": "#f4e7cd",
+        "accent": "#e8793a"
       },
-      "names": ["Oog", "Grak", "Ula", "Mek", "Thud", "Bonk", "Pebble", "Crag", "Moss", "Yuna", "Rukk", "Nib"]
-    },
-    {
-      "id": "farming",
-      "name": "Farming",
-      "when": "Some thousands of years later",
-      "intro": "Somebody planted a seed on purpose, and everyone stopped walking.",
-      "opener": "fa-open",
-      "keystone": "plough",
-      "next": null,
-      "fallback": "fa-nothing",
-      "theme": { "bg": "#1d2716", "panel": "#2b3820", "card": "#efe4ba", "ink": "#1d2716", "text": "#eef0d8", "accent": "#d9a520" },
       "sky": [
-        { "name": "day", "bg": "#1d2716" },
-        { "name": "dusk", "bg": "#2c2410" },
-        { "name": "night", "bg": "#101a22", "fx": ["stars", "fireflies"] },
-        { "name": "dawn", "bg": "#1f2a24" }
-      ],
-      "meters": {
-        "people": {
-          "label": "Village",
-          "icon": "village"
+        {
+          "name": "day",
+          "bg": "#2a1c14"
         },
-        "resources": {
-          "label": "Harvest",
-          "icon": "harvest"
+        {
+          "name": "dusk",
+          "bg": "#331a22"
         },
-        "belief": {
-          "label": "Priests",
-          "icon": "priests"
+        {
+          "name": "night",
+          "bg": "#121828",
+          "fx": [
+            "stars"
+          ]
         },
-        "power": {
-          "label": "The Neighbours",
-          "icon": "neighbours-eyes"
+        {
+          "name": "dawn",
+          "bg": "#2e2317"
         }
-      },
-      "names": ["Oatis", "Barley", "Rye", "Clod", "Tilly", "Sheaf", "Meadow", "Hayden", "Furrow", "Millet", "Bran", "Posy"]
+      ],
+      "names": [
+        "Mara",
+        "Ashe",
+        "Tovi",
+        "Oren",
+        "Sela",
+        "Idun",
+        "Kaya",
+        "Bren",
+        "Nara",
+        "Esk",
+        "Lio",
+        "Wren",
+        "Hale",
+        "Dara",
+        "Tam",
+        "Isa"
+      ]
     }
   ],
-  "scenes": {
-    "rain": { "bg": "#18222c", "fx": ["rain"] },
-    "storm": { "bg": "#111722", "fx": ["rain", "lightning"] },
-    "volcano": { "bg": "#2d1210", "fx": ["embers", "smoke", "shake"] },
-    "fire": { "bg": "#2c170c", "fx": ["flames", "embers"] },
-    "smoke": { "bg": "#1f1b19", "fx": ["smoke"] },
-    "sparks": { "fx": ["sparks"] },
-    "night": { "bg": "#10162a", "fx": ["stars", "fireflies"] },
-    "dust": { "bg": "#2d2415", "fx": ["dust"] },
-    "stampede": { "bg": "#2d2415", "fx": ["dust", "shake"] },
-    "harvest": { "fx": ["grain"] },
-    "birds": { "fx": ["birds"] },
-    "strange": { "bg": "#291d3a", "fx": [] }
-  }
+  "weather": {
+    "rain": {
+      "bg": "#18222c",
+      "fx": [
+        "rain"
+      ]
+    },
+    "storm": {
+      "bg": "#111722",
+      "fx": [
+        "rain",
+        "lightning"
+      ]
+    },
+    "fire": {
+      "bg": "#2c170c",
+      "fx": [
+        "flames",
+        "embers"
+      ]
+    },
+    "embers": {
+      "fx": [
+        "embers"
+      ]
+    },
+    "smoke": {
+      "bg": "#1f1b19",
+      "fx": [
+        "smoke"
+      ]
+    },
+    "sparks": {
+      "fx": [
+        "sparks"
+      ]
+    },
+    "night": {
+      "bg": "#10162a",
+      "fx": [
+        "stars",
+        "fireflies"
+      ]
+    },
+    "dust": {
+      "bg": "#2d2415",
+      "fx": [
+        "dust"
+      ]
+    },
+    "harvest": {
+      "fx": [
+        "grain"
+      ]
+    },
+    "birds": {
+      "fx": [
+        "birds"
+      ]
+    },
+    "strange": {
+      "bg": "#291d3a",
+      "fx": []
+    }
+  },
+  "transient": [
+    "glint",
+    "steam",
+    "smoke",
+    "flames"
+  ]
 }

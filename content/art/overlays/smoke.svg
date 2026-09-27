@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240">
+  <!-- Overlay: smoke rising from the top -->
+  <!-- flat puffs of smoke, lighter as they rise and drift -->
+  <g fill="#7c7771" opacity=".92"><circle cx="150" cy="76" r="8"/><circle cx="160" cy="70" r="11"/><circle cx="171" cy="75" r="8"/><circle cx="163" cy="80" r="7"/></g>
+  <g fill="#8e8983" opacity=".9"><circle cx="168" cy="54" r="9"/><circle cx="179" cy="47" r="12"/><circle cx="192" cy="52" r="9"/><circle cx="182" cy="58" r="8"/></g>
+  <g fill="#a19c96" opacity=".85"><circle cx="146" cy="35" r="8"/><circle cx="157" cy="28" r="11"/><circle cx="169" cy="32" r="8"/><circle cx="159" cy="38" r="7"/></g>
+  <g fill="#b5b0aa" opacity=".8"><circle cx="181" cy="24" r="5.5"/><circle cx="189" cy="20" r="7"/><circle cx="197.5" cy="23" r="5.5"/><circle cx="190.5" cy="27" r="5"/></g>
+</svg>

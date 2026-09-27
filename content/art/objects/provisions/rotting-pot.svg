@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240">
+  <!-- The household pot, overfull and rotting: lid pushed askew, food bulging out -->
+  <ellipse cx="160" cy="197" rx="40" ry="5" fill="#000" opacity=".2"/>
+  <!-- the household pot -->
+  <clipPath id="rt-pot"><path d="M134 196C118 191 106 173 106 150C106 125 119 108 131 101C134 99 131 94 126 91V84H194V91C189 94 186 99 189 101C201 108 214 125 214 150C214 173 202 191 186 196Z"/></clipPath>
+  <path fill="#b8643c" d="M134 196C118 191 106 173 106 150C106 125 119 108 131 101C134 99 131 94 126 91V84H194V91C189 94 186 99 189 101C201 108 214 125 214 150C214 173 202 191 186 196Z"/>
+  <g clip-path="url(#rt-pot)">
+    <path fill="#9a4f2e" d="M190 70H232V200H181Z"/>
+    <path fill="#cf7e52" d="M118 137C118 123 124 112 134 106C128 115 124 125 123 138Z"/>
+    <path fill="#7e3f24" d="M126 90A34 7.5 0 0 0 194 90L191 95.5A31 7 0 0 1 129 95.5Z"/>
+  </g>
+  <clipPath id="rt-rim"><ellipse cx="160" cy="84" rx="34" ry="7.5"/></clipPath>
+  <ellipse cx="160" cy="84" rx="34" ry="7.5" fill="#cf7e52"/>
+  <path clip-path="url(#rt-rim)" fill="#b8643c" d="M189 70H200V100H187Z"/>
+  <ellipse cx="160" cy="84.6" rx="27.5" ry="5.6" fill="#5a2a17"/>
+  <!-- too much food, packed in too long: a fish flopping out, a leg of meat pushing the lid up -->
+  <g transform="translate(146 86) rotate(148) scale(0.8)">
+    <path fill="#7a8580" d="M49 0L62-10C60-4 60 4 62 10Z"/>
+    <clipPath id="rt-f"><path d="M0 0C8-9 24-12 38-8C44-6 48-3 51 0C48 3 44 6 38 8C24 12 8 9 0 0Z"/></clipPath>
+    <path fill="#98a29d" d="M0 0C8-9 24-12 38-8C44-6 48-3 51 0C48 3 44 6 38 8C24 12 8 9 0 0Z"/>
+    <g clip-path="url(#rt-f)"><path fill="#7a8580" d="M-2-14H60V-2C40-4 16-4-2-2Z"/><path fill="#c3cbc6" d="M4 3C16 7 32 8 46 3V14H4Z"/><ellipse cx="30" cy="2" rx="4" ry="3" fill="#7d8a4a"/><ellipse cx="18" cy="-3" rx="3" ry="2.2" fill="#7d8a4a"/></g>
+    <circle cx="9" cy="-1.5" r="2.4" fill="#efe2c2"/><circle cx="9.4" cy="-1.3" r="1.2" fill="#24150e"/>
+  </g>
+  <g transform="translate(182 76) rotate(40) scale(0.9)">
+    <rect x="-3" y="-50" width="6" height="16" rx="2" fill="#efe2c2"/>
+    <circle cx="-3.4" cy="-50" r="4" fill="#efe2c2"/><circle cx="3.4" cy="-50" r="4" fill="#d9c9a4"/>
+    <clipPath id="rt-d"><path d="M0 0C-13 0-17-13-14-23C-11-31-6-35-3-38H3C6-35 11-31 14-23C17-13 13 0 0 0Z"/></clipPath>
+    <path fill="#b5553a" d="M0 0C-13 0-17-13-14-23C-11-31-6-35-3-38H3C6-35 11-31 14-23C17-13 13 0 0 0Z"/>
+    <g clip-path="url(#rt-d)"><path fill="#8e3d28" d="M4-40H20V4H6Z"/><path fill="#e8c9a8" d="M-9-22c1-5 3-9 6-12-2 4-3 8-3 13z"/><ellipse cx="-6" cy="-12" rx="4" ry="3" fill="#7d8a4a"/><ellipse cx="5" cy="-24" rx="3" ry="2.2" fill="#7d8a4a"/></g>
+  </g>
+  <clipPath id="rt-g"><path d="M123 89C121.5 86.8 118.7 83.3 119 81C119.3 78.7 120.7 76.8 125 75C129.3 73.2 138.3 71.8 145 70C151.7 68.2 158.5 66 165 64C171.5 62 178.3 58.7 184 58C189.7 57.3 195.5 58 199 60C202.5 62 204.3 66 205 70C205.7 74 204.5 80.2 203 84C201.5 87.8 203.2 90.8 196 93C188.8 95.2 171.3 96.8 160 97C148.7 97.2 134.2 95.3 128 94C121.8 92.7 124.5 91.2 123 89Z"/><circle cx="120.5" cy="84" r="3"/><circle cx="120.5" cy="79" r="3"/><circle cx="124" cy="75" r="3"/><circle cx="199" cy="61.5" r="3"/><circle cx="203" cy="65" r="3"/><circle cx="205" cy="70" r="3"/><circle cx="205.5" cy="75.5" r="3"/><circle cx="205" cy="81" r="3"/></clipPath>
+  <g clip-path="url(#rt-g)">
+    <rect x="0" y="0" width="320" height="240" fill="#aa9d55"/>
+    <path fill="#7d8a4a" opacity=".7" d="M110 64C134 70 150 82 160 100H100Z"/>
+    <path fill="#8b8042" opacity=".85" d="M190 0H320V240H184Z"/>
+    <g fill="#d9c46a"><ellipse cx="128" cy="84" rx="2" ry="1.2" transform="rotate(20 128 84)"/><ellipse cx="144" cy="88" rx="2" ry="1.2" transform="rotate(10 144 88)"/><ellipse cx="158" cy="84" rx="2" ry="1.2" transform="rotate(-10 158 84)"/><ellipse cx="172" cy="88" rx="2" ry="1.2" transform="rotate(-40 172 88)"/><ellipse cx="188" cy="72" rx="2" ry="1.2" transform="rotate(-20 188 72)"/><ellipse cx="198" cy="68" rx="2" ry="1.2" transform="rotate(15 198 68)"/><ellipse cx="124" cy="90" rx="2" ry="1.2" transform="rotate(30 124 90)"/><ellipse cx="160" cy="93" rx="2" ry="1.2" transform="rotate(70 160 93)"/></g>
+  </g>
+  <path fill="#aa9d55" d="M128 91C127 89.7 122.2 89.2 120 90C117.8 90.8 116 93.3 115 96C114 98.7 113.5 103.3 114 106C114.5 108.7 116.8 112.2 118 112C119.2 111.8 119.7 107.3 121 105C122.3 102.7 124.8 100.3 126 98C127.2 95.7 129 92.3 128 91Z"/>
+  <path fill="#7d8a4a" opacity=".7" d="M128 91C127 89.7 122.2 89.2 120 90C117.8 90.8 116 93.3 115 96C114 98.7 113.5 103.3 114 106C114.5 108.7 116.8 112.2 118 112C119.2 111.8 119.7 107.3 121 105C122.3 102.7 124.8 100.3 126 98C127.2 95.7 129 92.3 128 91Z"/>
+  <!-- the lid, pushed off its seat and tipping -->
+  <g transform="translate(-4 -19) rotate(-15 160 76)">
+    <clipPath id="rt-lid"><path d="M124 84C125 73 141 67.5 160 67.5C179 67.5 195 73 196 84A36 7.5 0 0 1 124 84Z"/></clipPath>
+    <path fill="#b8643c" d="M124 84C125 73 141 67.5 160 67.5C179 67.5 195 73 196 84A36 7.5 0 0 1 124 84Z"/>
+    <g clip-path="url(#rt-lid)">
+      <path fill="#9a4f2e" d="M124 84A36 7.5 0 0 0 196 84V80.5A36 7.5 0 0 1 124 80.5Z"/>
+      <path fill="#cf7e52" d="M131 79C134 73 142 70 151 69C144 72 138 75 136 80Z"/>
+      <path fill="#9a4f2e" fill-opacity=".85" d="M184 60H210V96H181Z"/>
+    </g>
+    <path fill="#b8643c" d="M153.5 68.5C152.5 63 156 59.5 160 59.5C164 59.5 167.5 63 166.5 68.5Z"/>
+    <path fill="#9a4f2e" d="M162.5 59.8C165 60.6 167.3 63.5 166.5 68.5H162.5Z"/>
+    <ellipse cx="160" cy="60" rx="6.2" ry="2.4" fill="#cf7e52"/>
+  </g>
+  <g fill="#a3ad6c"><circle cx="134" cy="80" r="1.6"/><circle cx="139" cy="77" r="1.2"/><circle cx="198" cy="78" r="1.4"/><circle cx="168" cy="92" r="1.3"/></g>
+</svg>
