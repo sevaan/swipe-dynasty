@@ -319,6 +319,8 @@ An unrelated invention cannot appear merely because the player happened to choos
 
 Danger has six visible segments.
 
+(Decided Sep 26, Sevaan: Danger is tracked but hidden. The screen shows no segments, no Danger changes and no Fatal marks. See `design-notes.md`.)
+
 It starts at 0 each life. Reaching 6 or more causes death.
 
 Ordinary choices typically change it by −1, 0, +1, or +2. Larger changes are reserved for clearly signposted situations.
@@ -674,6 +676,8 @@ Danger remains visible near the situation.
 
 Life progress is shown as a small phase indicator—Investigating, Proving, Aftermath—with remaining decisions where relevant. It is not styled like another resource to optimize.
 
+(Decided Sep 26, Sevaan: no phase indicator on screen, and the card with the object sits at the bottom under the thumb, with the situation above it. See `design-notes.md`.)
+
 The object receives more visual prominence than any portrait.
 
 ### 12.2 Swipe behaviour
@@ -691,6 +695,8 @@ Vertical reading gestures must not commit horizontal choices.
 ### 12.3 Equivalent controls
 
 Visible left and right buttons activate the same two outcomes.
+
+(Decided Sep 26, Sevaan: no visible buttons. Dragging the card shows each answer; keys and screen-reader buttons remain. See `design-notes.md`.)
 
 Keyboard controls and screen-reader actions use the same underlying decision function.
 

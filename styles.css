@@ -12,7 +12,6 @@
   --ink: #2a1c14;
   --text: #f4e7cd;
   --accent: #e8793a;
-  --danger: #e4574a;
   /* Secondary text: at least 6:1 on every sky and panel */
   --muted: color-mix(in srgb, var(--text) 80%, transparent);
   --sky: var(--bg);
@@ -101,7 +100,7 @@ img.art {
   max-width: 480px;
   margin: 0 auto;
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr);
   gap: 8px;
   padding: calc(env(safe-area-inset-top) + 10px) 14px calc(env(safe-area-inset-bottom) + 10px);
   position: relative;
@@ -149,222 +148,33 @@ img.art {
 
 button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
-/* The play area */
+/* The play area. The card sits at the bottom, under the thumb, with the
+   situation just above it, so reading and choosing happen in one place; any
+   spare room opens up under the header. Danger and the phase of the life are
+   tracked but not shown (Sevaan, Sep 26). cq units measure the play area. */
 
 .play {
+  container-type: size;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  justify-content: flex-end;
+  gap: 10px;
   min-height: 0;
 }
 
-.play[hidden], .choices[hidden], .context[hidden] { display: none; }
+.play[hidden], .context[hidden] { display: none; }
 
-/* 2. The object on its workbench. It takes the room the rest leaves: 4:3 on
-   a short screen, up to square on a tall one (cq units measure the room it
-   has). The art is drawn on a 4:3 frame; workbenches paint past its top and
-   bottom edges, so the taller box still looks finished. */
-.bench-wrap {
-  flex: 1 1 0;
-  min-height: 132px;
-  container-type: size;
-  display: grid;
-  place-items: center;
-}
-
-.bench {
-  position: relative;
-  width: min(100cqw, 100cqh * 4 / 3);
-  height: min(100cqh, 100cqw);
-  border-radius: 18px;
-  overflow: hidden;
-  background: var(--panel);
-  box-shadow: 0 6px 0 rgb(0 0 0 / 30%);
-  touch-action: none;
-  cursor: grab;
-  will-change: transform;
-}
-
-.bench:active { cursor: grabbing; }
-
-.bench .layer, .bench .marks img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.bench #objectArt { transition: opacity 180ms ease; }
-.bench.changing #objectArt { opacity: 0.35; }
-.bench.bump { animation: bump 420ms var(--ease-out); }
-.bench.enter { animation: bench-in 320ms var(--ease-out); }
-
-@keyframes bump {
-  35% { transform: scale(1.03); }
-}
-@keyframes bench-in {
-  from { transform: translateY(10px) scale(0.96); opacity: 0.3; }
-}
-
-/* The answer being previewed, on the edge that stays on screen */
-.peek {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  z-index: 2;
-  min-height: 3em;
-  padding: 11px 16px 10px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: color-mix(in srgb, var(--ink) 92%, transparent);
-  color: var(--card);
-  font-weight: 700;
-  font-size: calc(1.02rem * var(--scale));
-  line-height: 1.2;
-  opacity: 0;
-  transition: opacity 90ms linear;
-  pointer-events: none;
-}
-
-.peek.left { justify-content: flex-end; text-align: right; }
-.peek.right { justify-content: flex-start; text-align: left; }
-.peek .glyph { width: 20px; height: 20px; }
-
-.hand {
-  position: absolute;
-  bottom: 18%;
-  left: 50%;
-  z-index: 3;
-  width: 52px;
-  height: 52px;
-  pointer-events: none;
-  opacity: 0;
-  transform: translateX(-50%);
-  filter: drop-shadow(0 3px 0 rgb(0 0 0 / 25%));
-}
-
-.hand.show { animation: hand 1.8s ease-in-out 500ms infinite; }
-
-@keyframes hand {
-  0%, 100% { opacity: 0; transform: translateX(-50%); }
-  10% { opacity: 1; }
-  28% { transform: translateX(-170%); opacity: 1; }
-  52% { transform: translateX(70%); opacity: 1; }
-  66% { opacity: 0; transform: translateX(-50%); }
-}
-
-.bench.wiggle { animation: wiggle 1.8s ease-in-out 500ms infinite; }
-
-@keyframes wiggle {
-  0%, 62%, 100% { transform: rotate(0); }
-  18% { transform: translateX(-12px) rotate(-3deg); }
-  40% { transform: translateX(12px) rotate(3deg); }
-}
-
-/* 3. Evidence: up to three things this life has established */
-.evidence {
-  flex: none; /* only the workbench and the situation give up room */
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 6px;
-  min-height: 28px;
-}
-
-.evidence li {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 4px 11px 4px 9px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--text) 14%, transparent);
-  font-size: calc(0.84rem * var(--scale));
-  font-weight: 700;
-  line-height: 1.25;
-}
-
-/* A drawn tick, not a character */
-.evidence li::before {
-  content: '';
-  width: 5px;
-  height: 9px;
-  margin: -2px 1px 0;
-  border: solid var(--accent);
-  border-width: 0 2.5px 2.5px 0;
-  transform: rotate(45deg);
-}
-
-.evidence li.new { animation: pop 520ms var(--ease-out); background: color-mix(in srgb, var(--accent) 30%, transparent); }
-
-@keyframes pop {
-  0% { transform: scale(0.6); opacity: 0; }
-  60% { transform: scale(1.08); }
-}
-
-/* Danger (spec 7.1): six segments, a number and a word, not colour alone */
-.status {
-  flex: none;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 2px 12px;
-  min-height: 24px;
-}
-
-.danger {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: calc(0.84rem * var(--scale));
-  font-weight: 700;
-  white-space: nowrap;
-  text-shadow: var(--lift);
-}
-
-.danger .segs { display: flex; gap: 3px; }
-
-.danger .seg {
-  width: 12px;
-  height: 12px;
-  border-radius: 3px;
-  background: color-mix(in srgb, var(--text) 18%, transparent);
-}
-
-.danger .seg.on { background: var(--danger); }
-/* Previewing an answer: segments it would add blink, ones it would clear dim */
-.danger .seg.adds { background: var(--danger); animation: blink 0.8s steps(1, end) infinite; }
-.danger .seg.clears { background: color-mix(in srgb, var(--danger) 45%, transparent); }
-.danger.fatal .seg.adds { background: #ff8a7a; }
-
-@keyframes blink { 50% { opacity: 0.35; } }
-
-/* Small, and not styled like a resource (spec 12.1). On large text it
-   drops below Danger rather than breaking mid-phrase. */
-.phase {
-  margin-left: auto;
-  font-size: calc(0.84rem * var(--scale));
-  font-weight: 700;
-  white-space: nowrap;
-  color: var(--muted);
-  text-align: right;
-  text-shadow: var(--lift);
-}
-
-.phase b { color: var(--text); font-weight: 800; }
-
-/* 4. The situation. It may scroll on a small screen; the choices can't. */
+/* 2. The situation. It keeps its full height, and the picture shrinks to
+   make room for it; only with big text on a small screen, past about half
+   the play area, does it scroll. */
 .situation {
-  flex: 0 1 auto;
+  flex: 0 0 auto;
+  max-height: 55%;
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
   display: grid;
+  align-content: start;
   gap: 7px;
   padding-bottom: 2px;
 }
@@ -426,61 +236,176 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   text-wrap: pretty;
 }
 
-/* 5. The two answers, always reachable */
-.choices {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+/* 3. The stage: the evidence and the card, at the foot of the play area */
+.stage {
+  flex: 0 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   gap: 10px;
 }
 
-.choice {
-  position: relative;
-  display: grid;
-  align-content: start;
-  gap: 5px;
-  min-height: 96px;
-  padding: 12px 13px 12px;
-  border: 0;
-  border-radius: 16px;
-  background: var(--panel);
-  text-align: left;
-  cursor: pointer;
-  box-shadow: 0 4px 0 rgb(0 0 0 / 30%);
-  transition: transform 120ms var(--ease-out), background-color 120ms linear;
+/* Evidence: up to three things this life has established */
+.evidence {
+  flex: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  min-height: 28px;
 }
 
-.choice.right { text-align: right; }
-.choice .top { display: flex; align-items: flex-start; gap: 7px; }
-.choice.right .top { flex-direction: row-reverse; }
-.choice .glyph { width: 18px; height: 18px; margin-top: 2px; color: var(--muted); }
-.choice .label { font-size: calc(1rem * var(--scale)); font-weight: 800; line-height: 1.25; }
-.choice .preview { font-size: calc(0.84rem * var(--scale)); line-height: 1.3; color: var(--muted); }
-.choice .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 2px; }
-.choice.right .tags { justify-content: flex-end; }
-
-.choice .tag {
-  padding: 2px 8px;
+.evidence li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 11px 4px 9px;
   border-radius: 999px;
-  font-size: calc(0.76rem * var(--scale));
-  font-weight: 800;
-  line-height: 1.35;
   background: color-mix(in srgb, var(--text) 14%, transparent);
+  font-size: calc(0.84rem * var(--scale));
+  font-weight: 700;
+  line-height: 1.25;
 }
 
-.choice .tag.danger { background: color-mix(in srgb, var(--danger) 26%, transparent); }
-.choice .tag.fatal { background: var(--danger); color: #fff; }
-.choice .tag.because { background: color-mix(in srgb, var(--accent) 24%, transparent); }
+/* A drawn tick, not a character */
+.evidence li::before {
+  content: '';
+  width: 5px;
+  height: 9px;
+  margin: -2px 1px 0;
+  border: solid var(--accent);
+  border-width: 0 2.5px 2.5px 0;
+  transform: rotate(45deg);
+}
 
-.choice.hot { background: color-mix(in srgb, var(--accent) 34%, var(--panel)); transform: translateY(-2px); }
-.choice.pressed { transform: translateY(2px); box-shadow: 0 2px 0 rgb(0 0 0 / 30%); }
-.choice:disabled { cursor: default; }
+.evidence li.new { animation: pop 520ms var(--ease-out); background: color-mix(in srgb, var(--accent) 30%, transparent); }
+
+@keyframes pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.08); }
+}
+
+/* The card: the object on its workbench. There are no answer buttons
+   (Sevaan, Sep 26): dragging the card shows that side's answer across its
+   top, and letting go past the line chooses it. The picture is square when
+   there's room and shorter when there isn't, and it's the first thing to give
+   up room. The art is drawn on a 4:3 frame, and workbenches paint past every
+   edge of it, so any shape from about 2:1 to square still looks finished. */
+.card {
+  position: relative;
+  flex: 0 3 auto;
+  height: 100cqw;
+  min-height: 150px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--panel);
+  box-shadow: 0 6px 0 rgb(0 0 0 / 30%);
+  touch-action: none;
+  cursor: grab;
+  will-change: transform;
+}
+
+.card:active { cursor: grabbing; }
+
+.bench, .bench .layer, .bench .marks img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.card.bump { animation: bump 420ms var(--ease-out); }
+.card.enter { animation: card-in 300ms var(--ease-out); }
+.card.nudge { animation: nudge 620ms ease-in-out; }
+
+@keyframes bump {
+  35% { transform: scale(1.025); }
+}
+@keyframes card-in {
+  from { transform: translateY(24px) scale(0.94); opacity: 0; }
+}
+@keyframes nudge {
+  25% { transform: translateX(-14px) rotate(-2.5deg); }
+  60% { transform: translateX(12px) rotate(2deg); }
+}
+
+/* The answer being looked at, across the top of the card, flush to the edge
+   that stays on screen. It turns to the accent colour once letting go would
+   choose it. */
+.peek {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 2;
+  display: grid;
+  gap: 5px;
+  padding: 14px 18px 15px;
+  background: color-mix(in srgb, var(--ink) 93%, transparent);
+  color: var(--card);
+  opacity: 0;
+  transition: opacity 80ms linear, background-color 120ms linear, color 120ms linear;
+  pointer-events: none;
+}
+
+.peek.left { justify-items: end; text-align: right; }
+.peek.right { justify-items: start; text-align: left; }
+.peek .label { display: flex; align-items: center; gap: 9px; font-size: calc(1.12rem * var(--scale)); font-weight: 800; line-height: 1.25; text-wrap: balance; }
+.peek .desc { font-size: calc(0.92rem * var(--scale)); line-height: 1.35; opacity: 0.86; }
+.peek .glyph { width: 20px; height: 20px; }
+.peek .tag {
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: calc(0.78rem * var(--scale));
+  font-weight: 800;
+  line-height: 1.4;
+  background: color-mix(in srgb, var(--accent) 34%, transparent);
+}
+.peek.armed { background: var(--accent); color: var(--ink); }
+.peek.armed .desc { opacity: 1; }
+.peek.armed .tag { background: color-mix(in srgb, var(--ink) 16%, transparent); }
+
+.hand {
+  position: absolute;
+  bottom: 18%;
+  left: 50%;
+  z-index: 3;
+  width: 52px;
+  height: 52px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 3px 0 rgb(0 0 0 / 25%));
+}
+
+.hand.show { animation: hand 1.8s ease-in-out 500ms infinite; }
+.hand.once { animation: hand 1.8s ease-in-out 1; }
+
+@keyframes hand {
+  0%, 100% { opacity: 0; transform: translateX(-50%); }
+  10% { opacity: 1; }
+  28% { transform: translateX(-170%); opacity: 1; }
+  52% { transform: translateX(70%); opacity: 1; }
+  66% { opacity: 0; transform: translateX(-50%); }
+}
+
+.card.wiggle { animation: wiggle 1.8s ease-in-out 500ms infinite; }
+
+@keyframes wiggle {
+  0%, 62%, 100% { transform: rotate(0); }
+  18% { transform: translateX(-12px) rotate(-3deg); }
+  40% { transform: translateX(12px) rotate(3deg); }
+}
 
 /* Between lives: the exhibit, the inheritance, a new era, the end */
 
 /* The screen takes the place of the object and the answers; the menu stays
    reachable above it */
 .screen {
-  grid-row: 2 / 4;
+  grid-row: 2;
   grid-column: 1;
   min-height: 0;
   display: flex;
@@ -849,7 +774,7 @@ img.art.broken { visibility: hidden; }
   transition-duration: 1ms !important;
 }
 
-.reduce-motion .hand.show { animation: none; opacity: 1; }
+.reduce-motion .hand.show, .reduce-motion .hand.once { animation: none; opacity: 1; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -862,7 +787,6 @@ img.art.broken { visibility: hidden; }
 /* Short phones: tighter spacing, so the answers never leave the screen */
 @media (max-height: 700px) {
   .app { gap: 6px; }
-  .play { gap: 6px; }
-  .choice { min-height: 84px; padding: 10px 11px; }
+  .play { gap: 8px; }
   .situation .text { font-size: calc(1.1rem * var(--scale)); }
 }

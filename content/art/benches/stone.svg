@@ -1,38 +1,40 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240">
   <!-- Stone Age workbench: a cave wall and a stone slab; the object sits on the slab at y = 196 -->
   <!-- the cave wall: warm, dark and quiet, so the work stands out -->
-  <!-- the backdrop bleeds 80 units above and below the frame (y -80 to 320), for boxes up to square -->
-  <rect y="-80" width="320" height="280" fill="#3a2a20"/>
-  <!-- a patch of daylight far up on the left, where the cave opens -->
-  <path fill="#4a3628" d="M0-80H104L96-62 100-44 88-30 84-14 74-6 70 0 62 14 66 30 52 46 30 52 12 70 0 72Z"/>
-  <path fill="#58432f" d="M0-80H86L80-64 84-48 73-34 67-18 58-8 52 0 47 11 49 24 39 35 22 39 9 52 0 54Z"/>
-  <path fill="#6a533d" d="M0-80H66L60-66 63-52 53-40 47-24 40-12 34 0 31 9 32 17 24 24 11 26 0 34Z"/>
+  <!-- the backdrop bleeds 80 units past the frame on every side (x -80 to 400, y -80 to 320): the card can be from about 2:1 to square -->
+  <rect x="-80" y="-80" width="480" height="280" fill="#3a2a20"/>
+  <!-- a patch of daylight far up on the left, where the cave opens; it closes again in rock past the frame -->
+  <path fill="#4a3628" d="M-80-80H104L96-62 100-44 88-30 84-14 74-6 70 0 62 14 66 30 52 46 30 52 12 70 0 72-22 80-48 76-80 83Z"/>
+  <path fill="#58432f" d="M-54-80H86L80-64 84-48 73-34 67-18 58-8 52 0 47 11 49 24 39 35 22 39 9 52 0 54-16 50-30 34-40 6-46-30Z"/>
+  <path fill="#6a533d" d="M-26-80H66L60-66 63-52 53-40 47-24 40-12 34 0 31 9 32 17 24 24 11 26 0 34-10 26-17 8-22-24Z"/>
   <!-- the ceiling overhang -->
-  <path fill="#30231a" d="M104-80H320V20L302 25 284 18 262 24 240 16 214 21 190 14 164 19 140 13 116 19 94 14 74 20 62 14 70 0 74-6 84-14 88-30 100-44 96-62Z"/>
+  <path fill="#30231a" d="M104-80H400V24L382 18 360 26 340 19 320 20 302 25 284 18 262 24 240 16 214 21 190 14 164 19 140 13 116 19 94 14 74 20 62 14 70 0 74-6 84-14 88-30 100-44 96-62Z"/>
   <!-- above the frame: more of the ceiling, in big quiet facets -->
-  <path fill="#35271c" d="M104-80H188L176-52 188-26 150-18 124-34 110-56Z M226-80H320V-30L288-12 262-24 244-46Z"/>
+  <path fill="#35271c" d="M104-80H188L176-52 188-26 150-18 124-34 110-56Z M226-80H400V-44L370-26 342-36 318-22 288-12 262-24 244-46Z"/>
   <path fill="#2a1e16" d="M188-80H226L244-46 262-24 250-2 232-14 210-20 188-26 176-52Z"/>
-  <!-- rock buttresses at each side; the centre stays plain -->
-  <path fill="#453226" d="M0 72 12 70 30 52 52 46 60 70 58 100 72 128 64 162 76 196H0Z"/>
+  <!-- rock buttresses at each side, running on past the frame; the centre stays plain -->
+  <path fill="#453226" d="M-80 83-48 76-22 80 0 72 12 70 30 52 52 46 60 70 58 100 72 128 64 162 76 196H-80Z"/>
   <path fill="#352619" d="M52 46 60 70 58 100 72 128 64 162 76 196H64L54 162 60 130 48 100 50 70Z"/>
-  <path fill="#2f2219" d="M20 104l12 10-2 14 5 12-7-11 1-14z"/>
-  <path fill="#453226" d="M320 26 296 34 272 56 262 92 256 132 246 170 242 196H320Z"/>
+  <path fill="#3f2d22" d="M-80 132-58 126-46 158-54 196H-80Z"/>
+  <path fill="#2f2219" d="M20 104l12 10-2 14 5 12-7-11 1-14z M-34 104l10 12-2 14 5 12-7-11 1-14z"/>
+  <path fill="#453226" d="M400 30 374 25 346 29 320 26 296 34 272 56 262 92 256 132 246 170 242 196H400Z"/>
   <path fill="#4f3a2b" d="M296 34 272 56 262 92 256 132 246 170 242 196H248L254 170 263 132 269 94 278 60 300 36Z"/>
-  <path fill="#2f2219" d="M300 150l-8 12 3 12-6 10 8-9-2-12z"/>
+  <path fill="#3f2d22" d="M346 29 358 70 352 112 364 150 356 196H370L378 150 366 112 372 70 362 28Z"/>
+  <path fill="#2f2219" d="M300 150l-8 12 3 12-6 10 8-9-2-12z M392 86l-8 12 3 12-6 10 8-9-2-12z"/>
   <!-- two hand prints in red ochre, and a row of dots -->
   <g fill="#a33a28" opacity=".34" transform="translate(286 88) rotate(12) scale(1.0)"><ellipse cx="0" cy="0" rx="11" ry="12"/><rect x="-2.1" y="-15" width="4.2" height="15" rx="2.1" transform="translate(-10 -7) rotate(-14)"/><rect x="-2.2" y="-18" width="4.4" height="18" rx="2.2" transform="translate(-4 -11) rotate(-5)"/><rect x="-2.2" y="-18.5" width="4.4" height="18.5" rx="2.2" transform="translate(2.5 -11.5) rotate(3)"/><rect x="-2" y="-15" width="4" height="15" rx="2" transform="translate(8.5 -8.5) rotate(11)"/><rect x="-2" y="-12" width="4" height="12" rx="2" transform="translate(13.5 8) rotate(52)"/></g>
   <g fill="#a33a28" opacity=".26" transform="translate(304 124) rotate(-8) scale(0.8)"><ellipse cx="0" cy="0" rx="11" ry="12"/><rect x="-2.1" y="-15" width="4.2" height="15" rx="2.1" transform="translate(-10 -7) rotate(-14)"/><rect x="-2.2" y="-18" width="4.4" height="18" rx="2.2" transform="translate(-4 -11) rotate(-5)"/><rect x="-2.2" y="-18.5" width="4.4" height="18.5" rx="2.2" transform="translate(2.5 -11.5) rotate(3)"/><rect x="-2" y="-15" width="4" height="15" rx="2" transform="translate(8.5 -8.5) rotate(11)"/><rect x="-2" y="-12" width="4" height="12" rx="2" transform="translate(13.5 8) rotate(52)"/></g>
   <g fill="#a33a28" opacity=".3"><circle cx="276" cy="150" r="2.6"/><circle cx="285" cy="152" r="2.6"/><circle cx="294" cy="153" r="2.6"/></g>
   <!-- the stone slab: its top edge is the bench line, y = 196 -->
-  <rect y="196" width="320" height="68" fill="#5d4b3c"/>
-  <path fill="#4e3e32" d="M0 224 40 222 96 225 150 222 210 224 262 221 320 224V264H0Z"/>
-  <path fill="#463729" d="M0 248 50 246 120 249 190 246 250 248 320 246V264H0Z"/>
-  <rect y="196" width="320" height="3.5" fill="#8b7662"/>
-  <path fill="#4e3e32" d="M22 203h14l-3 5h-9z M288 206h16l-2 4h-12z M118 232h22l-2 4h-18z M226 230h16l-2 4h-12z"/>
+  <rect x="-80" y="196" width="480" height="68" fill="#5d4b3c"/>
+  <path fill="#4e3e32" d="M-80 223-40 225 0 224 40 222 96 225 150 222 210 224 262 221 320 224 360 222 400 224V264H-80Z"/>
+  <path fill="#463729" d="M-80 247-30 249 0 248 50 246 120 249 190 246 250 248 320 246 364 248 400 246V264H-80Z"/>
+  <rect x="-80" y="196" width="480" height="3.5" fill="#8b7662"/>
+  <path fill="#4e3e32" d="M22 203h14l-3 5h-9z M288 206h16l-2 4h-12z M118 232h22l-2 4h-18z M226 230h16l-2 4h-12z M-50 205h14l-3 5h-9z M352 210h16l-2 4h-12z"/>
   <!-- below the frame: the shadowed underside of the slab, then the cave floor -->
-  <path fill="#1f1610" d="M0 262 34 264.5 90 261.5 160 264.5 232 261.5 290 264.5 320 262V320H0Z"/>
-  <path fill="#2d2118" d="M0 277 60 275 140 278 220 275 320 277V320H0Z"/>
-  <g fill="#3a2a20"><ellipse cx="46" cy="290" rx="9" ry="3.5"/><ellipse cx="204" cy="300" rx="12" ry="4"/><ellipse cx="282" cy="287" rx="7" ry="3"/><ellipse cx="128" cy="306" rx="8" ry="3"/></g>
+  <path fill="#1f1610" d="M-80 262-44 264.5 0 262 34 264.5 90 261.5 160 264.5 232 261.5 290 264.5 320 262 356 264.5 400 262V320H-80Z"/>
+  <path fill="#2d2118" d="M-80 277-20 275 0 277 60 275 140 278 220 275 320 277 370 275 400 277V320H-80Z"/>
+  <g fill="#3a2a20"><ellipse cx="46" cy="290" rx="9" ry="3.5"/><ellipse cx="204" cy="300" rx="12" ry="4"/><ellipse cx="282" cy="287" rx="7" ry="3"/><ellipse cx="128" cy="306" rx="8" ry="3"/><ellipse cx="-36" cy="296" rx="8" ry="3"/><ellipse cx="356" cy="302" rx="10" ry="3.5"/></g>
   <!-- a bundle of cut reeds leaning on the wall, tied twice -->
   <path fill="#a8823f" transform="rotate(-9 22 164)" d="M19.5 198V117L22 108l2.5 9V198Z"/>
   <path fill="#b8924e" transform="rotate(-5 22 164)" d="M19.5 198V109L22 100l2.5 9V198Z"/>

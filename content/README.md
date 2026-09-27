@@ -13,8 +13,8 @@ Before pushing, run `node tools/check.mjs`. It lists errors (the game won't star
 - Answers establish **observations** (`observations.csv`), such as "Holds its shape". The last three show as chips under the object.
 - An **invention**'s recipe is a set of observations. Once a recipe is met, the proof scene can commit that invention. With nothing committed, the life leaves a **failed design** (`failures.csv`) instead. Either way, it's exactly one contribution per life.
 - Each invention has two **legacy packages** (`legacies.csv`): two ways it could spread. Answers pick one with `legacy <id>`, and the last pick wins. The chosen legacy becomes the next life's **featured problem**. Scenes check it with `problem <legacy>`.
-- **Danger** runs from 0 to 6. `danger +1` raises it, and at 6 the inventor dies. An answer that would reach 6 is marked Fatal before you choose.
-- The object on the workbench has a **look** (one picture per state) and **marks** (overlays such as smoke or drips).
+- **Danger** runs from 0 to 6. `danger +1` raises it, and at 6 the inventor dies. The player never sees it: no meter and no warnings. So an answer's description has to carry the risk in words, and a risky answer should name the death that fits it (`death prov-died-salt`).
+- The object on the workbench has a **look** (one picture per state) and **marks** (overlays such as smoke or drips). It's a card at the bottom of the screen. Dragging it shows an answer and its description, and letting go past the line chooses it.
 
 ## Files
 
@@ -28,7 +28,7 @@ Before pushing, run `node tools/check.mjs`. It lists errors (the game won't star
 | `inventions.csv` | Invention | `id`, `era`, `type` (`stepping stone`, `optional` or `keystone`), `name` (as in "Invented ___"), `project`, `requires`, `recipe` (below), `legacies` (its two packages), `made` (the epitaph's first line, if not "Invented ___."), `look` (its picture in History), `capability` (for "Possible because of ___"), `museum`, `hint` |
 | `legacies.csv` | Legacy package | `id`, `invention`, `adoption` (how it spread, in a few words), `problem` (what it leaves behind), `inherit` (the one line the next inventor inherits), `epitaph` (the epitaph's third line), `change` (a note on how it changes the next life) |
 | `failures.csv` | Failed design | `id`, `project`, `name` (as in "Invented ___"), `conditions` (the first one whose conditions hold is used), `epitaph`, `inherit`, `look` (the exhibit) |
-| `deaths.csv` | Death | `id`, `kind` (`danger` or `natural`), `project` (blank for any), `text` (the epitaph's second line), `conditions`, `weight` |
+| `deaths.csv` | Death | `id`, `kind` (`danger` or `natural`), `project` (blank for any), `text` (the epitaph's second line), `conditions`, `weight` (0 means only when an answer names it) |
 | `scenes/*.csv` | Scene | Below |
 
 Ids are forgiving: case doesn't matter, and spaces, `_` and `-` are the same (`lid_habit` = `lid habit` = `lid-habit`). A row whose first cell starts with `#` is a comment, and every table can have a `notes` column the game ignores.
@@ -43,8 +43,8 @@ Ids are forgiving: case doesn't matter, and spaces, `_` and `-` are the same (`l
 | `speaker` | A character id, or blank for no speaker |
 | `shows` | What the object looks like when the scene appears, before any answer: `look`, `mark` and `unmark`, like `look rotting-pot; mark smell`. Each can take `if`: `look store-jar if legacy pottery-communal` |
 | `text` | The situation. Aim for 20 to 45 words |
-| `left`, `right` | The two answers, 2 to 8 words each |
-| `left preview`, `right preview` | A few words under each answer, shown before choosing |
+| `left`, `right` | The two answers, 2 to 8 words each, shown on the card while it's dragged |
+| `left preview`, `right preview` | The answer's description, a few words shown under it on the card. Since Danger is hidden, this is where a risky approach says so ("Fast and very hot") |
 | `left result`, `right result` | What happened, shown above the next scene. 5 to 20 words |
 | `left effects`, `right effects` | What each answer does (below) |
 | `conditions` | When the scene can appear (below) |
@@ -77,7 +77,7 @@ Separate effects with `;`. Add `if <condition>` to make one conditional: `look w
 | `legacy pottery-household` | In a proof or aftermath scene: how the invention spreads (the last pick wins) |
 | `because pottery` | Marks the answer "Possible because of" that invention's capability. Gate the scene with `has pottery` |
 | `next prov-loose` | The next scene |
-| `death vessel-kiln` | If this answer kills, use this death |
+| `death vessel-kiln` | If this answer kills, use this death. Give every answer that raises Danger one, so the epitaph matches what happened |
 | `set taught`, `clear taught`, `count +1` | Flags (declare them in `flags.csv`) |
 
 ## Conditions

@@ -11,8 +11,8 @@ import { createFx } from './fx.js';
 const $ = (id) => document.getElementById(id);
 const els = {
   app: $('app'), context: $('context'), inventor: $('inventor'), era: $('era'), problem: $('problem'),
-  play: $('play'), bench: $('bench'), benchArt: $('benchArt'), objectArt: $('objectArt'), marks: $('marks'), peek: $('peek'), hand: $('hand'),
-  evidence: $('evidence'), danger: $('danger'), phase: $('phase'),
+  play: $('play'), stage: $('stage'), card: $('card'), bench: $('bench'), benchArt: $('benchArt'), objectArt: $('objectArt'), marks: $('marks'), peek: $('peek'), hand: $('hand'),
+  evidence: $('evidence'),
   situation: $('situation'), result: $('result'), notice: $('notice'), speaker: $('speaker'), face: $('face'), speakerName: $('speakerName'), text: $('text'),
   choices: $('choices'), left: $('choiceLeft'), right: $('choiceRight'),
   screen: $('screen'), menuBtn: $('menuBtn'), panel: $('panel'), banner: $('banner'), live: $('live'),
@@ -36,6 +36,7 @@ let sceneShownAt = 0; // when this scene appeared: input must start after it (sp
 let screenShownAt = 0;
 let lastEvidence = [];
 let peekSide = null;
+let keyPreview = null; // the side an arrow key is showing, waiting for a second press
 let currentTab = 'history';
 let devWeather = '';
 let timelapse = 0;
@@ -44,8 +45,6 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '
 const cap = (s) => (s ? s[0].toUpperCase() + s.slice(1) : s);
 const low = (s) => (s ? s[0].toLowerCase() + s.slice(1) : s);
 const pause = (ms) => new Promise((r) => setTimeout(r, ms));
-// Motion waits shrink with reduced motion; pauses that carry information don't
-const wait = (ms) => pause(settings.reduceMotion ? Math.min(ms, 60) : ms);
 
 function banner(text, ms = 5000) {
   els.banner.textContent = text;
@@ -137,36 +136,21 @@ function drawObject(eraBench, project, look, marks) {
   }
 }
 
-function drawDanger(value, max, preview = null) {
-  const after = preview == null ? value : Math.max(0, Math.min(max, preview));
-  const segs = [];
-  for (let i = 0; i < max; i++) {
-    let cls = i < value ? 'on' : '';
-    if (preview != null && i >= value && i < after) cls = 'adds';
-    if (preview != null && i < value && i >= after) cls = 'clears';
-    segs.push(`<span class="seg ${cls}"></span>`);
-  }
-  els.danger.classList.toggle('fatal', preview != null && preview >= max);
-  els.danger.innerHTML = `<span>Danger</span><span class="segs" aria-hidden="true">${segs.join('')}</span><span>${value} of ${max}</span>`;
-  els.danger.setAttribute('aria-label', `Danger ${value} of ${max}`);
-}
-
-function choiceHTML(side, o) {
-  const tags = [];
-  if (o.fatal) tags.push('<span class="tag fatal">Fatal</span>');
-  else if (o.danger) tags.push(`<span class="tag danger">Danger ${o.danger > 0 ? '+' : '−'}${Math.abs(o.danger)}</span>`);
-  for (const b of o.because) tags.push(`<span class="tag because">Possible because of ${esc(b)}</span>`);
+// An answer as it appears across the top of the card while it's dragged:
+// flush to the edge that stays on screen, with its description and anything
+// that made it possible. There are no answer buttons, and Danger is tracked
+// but never shown (Sevaan, Sep 26), so the description's words are what warn
+// the player.
+function peekHTML(side, o) {
   const arrow = glyphHTML('ui', side === 'left' ? 'arrow-left' : 'arrow-right');
-  return `<span class="top">${arrow}<span class="label">${esc(o.label)}</span></span>
-    ${o.preview ? `<span class="preview">${esc(o.preview)}</span>` : ''}
-    ${tags.length ? `<span class="tags">${tags.join('')}</span>` : ''}`;
+  const label = side === 'left' ? `${arrow}<span>${esc(o.label)}</span>` : `<span>${esc(o.label)}</span>${arrow}`;
+  const tags = o.because.map((b) => `<span class="tag">Possible because of ${esc(b)}</span>`).join(' ');
+  return `<p class="label">${label}</p>${o.preview ? `<p class="desc">${esc(o.preview)}</p>` : ''}${tags ? `<p>${tags}</p>` : ''}`;
 }
 
 function describe(side, o) {
   const bits = [o.label];
   if (o.preview) bits.push(o.preview);
-  if (o.fatal) bits.push('Fatal');
-  else if (o.danger) bits.push(`Danger ${o.danger > 0 ? 'plus' : 'minus'} ${Math.abs(o.danger)}`);
   for (const b of o.because) bits.push(`Possible because of ${b}`);
   return `${side === 'left' ? 'Left' : 'Right'}: ${bits.join('. ')}`;
 }
@@ -174,8 +158,6 @@ function describe(side, o) {
 function renderPlay(v, opts = {}) {
   els.app.classList.remove('between');
   els.play.hidden = false;
-  els.choices.hidden = false;
-  els.choices.style.visibility = '';
   els.screen.hidden = true;
 
   els.inventor.textContent = v.inventor.name;
@@ -183,15 +165,12 @@ function renderPlay(v, opts = {}) {
   els.problem.textContent = v.project.problem;
 
   drawObject(v.era.bench, v.object.project, v.object.look, v.object.marks);
-  if (opts.enter) { els.bench.classList.remove('enter'); void els.bench.offsetWidth; els.bench.classList.add('enter'); }
+  if (opts.enter) { els.card.classList.remove('enter'); void els.card.offsetWidth; els.card.classList.add('enter'); }
 
   const fresh = v.evidence.filter((e) => !lastEvidence.includes(e.id)).map((e) => e.id);
   els.evidence.innerHTML = v.evidence.map((e) => `<li class="${opts.animate && fresh.includes(e.id) ? 'new' : ''}">${esc(e.text)}</li>`).join('');
   lastEvidence = v.evidence.map((e) => e.id);
 
-  drawDanger(v.danger.value, v.danger.max);
-  const p = v.progress;
-  els.phase.innerHTML = `<b>${esc(p.label)}</b>${p.text ? ` · ${esc(p.text)}` : ''}`;
 
   els.result.textContent = v.scene.result || '';
   const n = v.scene.notice;
@@ -201,19 +180,19 @@ function renderPlay(v, opts = {}) {
   els.speakerName.textContent = who?.name || '';
   els.face.innerHTML = who?.portrait ? `<img class="art" src="${esc(artURL('characters', who.portrait))}" alt="" draggable="false">` : '';
   els.text.textContent = v.scene.text;
-  els.left.innerHTML = choiceHTML('left', v.options.left);
-  els.right.innerHTML = choiceHTML('right', v.options.right);
-  els.left.setAttribute('aria-label', describe('left', v.options.left));
-  els.right.setAttribute('aria-label', describe('right', v.options.right));
+  // The answers as buttons, for screen readers only
+  els.left.textContent = describe('left', v.options.left);
+  els.right.textContent = describe('right', v.options.right);
 
   // The first scene of the first life shows how to swipe
   const hint = v.scene.phase === 'opening' && v.project.id === content.start.project && !state.collection.tutorialDone;
   els.hand.classList.toggle('show', hint);
-  els.bench.classList.toggle('wiggle', hint);
+  els.card.classList.toggle('wiggle', hint);
 
   if (v.turn !== shownTurn) {
     shownTurn = v.turn;
     sceneShownAt = performance.now();
+    keyPreview = null;
     els.situation.scrollTop = 0;
     const live = [who?.name ? `${who.name}:` : '', v.scene.result, v.scene.text, describe('left', v.options.left), describe('right', v.options.right)];
     els.live.textContent = live.filter(Boolean).join(' ');
@@ -222,38 +201,63 @@ function renderPlay(v, opts = {}) {
   preview(null);
 }
 
-// Previewing never changes the game: it only lights up the answer and what it would do.
-function preview(side, strength = 1) {
-  const v = cur;
-  els.left.classList.toggle('hot', side === 'left');
-  els.right.classList.toggle('hot', side === 'right');
-  if (!side || !v?.options) {
+// Showing an answer never changes the game. `armed` means letting go now
+// would choose it.
+function preview(side, strength = 1, armed = false) {
+  if (!side || !cur?.options) {
     els.peek.style.opacity = 0;
-    if (peekSide && v?.danger) drawDanger(v.danger.value, v.danger.max);
+    els.peek.classList.remove('armed');
     peekSide = null;
     return;
   }
-  const o = v.options[side];
   if (peekSide !== side) {
     peekSide = side;
     els.peek.className = `peek ${side}`;
-    els.peek.innerHTML = side === 'left'
-      ? `${glyphHTML('ui', 'arrow-left')}<span>${esc(o.label)}</span>`
-      : `<span>${esc(o.label)}</span>${glyphHTML('ui', 'arrow-right')}`;
-    drawDanger(v.danger.value, v.danger.max, v.danger.value + o.danger);
+    els.peek.innerHTML = peekHTML(side, cur.options[side]);
   }
-  els.peek.style.opacity = Math.min(1, strength);
+  els.peek.classList.toggle('armed', armed);
+  els.peek.style.opacity = Math.max(0, Math.min(1, strength));
 }
 
-function setBenchTransform(dx) {
-  const rot = Math.max(-8, Math.min(8, dx / 24));
-  els.bench.style.transform = `translateX(${dx * 0.7}px) rotate(${rot}deg)`;
+// The card follows the finger, tilting a little, like a card held at the bottom
+function setCardTransform(dx) {
+  const rot = Math.max(-7, Math.min(7, dx / 26));
+  els.card.style.transform = `translateX(${dx * 0.75}px) rotate(${rot}deg)`;
 }
 
 function springBack() {
-  els.bench.style.transition = 'transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1.2)';
-  els.bench.style.transform = '';
+  keyPreview = null;
+  els.card.style.transition = 'transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1.2)';
+  els.card.style.transform = '';
   preview(null);
+}
+
+// A chosen card flies off the side it was swiped to
+function flingCard(side) {
+  if (settings.reduceMotion) return Promise.resolve();
+  const dir = side === 'left' ? -1 : 1;
+  els.card.style.transition = 'transform 240ms cubic-bezier(0.5, 0, 0.9, 0.6), opacity 240ms linear';
+  els.card.style.transform = `translateX(${dir * 130}%) rotate(${dir * 16}deg)`;
+  els.card.style.opacity = '0';
+  return pause(240);
+}
+
+function resetCard() {
+  els.card.style.transition = 'none';
+  els.card.style.transform = '';
+  els.card.style.opacity = '';
+  void els.card.offsetWidth;
+}
+
+// A tap on the card: a small shake and the hand, to show it's for dragging
+function nudge() {
+  if (busy || state.phase !== 'play') return;
+  els.card.classList.remove('nudge');
+  void els.card.offsetWidth;
+  els.card.classList.add('nudge');
+  els.hand.classList.add('once');
+  clearTimeout(nudge.t);
+  nudge.t = setTimeout(() => els.hand.classList.remove('once'), 1900);
 }
 
 // Screens between lives (spec 12.6): the epitaph, one line of inheritance, the next life
@@ -326,7 +330,6 @@ function screenHTML(v) {
 function renderScreen(v) {
   els.app.classList.add('between');
   els.play.hidden = true;
-  els.choices.hidden = true;
   els.hand.classList.remove('show');
   els.screen.innerHTML = screenHTML(v);
   els.screen.hidden = false;
@@ -363,9 +366,8 @@ function quietText() {
   };
   add(els.context.querySelector('.who'));
   if (!els.play.hidden) {
-    add(els.evidence, 4, 2);
-    add(els.danger.parentElement, 4, 2);
     add(els.situation, 8, 6);
+    add(els.evidence, 4, 2);
   }
   if (!els.screen.hidden) {
     for (const el of els.screen.querySelectorAll('.closing, .kicker, .statement, .big, .era-name, .scene, .fine, .tags, .notice, .continue')) add(el, 12, 6);
@@ -375,7 +377,7 @@ function quietText() {
 
 // Actions
 
-async function commit(side, via = 'tap') {
+async function commit(side) {
   if (busy || conflict || state.phase !== 'play' || !cur?.scene) return;
   busy = true;
   const res = choose(state, content, { side, scene: cur.scene.id, turn: cur.turn });
@@ -383,34 +385,22 @@ async function commit(side, via = 'tap') {
   state = res.state;
   const saved = persist();
 
-  // The workbench nods toward the answer, then the new moment appears
-  const button = side === 'left' ? els.left : els.right;
-  button.classList.add('pressed');
-  if (!settings.reduceMotion) {
-    els.bench.style.transition = 'transform 200ms var(--ease-out)';
-    els.bench.style.transform = `translateX(${side === 'left' ? -28 : 28}px) rotate(${side === 'left' ? -3 : 3}deg)`;
-  }
-  await wait(via === 'swipe' ? 120 : 180);
-  button.classList.remove('pressed');
-  els.bench.style.transition = settings.reduceMotion ? 'none' : 'transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1.2)';
-  els.bench.style.transform = '';
-  preview(null);
-
+  // The chosen answer stays showing as the card flies off; then the next card
+  // arrives with the object as it now is.
+  keyPreview = null;
+  els.card.classList.remove('wiggle', 'nudge');
+  els.hand.classList.remove('show', 'once');
+  preview(side, 1, true);
+  await flingCard(side);
   const ended = res.events.find((e) => e.type === 'death')?.record;
   if (ended) {
-    // A short pause on what the last choice did to the object, then the epitaph
-    drawObject(cur.era.bench, ended.project, ended.look, ended.marks);
-    drawDanger(ended.danger, cur.danger.max);
-    els.choices.style.visibility = 'hidden';
-    await pause(900);
+    // A beat with the card gone, then the epitaph (spec 13.4: a short pause)
+    await pause(450);
     render({ enter: true });
+    resetCard();
   } else {
-    render({ animate: true });
-    if (res.events.some((e) => e.type === 'commit' || e.type === 'look')) {
-      els.bench.classList.remove('bump');
-      void els.bench.offsetWidth;
-      els.bench.classList.add('bump');
-    }
+    resetCard();
+    render({ animate: true, enter: true });
   }
   await saved;
   busy = false;
@@ -651,28 +641,29 @@ async function loadGame() {
 }
 
 function bindInput() {
-  bindSwipe(els.bench, {
+  bindSwipe(els.card, {
     canStart: (e) => !busy && !conflict && state.phase === 'play' && els.panel.hidden && e.timeStamp >= sceneShownAt,
     onMove: (dx, dy, threshold) => {
-      if (Math.abs(dx) > 4) { els.bench.classList.remove('wiggle'); els.hand.classList.remove('show'); }
-      els.bench.style.transition = 'none';
-      setBenchTransform(dx);
-      if (Math.abs(dx) > 14) preview(dx < 0 ? 'left' : 'right', (Math.abs(dx) - 8) / (threshold * 0.7));
+      if (Math.abs(dx) > 4) { els.card.classList.remove('wiggle', 'nudge'); els.hand.classList.remove('show', 'once'); }
+      keyPreview = null;
+      els.card.style.transition = 'none';
+      setCardTransform(dx);
+      // The answer comes up quickly, so it can be read long before the line
+      if (Math.abs(dx) > 12) preview(dx < 0 ? 'left' : 'right', (Math.abs(dx) - 12) / (threshold * 0.3), Math.abs(dx) >= threshold);
       else preview(null);
     },
     onCancel: springBack,
-    onCommit: (side) => commit(side, 'swipe'),
+    onCommit: (side) => commit(side),
+    onTap: nudge,
   });
-  // The answer buttons: a press has to start after this scene appeared
+  // The answers as buttons, for screen readers: a press has to start after this scene appeared
   for (const button of [els.left, els.right]) {
     let downAt = -1;
     button.addEventListener('pointerdown', (e) => { downAt = e.timeStamp; });
     button.addEventListener('click', (e) => {
       if (e.detail > 0 && downAt < sceneShownAt) return; // a finger still down from the last scene
-      commit(button.dataset.side, 'tap');
+      commit(button.dataset.side);
     });
-    button.addEventListener('pointerenter', () => { if (!busy && state.phase === 'play') preview(button.dataset.side); });
-    button.addEventListener('pointerleave', () => { if (!busy) preview(null); });
   }
   bindTap(els.screen, proceed);
   els.screen.addEventListener('scroll', quietText, { passive: true });
@@ -680,27 +671,32 @@ function bindInput() {
   els.menuBtn.addEventListener('click', () => { if (!busy) openPanel(); });
   els.panel.addEventListener('click', onPanelClick);
 
-  document.addEventListener('keydown', async (e) => {
+  // Keys work like the card: an arrow shows that side's answer, and the same
+  // arrow again (or Enter) chooses it. The other arrow switches; Escape puts
+  // the card back.
+  document.addEventListener('keydown', (e) => {
     if (!els.panel.hidden) { if (e.key === 'Escape') closePanel(); return; }
-    if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return; // one press, one answer
+    if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return; // one press, one step
     if (state.phase !== 'play') {
       if (['Enter', ' ', 'ArrowRight', 'ArrowLeft'].includes(e.key)) { e.preventDefault(); proceed(); }
       return;
     }
-    if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && !busy && !conflict) {
+    if (busy || conflict) return;
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
       e.preventDefault();
       const side = e.key === 'ArrowLeft' ? 'left' : 'right';
-      busy = true;
-      els.bench.classList.remove('wiggle');
-      els.hand.classList.remove('show');
-      if (!settings.reduceMotion) {
-        els.bench.style.transition = 'transform 140ms ease-out';
-        setBenchTransform(side === 'left' ? -60 : 60);
-      }
-      preview(side);
-      await wait(360);
-      busy = false;
-      commit(side, 'key');
+      if (keyPreview === side) { commit(side); return; }
+      keyPreview = side;
+      els.card.classList.remove('wiggle', 'nudge');
+      els.hand.classList.remove('show', 'once');
+      els.card.style.transition = settings.reduceMotion ? 'none' : 'transform 160ms ease-out';
+      setCardTransform(side === 'left' ? -44 : 44);
+      preview(side, 1, false);
+    } else if (e.key === 'Enter' && keyPreview) {
+      e.preventDefault();
+      commit(keyPreview);
+    } else if (e.key === 'Escape' && keyPreview) {
+      springBack();
     }
   });
 
