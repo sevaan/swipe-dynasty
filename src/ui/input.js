@@ -45,7 +45,11 @@ export function bindSwipe(el, { canStart, onMove, onCancel, onCommit, onTap = ()
   };
   el.addEventListener('pointerup', (e) => finish(e, false));
   el.addEventListener('pointercancel', (e) => finish(e, true));
-  el.addEventListener('lostpointercapture', (e) => finish(e, true));
+  // Only the element's own capture ending counts. On a touch screen the
+  // browser first captures the finger to whatever it touched inside the
+  // element, and handing that capture to the element makes the inner piece
+  // report a lost capture, which bubbles up here; that isn't the drag ending.
+  el.addEventListener('lostpointercapture', (e) => { if (e.target === el) finish(e, true); });
   // Without capture, the release can land elsewhere.
   window.addEventListener('pointerup', (e) => finish(e, false));
   window.addEventListener('pointercancel', (e) => finish(e, true));
@@ -62,7 +66,8 @@ export function bindTap(el, handler, { guardMs = 350 } = {}) {
   let downAt = -1;
   const observer = new MutationObserver(() => { if (!el.hidden) shownAt = performance.now(); });
   observer.observe(el, { attributes: true, attributeFilter: ['hidden'], childList: true });
-  el.addEventListener('pointerdown', (e) => { downAt = e.timeStamp; });
+  // The page's own clock, not the event's timestamp, which some browsers count differently
+  el.addEventListener('pointerdown', () => { downAt = performance.now(); });
   el.addEventListener('pointerup', (e) => {
     if (e.pointerType === 'mouse' && e.button !== 0) return;
     if (downAt < shownAt || performance.now() - shownAt < guardMs) return;

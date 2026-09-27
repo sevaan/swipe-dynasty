@@ -642,7 +642,8 @@ async function loadGame() {
 
 function bindInput() {
   bindSwipe(els.card, {
-    canStart: (e) => !busy && !conflict && state.phase === 'play' && els.panel.hidden && e.timeStamp >= sceneShownAt,
+    // A new card has to be on screen a moment before it can be dragged
+    canStart: () => !busy && !conflict && state.phase === 'play' && els.panel.hidden && performance.now() - sceneShownAt > 120,
     onMove: (dx, dy, threshold) => {
       if (Math.abs(dx) > 4) { els.card.classList.remove('wiggle', 'nudge'); els.hand.classList.remove('show', 'once'); }
       keyPreview = null;
@@ -659,7 +660,7 @@ function bindInput() {
   // The answers as buttons, for screen readers: a press has to start after this scene appeared
   for (const button of [els.left, els.right]) {
     let downAt = -1;
-    button.addEventListener('pointerdown', (e) => { downAt = e.timeStamp; });
+    button.addEventListener('pointerdown', () => { downAt = performance.now(); });
     button.addEventListener('click', (e) => {
       if (e.detail > 0 && downAt < sceneShownAt) return; // a finger still down from the last scene
       commit(button.dataset.side);

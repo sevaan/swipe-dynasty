@@ -304,11 +304,15 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   background: var(--panel);
   box-shadow: 0 6px 0 rgb(0 0 0 / 30%);
   touch-action: none;
+  -webkit-touch-callout: none; /* no "Save Image" menu on a long press */
   cursor: grab;
   will-change: transform;
 }
 
 .card:active { cursor: grabbing; }
+
+/* The pictures inside never take the touch themselves: the card does */
+.card > * { pointer-events: none; }
 
 .bench, .bench .layer, .bench .marks img {
   position: absolute;
