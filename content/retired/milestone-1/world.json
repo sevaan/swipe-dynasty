@@ -1,0 +1,166 @@
+{
+  "title": "One Bright Idea",
+  "files": {
+    "characters": "characters.csv",
+    "flags": "flags.csv",
+    "observations": "observations.csv",
+    "projects": "projects.csv",
+    "inventions": "inventions.csv",
+    "legacies": "legacies.csv",
+    "failures": "failures.csv",
+    "deaths": "deaths.csv",
+    "scenes": [
+      "scenes/vessel.csv",
+      "scenes/provisions.csv"
+    ]
+  },
+  "start": {
+    "era": "stone",
+    "project": "vessel"
+  },
+  "tuning": {
+    "dangerMax": 6,
+    "investigationMin": 6,
+    "investigationMax": 8,
+    "aftermath": 3,
+    "callbackBy": 3,
+    "stallLives": 2,
+    "skyEvery": 4
+  },
+  "eras": [
+    {
+      "id": "stone",
+      "name": "The Stone Age",
+      "intro": "Small settlements, big ideas, and nowhere to keep anything.",
+      "required": [
+        "pottery",
+        "preservation"
+      ],
+      "optional": [
+        "rope",
+        "fermentation"
+      ],
+      "keystone": "seed-store",
+      "next": "farming",
+      "bench": "stone",
+      "theme": {
+        "bg": "#2a1c14",
+        "panel": "#3b2a1e",
+        "card": "#ecd9b4",
+        "ink": "#2a1c14",
+        "text": "#f4e7cd",
+        "accent": "#e8793a"
+      },
+      "sky": [
+        {
+          "name": "day",
+          "bg": "#2a1c14"
+        },
+        {
+          "name": "dusk",
+          "bg": "#331a22"
+        },
+        {
+          "name": "night",
+          "bg": "#121828",
+          "fx": [
+            "stars"
+          ]
+        },
+        {
+          "name": "dawn",
+          "bg": "#2e2317"
+        }
+      ],
+      "names": [
+        "Mara",
+        "Ashe",
+        "Tovi",
+        "Oren",
+        "Sela",
+        "Idun",
+        "Kaya",
+        "Bren",
+        "Nara",
+        "Esk",
+        "Lio",
+        "Wren",
+        "Hale",
+        "Dara",
+        "Tam",
+        "Isa"
+      ]
+    }
+  ],
+  "weather": {
+    "rain": {
+      "bg": "#18222c",
+      "fx": [
+        "rain"
+      ]
+    },
+    "storm": {
+      "bg": "#111722",
+      "fx": [
+        "rain",
+        "lightning"
+      ]
+    },
+    "fire": {
+      "bg": "#2c170c",
+      "fx": [
+        "flames",
+        "embers"
+      ]
+    },
+    "embers": {
+      "fx": [
+        "embers"
+      ]
+    },
+    "smoke": {
+      "bg": "#1f1b19",
+      "fx": [
+        "smoke"
+      ]
+    },
+    "sparks": {
+      "fx": [
+        "sparks"
+      ]
+    },
+    "night": {
+      "bg": "#10162a",
+      "fx": [
+        "stars",
+        "fireflies"
+      ]
+    },
+    "dust": {
+      "bg": "#2d2415",
+      "fx": [
+        "dust"
+      ]
+    },
+    "harvest": {
+      "fx": [
+        "grain"
+      ]
+    },
+    "birds": {
+      "fx": [
+        "birds"
+      ]
+    },
+    "strange": {
+      "bg": "#291d3a",
+      "fx": []
+    }
+  },
+  "transient": [
+    "glint",
+    "steam",
+    "smoke",
+    "flames"
+  ]
+}

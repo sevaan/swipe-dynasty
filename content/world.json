@@ -1,47 +1,18 @@
 {
   "title": "One Bright Idea",
-  "files": {
-    "characters": "characters.csv",
-    "flags": "flags.csv",
-    "observations": "observations.csv",
-    "projects": "projects.csv",
-    "inventions": "inventions.csv",
-    "legacies": "legacies.csv",
-    "failures": "failures.csv",
-    "deaths": "deaths.csv",
-    "scenes": [
-      "scenes/vessel.csv",
-      "scenes/provisions.csv"
-    ]
-  },
-  "start": {
-    "era": "stone",
-    "project": "vessel"
-  },
+  "note": "How the script looks: which era palette and workbench each life uses, its skies, and which drawings show its six workbench states. The story itself is content/script.md. A state with no drawing shows its script description on the workbench as an exhibit label. See content/README.md.",
   "tuning": {
-    "dangerMax": 6,
-    "investigationMin": 6,
-    "investigationMax": 8,
-    "aftermath": 3,
-    "callbackBy": 3,
-    "stallLives": 2,
-    "skyEvery": 4
+    "skyEvery": 3
   },
-  "eras": [
-    {
-      "id": "stone",
-      "name": "The Stone Age",
-      "intro": "Small settlements, big ideas, and nowhere to keep anything.",
-      "required": [
-        "pottery",
-        "preservation"
+  "ages": {
+    "hearth": {
+      "name": "Hearth and clay",
+      "chapters": [
+        "C01",
+        "C02",
+        "C03",
+        "C04"
       ],
-      "optional": [
-        "rope",
-        "fermentation"
-      ],
-      "keystone": "seed-store",
-      "next": "farming",
       "bench": "stone",
       "theme": {
         "bg": "#2a1c14",
@@ -52,10 +23,6 @@
         "accent": "#e8793a"
       },
       "sky": [
-        {
-          "name": "day",
-          "bg": "#2a1c14"
-        },
         {
           "name": "dusk",
           "bg": "#331a22"
@@ -70,28 +37,459 @@
         {
           "name": "dawn",
           "bg": "#2e2317"
+        },
+        {
+          "name": "day",
+          "bg": "#2a1c14"
         }
+      ]
+    },
+    "workshop": {
+      "name": "Paper and metal",
+      "chapters": [
+        "C05",
+        "C06",
+        "C07",
+        "C08"
       ],
-      "names": [
-        "Mara",
-        "Ashe",
-        "Tovi",
-        "Oren",
-        "Sela",
-        "Idun",
-        "Kaya",
-        "Bren",
-        "Nara",
-        "Esk",
-        "Lio",
-        "Wren",
-        "Hale",
-        "Dara",
-        "Tam",
-        "Isa"
+      "bench": "workshop",
+      "theme": {
+        "bg": "#261f19",
+        "panel": "#3a2f25",
+        "card": "#efe2c6",
+        "ink": "#261f19",
+        "text": "#f3e8d2",
+        "accent": "#d9a441"
+      },
+      "sky": [
+        {
+          "name": "day",
+          "bg": "#261f19"
+        },
+        {
+          "name": "lamplight",
+          "bg": "#2c1f16"
+        },
+        {
+          "name": "night",
+          "bg": "#141722",
+          "fx": [
+            "stars"
+          ]
+        }
+      ]
+    },
+    "engine": {
+      "name": "Steam and current",
+      "chapters": [
+        "C09",
+        "C10",
+        "C11"
+      ],
+      "bench": "engine",
+      "theme": {
+        "bg": "#1d1f22",
+        "panel": "#2d3034",
+        "card": "#ece4d6",
+        "ink": "#1d1f22",
+        "text": "#efe7da",
+        "accent": "#e0913a"
+      },
+      "sky": [
+        {
+          "name": "smoke",
+          "bg": "#1d1f22"
+        },
+        {
+          "name": "evening",
+          "bg": "#231b1f"
+        },
+        {
+          "name": "night",
+          "bg": "#11141c",
+          "fx": [
+            "stars"
+          ]
+        }
+      ]
+    },
+    "lab": {
+      "name": "Code and living systems",
+      "chapters": [
+        "C12",
+        "C13",
+        "C14"
+      ],
+      "bench": "lab",
+      "theme": {
+        "bg": "#16222a",
+        "panel": "#22333d",
+        "card": "#e3efec",
+        "ink": "#16222a",
+        "text": "#e6f1ef",
+        "accent": "#56c7b8"
+      },
+      "sky": [
+        {
+          "name": "day",
+          "bg": "#16222a"
+        },
+        {
+          "name": "late",
+          "bg": "#171c2c"
+        },
+        {
+          "name": "night",
+          "bg": "#0e141d",
+          "fx": [
+            "stars"
+          ]
+        }
+      ]
+    },
+    "simulation": {
+      "name": "Simulation",
+      "chapters": [
+        "S1",
+        "S2",
+        "S3",
+        "S4"
+      ],
+      "bench": "simulation",
+      "theme": {
+        "bg": "#1a1830",
+        "panel": "#2a2748",
+        "card": "#e7e5f7",
+        "ink": "#1a1830",
+        "text": "#ece9ff",
+        "accent": "#8fb4ff"
+      },
+      "sky": [
+        {
+          "name": "dusk",
+          "bg": "#1a1830"
+        },
+        {
+          "name": "night",
+          "bg": "#100f22",
+          "fx": [
+            "stars"
+          ]
+        },
+        {
+          "name": "dawn",
+          "bg": "#211a31"
+        }
+      ]
+    },
+    "departure": {
+      "name": "Departure",
+      "chapters": [
+        "D1",
+        "D2",
+        "D3",
+        "D4"
+      ],
+      "bench": "departure",
+      "theme": {
+        "bg": "#101a24",
+        "panel": "#1d2b38",
+        "card": "#e5eee3",
+        "ink": "#101a24",
+        "text": "#e8f0e6",
+        "accent": "#9bd36a"
+      },
+      "sky": [
+        {
+          "name": "night",
+          "bg": "#0c141d",
+          "fx": [
+            "stars"
+          ]
+        },
+        {
+          "name": "orbit",
+          "bg": "#101a24",
+          "fx": [
+            "stars"
+          ]
+        },
+        {
+          "name": "dawn",
+          "bg": "#172230"
+        }
+      ]
+    },
+    "retirement": {
+      "name": "Retirement",
+      "chapters": [
+        "R1",
+        "R2",
+        "R3",
+        "R4"
+      ],
+      "bench": "retirement",
+      "theme": {
+        "bg": "#22261d",
+        "panel": "#333a2b",
+        "card": "#f1ecdc",
+        "ink": "#22261d",
+        "text": "#f1ecdc",
+        "accent": "#e7b86a"
+      },
+      "sky": [
+        {
+          "name": "afternoon",
+          "bg": "#22261d"
+        },
+        {
+          "name": "evening",
+          "bg": "#2a2320"
+        },
+        {
+          "name": "night",
+          "bg": "#161a1c",
+          "fx": [
+            "stars"
+          ]
+        }
+      ]
+    },
+    "reply": {
+      "name": "First Reply",
+      "chapters": [
+        "A1",
+        "A2",
+        "A3",
+        "A4"
+      ],
+      "bench": "reply",
+      "theme": {
+        "bg": "#151b22",
+        "panel": "#232d38",
+        "card": "#e7ecef",
+        "ink": "#151b22",
+        "text": "#e9eef2",
+        "accent": "#f0b24a"
+      },
+      "sky": [
+        {
+          "name": "night",
+          "bg": "#0e131a",
+          "fx": [
+            "stars"
+          ]
+        },
+        {
+          "name": "slate",
+          "bg": "#151b22"
+        },
+        {
+          "name": "dusk",
+          "bg": "#1d1a24"
+        }
+      ]
+    },
+    "unmaking": {
+      "name": "Unmaking",
+      "chapters": [
+        "U1",
+        "U2",
+        "U3",
+        "U4"
+      ],
+      "bench": "unmaking",
+      "theme": {
+        "bg": "#1f2324",
+        "panel": "#2e3536",
+        "card": "#eef1ec",
+        "ink": "#1f2324",
+        "text": "#eef1ec",
+        "accent": "#b9c9a8"
+      },
+      "sky": [
+        {
+          "name": "morning",
+          "bg": "#1f2324"
+        },
+        {
+          "name": "afternoon",
+          "bg": "#222521"
+        },
+        {
+          "name": "evening",
+          "bg": "#1b1d24"
+        }
       ]
     }
-  ],
+  },
+  "art": {
+    "C01": [
+      {
+        "object": "hearth/stones-grass",
+        "left": {
+          "object": "hearth/stones-grass",
+          "marks": [
+            "glint"
+          ]
+        },
+        "right": "hearth/fibres-spark"
+      },
+      {
+        "object": "hearth/flint-nodule",
+        "left": {
+          "object": "hearth/flint-nodule",
+          "marks": [
+            "glint"
+          ]
+        },
+        "right": {
+          "object": "hearth/flint-nodule",
+          "marks": [
+            "glint"
+          ]
+        }
+      },
+      {
+        "object": "hearth/fibres-spark",
+        "left": "hearth/small-flame",
+        "right": "hearth/small-flame"
+      },
+      {
+        "object": "hearth/small-flame",
+        "left": "hearth/small-flame",
+        "right": "hearth/small-flame"
+      },
+      {
+        "object": "hearth/small-flame",
+        "left": "hearth/two-hearths",
+        "right": "hearth/ember-carrier"
+      },
+      {
+        "object": "hearth/stones-warm-hand",
+        "left": "hearth/stones-warm-hand",
+        "right": "hearth/ember-carrier"
+      }
+    ],
+    "C02": [
+      {
+        "object": "vessel/basket",
+        "marks": [
+          "drips"
+        ],
+        "left": "vessel/lined-basket",
+        "right": "vessel/clay-pot"
+      },
+      {
+        "object": {
+          "from": "C02.1",
+          "left": "vessel/lined-basket",
+          "right": "vessel/clay-pot"
+        },
+        "left": {
+          "object": "vessel/cracked-pot",
+          "marks": [
+            "smoke"
+          ]
+        },
+        "right": {
+          "object": "vessel/cracked-pot",
+          "marks": [
+            "flames"
+          ]
+        }
+      },
+      {
+        "object": "vessel/cracked-pot",
+        "left": "vessel/clay-pot",
+        "right": "vessel/rim-pot"
+      },
+      {
+        "object": "vessel/fired-pot",
+        "left": "vessel/fired-pot",
+        "right": {
+          "object": "vessel/fired-pot",
+          "marks": [
+            "glint"
+          ]
+        }
+      },
+      {
+        "object": "vessel/fired-pot",
+        "left": "vessel/household-pots",
+        "right": "vessel/store-jar"
+      },
+      {
+        "object": "vessel/notched-pot",
+        "left": "vessel/notched-pot",
+        "right": "vessel/store-jar"
+      }
+    ],
+    "C03": [
+      {
+        "object": "provisions/rotting-pot",
+        "marks": [
+          "smell",
+          "flies"
+        ],
+        "left": "provisions/drying-rack",
+        "right": {
+          "object": "provisions/salt-pot",
+          "marks": [
+            "salt"
+          ]
+        }
+      },
+      {
+        "object": {
+          "from": "C03.1",
+          "left": "provisions/drying-rack",
+          "right": "provisions/salt-pot"
+        },
+        "left": "provisions/drying-rack",
+        "right": {
+          "object": "provisions/drying-rack",
+          "marks": [
+            "smoke"
+          ]
+        }
+      },
+      {
+        "object": "provisions/drying-rack",
+        "left": "provisions/sealed-jar",
+        "right": {
+          "object": "provisions/salt-pot",
+          "marks": [
+            "salt"
+          ]
+        }
+      },
+      {
+        "object": "provisions/sealed-jar",
+        "left": {
+          "object": "provisions/sealed-jar",
+          "marks": [
+            "steam"
+          ]
+        },
+        "right": "provisions/sealed-jar"
+      },
+      {
+        "object": "provisions/sealed-jar",
+        "left": "provisions/larder",
+        "right": "provisions/journey-packs"
+      },
+      {
+        "object": "provisions/marked-jar",
+        "left": "provisions/marked-jar",
+        "right": "provisions/journey-packs"
+      }
+    ]
+  },
+  "portraits": {
+    "C01:aru": "c01-aru",
+    "C01:iri": "c01-iri"
+  },
   "weather": {
     "rain": {
       "bg": "#18222c",
@@ -141,26 +539,6 @@
       "fx": [
         "dust"
       ]
-    },
-    "harvest": {
-      "fx": [
-        "grain"
-      ]
-    },
-    "birds": {
-      "fx": [
-        "birds"
-      ]
-    },
-    "strange": {
-      "bg": "#291d3a",
-      "fx": []
     }
-  },
-  "transient": [
-    "glint",
-    "steam",
-    "smoke",
-    "flames"
-  ]
+  }
 }

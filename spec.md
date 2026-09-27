@@ -2,6 +2,8 @@
 
 Game design and implementation specification — v1.0
 
+(Superseded, Sep 27, 2026: `content/script.md`, Sevaan's complete game script and implementation handoff, replaces this specification's campaign structure and rules wherever they differ. This document is kept for its principles and history. See `design-notes.md`.)
+
 Working title: One Bright Idea
 Format: Mobile-first, single-player narrative invention game
 Primary interaction: Choose between two approaches by swiping left or right

@@ -6,6 +6,12 @@ Sep 25, 2026 · @Sevaan Franks
 
 ## Decisions since the spec
 
+- **The complete game script replaces the spec's systems (Sep 27, Sevaan).** `content/script.md` (v1.0) is the whole game, and the game reads it directly: 34 lives, 204 cards, 28 callbacks, five routes, five endings and one redirect. Where it differs from `spec.md`, the script wins:
+  - every life plays exactly six cards, with the invention on card four and the legacy on card six, and nothing ends a life early;
+  - "danger" is now hidden experimental exposure, which only picks the obituary;
+  - small interest scores rank five future projects after the fourteenth life;
+  - there are no observations, recipes, schedulers, failed designs or random scenes.
+  The prototype's content and engine are in the Graveyard. The decisions below about the screen (the card at the bottom with its answers along the foot, swipe or tap, nothing showing Danger or the phase) still hold. Art stays flat vector, which the script asks for ("use the existing proof-of-concept visual language").
 - **The spec replaces the Reigns-style structure (Sep 26, Sevaan).** The pieces it drops are in the Graveyard under "The Reigns-style design".
 - **Art stays flat vector (Sep 26, Sevaan).** The spec's §13.1 asks for pixel-art objects. The flat, Reigns-like style chosen the same day wins: workbench objects, overlays and scenes are SVG in `content/art/`, drawn to `content/art/README.md`. The character portraits become the small figures beside the object.
 - **The old cast carries over as roles (Sep 26, Sevaan).** The old cards are retired, and the characters map onto the spec's voices where they fit:
@@ -453,6 +459,8 @@ Meters: Harvest, Village, Priests, The Neighbours.
 
 Discarded, but kept in case something here comes back.
 
+**The Milestone 1 prototype (Sep 26), replaced by the complete script.** Pottery and provisions as two randomized projects, with observations, recipes, a scene scheduler, callbacks by decision three, failed designs, a Danger track that killed at 6, and two legacy packages per invention. Its content is kept in `content/retired/milestone-1/`; its engine is in git history (the commits before "The complete game script"). Its pottery and food drawings live on in C02 and C03.
+
 **Swipe-only answers (Sep 26), replaced by the answers along the card's foot.** Sevaan tried the card with no answer buttons: you dragged it to read each answer and let go to choose. The buttons came back the same day, after swiping turned out not to work on the iPhone (a touch bug, since fixed). Swiping stays as the second way to answer.
 
 **The Reigns-style design (Sep 25–26), replaced by `spec.md`**
@@ -563,33 +571,25 @@ These are the defaults the first build uses where the Decisions above are silent
 
 ## Implementation notes
 
-Updated Sep 26 for the One Bright Idea engine (Milestone 1).
+Updated Sep 27 for the complete script.
 
 - **Stack:** plain HTML, CSS and JavaScript modules with no build step. GitHub Pages serves `main` at https://sevaan.github.io/swipe-dynasty/.
-- **Content:** CSV tables plus `world.json` in `content/`: projects, observations, inventions, legacy packages, failed designs, deaths, flags, characters, and one scene file per project. The browser parses them at load time with the same code the checker uses. The cell syntax is in `content/README.md`.
-- **Engine:**
-  - `src/engine/` has no page code, so the game, the tests and the simulation bot all run the same rules.
-  - State has three scopes: life, timeline and collection.
-  - Each choice resolves in one atomic step, in spec §16.6's order, then saves.
-  - A scene's definition is frozen into the save when it's shown, so a content update never changes a scene while it waits for an answer.
-  - Randomness is seeded and saved, so a reload never rerolls anything.
-- **Scheduling (§16.5):**
-  - Follow-ups come first, then one inherited-history callback per life (by decision 3 at the latest). After that, a scene that can establish missing evidence, then anything that fits.
-  - A proof scene is only chosen if both its answers resolve to something real.
-- **Tuning values:** Danger's maximum, the investigation and aftermath lengths, the callback deadline, the stall rule and the sky's pace live under `tuning` in `content/world.json`, not in code.
-- **Saves (§16.7):** each save is an IndexedDB snapshot, with the one before it kept. A revision check stops a stale tab from overwriting a newer game. localStorage stands in when IndexedDB isn't available, and export and import are in Settings.
-- **Screen (§12, as changed Sep 26):**
-  - The layers, top to bottom: context, then the situation, then the evidence chips, then the card. The card is the bench, the object and its overlays, with the two answers along its foot. Nothing shows Danger or the phase.
-  - To answer, tap one of the card's two halves, or drag the card: the answer and its description come up across the top of the picture. Past 28% of its width the band turns to the accent colour, and letting go chooses it. A tap on the picture nudges the card.
-  - An arrow key shows an answer, and the same arrow again chooses it.
-  - Touch needs care: a phone captures a finger to whatever it touched first. The pictures inside the card never take pointer events, and the swipe ignores lost-capture events that bubble up from inside the card. Test with touch, not just a mouse.
-  - `fitCard()` in app.js sizes the picture: whatever height the words, the evidence and the answers leave, up to square. It stays at least 2:1 unless that would leave the words under 140px; only then does the situation scroll. Workbench art paints 80 units of bleed on every side of its 4:3 frame, so any shape from 2:1 to square looks finished.
-- **Between lives (§12.6):** the epitaph (the object as an exhibit, then the three-part placard), then one line of inheritance, then the next life. History (Discoveries, Lives, Connections) is in the menu and never forced.
-- **Weather:** `world.json` has each era's skies and a `weather` list, and scenes pick weather in their `weather` column. `src/ui/fx.js` draws it as flat shapes at about 30 frames a second. `fx.setQuiet()` thins it behind the words, reduce motion freezes it, and Settings can turn it off. `tools/fx.html` previews any weather.
-- **Text:** the font loads from Google Fonts (a link in `index.html`); offline, the system font takes over.
+- **Content:**
+  - `content/script.md` is read by `src/content/script.js`, a line-by-line reader of its headings and bold field labels. It reports errors by line and by chapter, card and field.
+  - `src/content/game-content.js` adds `world.json` (era palettes, workbenches, drawings, portraits) and `ui.json` (the interface's words), checks them, and is shared by the browser, the checker and the tests.
+- **Engine:** `src/engine/campaign.js`, with no page code.
+  - One atomic step per action (choose, continue, offer, redirect, another future), each carrying its turn so a doubled or stale input does nothing.
+  - The save follows the script's section 7: the current view, the choices by card id, inventions, legacies, exposure, interests, the route and the proposal order.
+  - A reload on a result shows the stored result and never repeats its effects.
+- **Saves:** an IndexedDB snapshot with a revision check and the previous one kept, under a new key. Beside it sit the post-C14 checkpoint for "Another future" and the endings seen, which outlive a restart. The old prototype save stays untouched under its old key.
+- **Screen:** see the Sep 26 decisions. There's a title screen, the framing panel, a life's arrival, the card, the result with Continue, the reveal, the epitaph, The Archive's proposals, the ending panels and the credits. History lists each life's invention, legacy, obituary and the answers actually chosen.
 - **Art:**
-  - Every picture is an SVG in `content/art/`: characters at 288 × 360; workbenches, object states (one folder per project) and overlays at 320 × 240; interface pieces at 48 × 48. The house style is in `content/art/README.md`.
-  - The browser shows colour art as images and one-colour glyphs as CSS masks.
-  - The checker reads every file. It reports missing pictures, the wrong canvas size, and anything unsafe or unportable (scripts, `<text>`, embedded images, outside links).
-  - `tools/art.html` shows them all, stacked the way the game stacks them.
-  - This is first-draft art, and there's no sound yet.
+  - Each era has a palette, skies and a workbench.
+  - C01–C03 have drawn workbench states; the other lives show each state's description as an exhibit label until drawn.
+  - People without a drawn portrait get a silhouette in a colour of their own.
+  - `tools/art.html` shows it all.
+- **Tools:**
+  - `tools/check.mjs` checks the content.
+  - `tools/simulate.mjs` plays histories.
+  - `tools/script.html` and `tools/script.mjs` read the script back for review.
+  - `npm test` covers the script's section 16 list.

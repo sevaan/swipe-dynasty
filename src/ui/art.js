@@ -35,6 +35,7 @@ export function setGlyph(el, kind, id) {
 document.addEventListener('error', (e) => {
   const img = e.target;
   if (!(img instanceof HTMLImageElement) || !img.classList.contains('art') || img.dataset.missing) return;
+  if (img.dataset.key || img.dataset.label) return; // the game swaps in a silhouette or a label itself
   console.warn(`Missing picture: ${img.src}`);
   if (img.closest('.bench, .exhibit, .pic, .marks')) { img.classList.add('broken'); return; }
   img.dataset.missing = '1';

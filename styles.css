@@ -31,6 +31,9 @@
 
 * { box-sizing: border-box; }
 
+/* Hidden means hidden, whatever display a class gives it */
+[hidden] { display: none !important; }
+
 html, body {
   height: 100%;
   margin: 0;
@@ -180,24 +183,43 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   padding-bottom: 2px;
 }
 
-.situation .result {
+/* After a choice: the answer that was chosen, above what came of it */
+.situation .kicker {
   font-size: calc(0.95rem * var(--scale));
+  font-weight: 800;
+  line-height: 1.35;
+  color: var(--accent);
+  text-shadow: var(--lift);
+}
+
+.situation .kicker:empty, .situation .helper:empty, .callbacks:empty { display: none; }
+
+/* A callback: one short narrator line when an earlier life's choice returns */
+.callbacks { display: grid; gap: 6px; }
+.callback {
+  padding: 6px 12px;
+  border-left: 3px solid var(--accent);
+  border-radius: 2px 10px 10px 2px;
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  font-size: calc(0.95rem * var(--scale));
+  line-height: 1.4;
+}
+
+/* The first two cards' one-line help */
+.situation .helper {
+  font-size: calc(0.88rem * var(--scale));
   line-height: 1.4;
   color: var(--muted);
   text-shadow: var(--lift);
 }
 
-.situation .result:empty, .situation .notice:empty { display: none; }
-
-.situation .notice {
-  justify-self: start;
-  padding: 5px 11px;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--accent) 22%, transparent);
-  font-size: calc(0.86rem * var(--scale));
-  font-weight: 700;
-  line-height: 1.35;
-}
+/* A proposal: The Archive's lead-in, then each project's title and pitch */
+.situation .text .lead { display: block; margin-bottom: 10px; font-size: calc(0.98rem * var(--scale)); color: var(--muted); }
+.situation .text .offer-heading { display: block; margin-bottom: 8px; font-weight: 800; }
+.situation .text .offer { display: block; }
+.situation .text .offer + .offer { margin-top: 10px; }
+.situation .text .offer b { display: block; font-weight: 800; color: var(--accent); }
+.situation .text .question { display: block; margin-top: 10px; font-weight: 700; }
 
 .speaker {
   display: flex;
@@ -237,55 +259,11 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   text-wrap: pretty;
 }
 
-/* 3. The stage: the evidence and the card, at the foot of the play area */
+/* 3. The stage: the card, at the foot of the play area */
 .stage {
   flex: none;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-}
-
-/* Evidence: up to three things this life has established */
-.evidence {
-  flex: none;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 6px;
-  min-height: 28px;
-}
-
-.evidence li {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 4px 11px 4px 9px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--text) 14%, transparent);
-  font-size: calc(0.84rem * var(--scale));
-  font-weight: 700;
-  line-height: 1.25;
-}
-
-/* A drawn tick, not a character */
-.evidence li::before {
-  content: '';
-  width: 5px;
-  height: 9px;
-  margin: -2px 1px 0;
-  border: solid var(--accent);
-  border-width: 0 2.5px 2.5px 0;
-  transform: rotate(45deg);
-}
-
-.evidence li.new { animation: pop 520ms var(--ease-out); background: color-mix(in srgb, var(--accent) 30%, transparent); }
-
-@keyframes pop {
-  0% { transform: scale(0.6); opacity: 0; }
-  60% { transform: scale(1.08); }
 }
 
 /* The card: the object on its workbench, with the two answers along its
@@ -307,6 +285,7 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 }
 
 .card:active { cursor: grabbing; }
+.card:not(.deciding) { cursor: default; }
 
 /* The picture: square when there's room, shorter when there isn't, and the
    first thing to give up room (fitCard in app.js sets its height). The art
@@ -367,15 +346,7 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .peek .label { display: flex; align-items: center; gap: 9px; font-size: calc(1.12rem * var(--scale)); font-weight: 800; line-height: 1.25; text-wrap: balance; }
 .peek .desc { font-size: calc(0.92rem * var(--scale)); line-height: 1.35; opacity: 0.86; }
 .peek .glyph { width: 20px; height: 20px; }
-.peek .tag {
-  padding: 2px 9px;
-  border-radius: 999px;
-  font-size: calc(0.78rem * var(--scale));
-  font-weight: 800;
-  line-height: 1.4;
-  background: color-mix(in srgb, var(--accent) 34%, transparent);
-}
-.peek.armed { background: var(--accent); color: var(--ink); }
+.peek .peek.armed { background: var(--accent); color: var(--ink); }
 .peek.armed .desc { opacity: 1; }
 .peek.armed .tag { background: color-mix(in srgb, var(--ink) 16%, transparent); }
 
@@ -454,6 +425,56 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .choice.pressed { background: color-mix(in srgb, var(--accent) 40%, transparent); }
 .choice:focus-visible { outline-offset: -4px; }
 
+/* After a choice, one Continue takes the answers' place */
+.next {
+  flex: none;
+  min-height: 60px;
+  padding: 12px 16px;
+  border: 0;
+  border-top: 2px solid var(--rule);
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  font-size: calc(1rem * var(--scale));
+  font-weight: 800;
+  cursor: pointer;
+}
+.next[hidden], .choices[hidden] { display: none; }
+.next:focus-visible { outline-offset: -4px; }
+
+/* A workbench state with no drawing yet: its description from the script,
+   set on the bench like an exhibit label (spec 16: deliberate, never a
+   broken picture) */
+.label-card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  transform: translate(-50%, -50%);
+  width: max-content;
+  max-width: 78%;
+  padding: 12px 16px 13px;
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: 0 4px 0 rgb(0 0 0 / 28%);
+  font-size: calc(0.98rem * var(--scale));
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  text-wrap: balance;
+}
+.label-card[hidden], .label-card:empty { display: none; }
+.label-card .candidate { display: flex; align-items: center; gap: 10px; text-align: left; font-weight: 800; }
+.label-card .candidate + .candidate { margin-top: 10px; }
+.label-card .candidate small { font-weight: 600; opacity: 0.8; }
+
+/* Portraits: drawn ones, and silhouettes for everyone not drawn yet */
+svg.silhouette { display: block; width: 100%; height: 100%; }
+.portrait { position: relative; overflow: hidden; background: var(--panel); flex: none; }
+.portrait img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.portrait.large { width: 118px; height: 148px; border-radius: 18px; box-shadow: 0 5px 0 rgb(0 0 0 / 28%); }
+.portrait.small { width: 44px; height: 44px; border-radius: 50%; }
+.portrait.small img { width: 250%; height: auto; left: -75%; top: -40%; }
+
 /* Between lives: the exhibit, the inheritance, a new era, the end */
 
 /* The screen takes the place of the object and the answers; the menu stays
@@ -487,14 +508,6 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   animation: fade-in 400ms ease;
 }
 
-.screen .closing {
-  max-width: 22em;
-  font-size: calc(1.02rem * var(--scale));
-  line-height: 1.4;
-  color: var(--muted);
-  text-shadow: var(--lift);
-  text-wrap: balance;
-}
 
 /* The completed object, on a museum plinth */
 .exhibit {
@@ -521,19 +534,11 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   text-align: left;
 }
 
-.placard .rip { font-size: calc(0.76rem * var(--scale)); font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: color-mix(in srgb, var(--ink) 75%, transparent); }
 .placard .name { font-size: calc(1.8rem * var(--scale)); font-weight: 800; line-height: 1.05; }
 .placard .made { font-size: calc(1.15rem * var(--scale)); font-weight: 800; line-height: 1.3; }
 .placard .ended { font-size: calc(1rem * var(--scale)); line-height: 1.4; }
 .placard .legacy { font-size: calc(1rem * var(--scale)); line-height: 1.4; padding-top: 8px; border-top: 2px solid color-mix(in srgb, var(--ink) 15%, transparent); }
-.placard .meta { font-size: calc(0.82rem * var(--scale)); color: color-mix(in srgb, var(--ink) 75%, transparent); }
 
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-}
 
 .tag {
   display: inline-block;
@@ -546,20 +551,9 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   background: color-mix(in srgb, var(--text) 18%, transparent);
 }
 
-.tag.keystone, .tag.accent { background: var(--accent); color: var(--ink); }
-.tag.new { background: var(--text); color: var(--bg); }
 
-.screen .notice {
-  max-width: 24em;
-  padding: 6px 12px;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--accent) 22%, transparent);
-  font-size: calc(0.9rem * var(--scale));
-  font-weight: 700;
-  line-height: 1.4;
-}
 
-.inherit .kicker, .screen .kicker {
+.screen .kicker {
   font-size: calc(0.8rem * var(--scale));
   font-weight: 800;
   letter-spacing: 0.16em;
@@ -568,7 +562,7 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   text-shadow: var(--lift);
 }
 
-.inherit .statement {
+.screen .statement {
   max-width: 19em;
   font-size: calc(1.45rem * var(--scale));
   font-weight: 600;
@@ -582,13 +576,6 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   line-height: 1.1;
 }
 
-.era-name {
-  font-size: calc(2.2rem * var(--scale));
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--accent);
-}
 
 .screen .scene {
   max-width: 20em;
@@ -599,29 +586,40 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 }
 
 /* The words hold still; a small arrow after them blinks */
-.continue {
-  margin-top: 6px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: calc(0.9rem * var(--scale));
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted);
-  text-shadow: var(--lift);
-}
 
-.continue::after {
-  content: '';
-  width: 12px;
-  height: 8px;
-  background: currentColor;
-  clip-path: polygon(0 0, 100% 0, 50% 100%);
-  animation: blink-off 1s steps(1, end) infinite;
-}
 
-@keyframes blink-off { 50% { opacity: 0; } }
+/* The buttons that move a screen along: large, with their own words */
+.screen-actions { display: grid; gap: 10px; width: min(100%, 340px); margin-top: 8px; }
+.btn-screen {
+  min-height: 54px;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--accent);
+  color: var(--ink);
+  font-size: calc(1.02rem * var(--scale));
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 0 rgb(0 0 0 / 28%);
+}
+.btn-screen.quiet { background: var(--panel); color: var(--text); }
+
+.title-screen .game-title { margin: 0; font-size: calc(2.6rem * var(--scale)); font-weight: 800; line-height: 1.05; letter-spacing: 0.01em; }
+.title-screen .tagline { max-width: 20em; font-size: calc(1.1rem * var(--scale)); line-height: 1.4; color: var(--muted); text-wrap: balance; }
+
+.arrival .name { font-size: calc(1.9rem * var(--scale)); font-weight: 800; line-height: 1.1; }
+.arrival .role { font-size: calc(1rem * var(--scale)); color: var(--muted); margin-top: -6px; }
+.arrival .want { max-width: 22em; padding: 10px 14px; border-radius: 12px; background: color-mix(in srgb, var(--accent) 16%, transparent); font-size: calc(1.02rem * var(--scale)); font-weight: 700; line-height: 1.4; }
+.arrival .want span { color: var(--accent); }
+
+.reveal .first { font-size: calc(1rem * var(--scale)); font-weight: 700; color: var(--accent); }
+
+.ending .dots { display: flex; gap: 6px; justify-content: center; }
+.ending .dots span { width: 7px; height: 7px; border-radius: 50%; background: color-mix(in srgb, var(--text) 30%, transparent); }
+.ending .dots span.on { background: var(--text); }
+
+.credits .big + .scene { margin-top: -4px; }
+
 @keyframes fade-in { from { opacity: 0; } }
 
 /* Menu panel */
@@ -706,9 +704,18 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .item .body { color: var(--muted); text-wrap: pretty; }
 .item .link { font-size: calc(0.86rem * var(--scale)); color: var(--muted); }
 .item .link b { color: var(--text); }
-.item.chain { grid-template-columns: 1fr; gap: 6px; }
-.item.chain .body { color: var(--text); }
-.item.chain b { font-weight: 800; }
+
+
+details.item.life { display: block; }
+details.item.life summary { display: flex; align-items: center; gap: 14px; cursor: pointer; list-style: none; }
+details.item.life summary::-webkit-details-marker { display: none; }
+details.item.life .about { min-width: 0; }
+details.item.life .by { font-size: calc(0.88rem * var(--scale)); color: var(--muted); }
+details.item.life[open] summary { margin-bottom: 8px; }
+details.item.life .body, details.item.life .link { margin-top: 6px; }
+ol.chosen { margin: 10px 0 0; padding-left: 20px; font-size: calc(0.9rem * var(--scale)); line-height: 1.45; }
+ol.chosen li span { text-transform: capitalize; color: var(--muted); }
+ol.chosen li span::after { content: ':'; }
 
 .row {
   display: flex;
@@ -840,6 +847,8 @@ img.art.broken { visibility: hidden; }
 
 /* Short phones: tighter spacing, so the answers never leave the screen */
 @media (max-height: 700px) {
+  .portrait.large { width: 84px; height: 104px; border-radius: 14px; }
+  .screen-in { gap: 10px; }
   .app { gap: 6px; }
   .play { gap: 8px; }
   .choice { min-height: 80px; padding: 10px 12px 11px; }

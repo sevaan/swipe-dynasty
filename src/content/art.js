@@ -53,20 +53,28 @@ export function artProblems(kind, text) {
   return problems;
 }
 
-// Every picture the content refers to, with where the reference is and
-// whether a missing file breaks the game ('error') or just shows a question mark ('warn').
+// Every picture the content refers to, with where the reference is:
+// each era's workbench, the exhibit plinth, the drawn workbench states and
+// their overlays (world.json "art"), the drawn portraits, and the interface.
 export function artReferences(content) {
   const refs = [];
-  const add = (kind, id, file, line, column, what, level = 'error') => refs.push({ kind, id, file, line, column, level, what });
-  for (const ch of Object.values(content.characters)) {
-    if (ch.portrait) add('characters', ch.portrait, 'characters.csv', ch.line, 'portrait', `the portrait for ${ch.id}`);
+  const add = (kind, id, where, what) => refs.push({ kind, id, where, what });
+  const world = content.world || {};
+  for (const [id, age] of Object.entries(world.ages || {})) add('benches', age.bench, `ages.${id}.bench`, `the ${age.name || id} workbench`);
+  add('benches', 'exhibit', 'exhibit', 'the exhibit plinth');
+  const look = (value, where, chapter) => {
+    const obj = typeof value === 'string' ? { object: value } : value || {};
+    const objects = obj.object && typeof obj.object === 'object' ? [obj.object.left, obj.object.right] : [obj.object];
+    for (const o of objects) if (o) add('objects', o, where, `a ${chapter} workbench state`);
+    for (const m of obj.marks || []) add('overlays', m, where, `the "${m}" overlay`);
+  };
+  for (const [chapter, states] of Object.entries(world.art || {})) {
+    states.forEach((st, i) => {
+      look(st, `art.${chapter}[${i}]`, chapter);
+      for (const side of ['left', 'right']) if (st[side]) look(st[side], `art.${chapter}[${i}].${side}`, chapter);
+    });
   }
-  for (const era of Object.values(content.eras)) add('benches', era.bench, 'world.json', 0, `eras.${era.id}.bench`, `the ${era.name} workbench`);
-  add('benches', 'exhibit', 'world.json', 0, '', 'the exhibit plinth on the death screen');
-  for (const [project, looks] of Object.entries(content.looks)) {
-    for (const [look, where] of Object.entries(looks)) add('objects', `${project}/${look}`, where.file, where.line, where.column, `the "${look}" look of ${project}`);
-  }
-  for (const [mark, where] of Object.entries(content.marks)) add('overlays', mark, where.file, where.line, where.column, `the "${mark}" overlay`);
-  for (const id of UI_ART) add('ui', id, 'art/ui', 0, '', 'the interface');
+  for (const [key, id] of Object.entries(world.portraits || {})) add('characters', id, `portraits.${key}`, `the portrait of ${key}`);
+  for (const id of UI_ART) add('ui', id, 'ui', 'the interface');
   return refs;
 }

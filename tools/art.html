@@ -18,6 +18,8 @@
     /* The workbench stack, as the game draws it: 4:3 on short phones, up to square on tall ones */
     .bench { position: relative; width: 200px; height: 150px; border-radius: 12px; overflow: hidden; background: #3b2a1e; box-shadow: 0 4px 0 rgb(0 0 0 / 30%); }
     .bench.square { height: 200px; }
+    .bench.wide { height: 100px; }
+    .bench.mini { width: 96px; height: 72px; border-radius: 8px; }
     .bench img { position: absolute; inset: 0; width: 100%; height: 100%; }
     .pair { display: flex; gap: 10px; align-items: flex-start; }
     .tile { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 12px; background: #3b2a1e; }
@@ -30,7 +32,7 @@
 </head>
 <body>
   <h1>Art gallery</h1>
-  <p>Every picture the game uses, from <code>content/art/</code> (see its README), stacked the way the game stacks them. Workbenches show at 4:3 and at square, the tallest the game draws them. A red outline means a file is missing.</p>
+  <p>Every picture the game uses, from <code>content/art/</code> (see its README), stacked the way the game stacks them, following <code>content/world.json</code>. A red outline means a file is missing; in the game that state shows its description as a label instead.</p>
   <div id="out"></div>
   <script type="module">
     import { loadContentWeb } from '../src/content/load-web.js';
@@ -46,32 +48,28 @@
     const mask = (kind, id, cls = '') => `<div class="glyph ${cls}"><span style="--art: url('${artURL(kind, id)}')"></span></div>`;
     const section = (title, cells) => out.insertAdjacentHTML('beforeend', `<h2>${title}</h2><div class="grid">${cells.join('')}</div>`);
     const stack = (layers, cls = '') => `<div class="bench ${cls}">${layers.map(([kind, id]) => img(kind, id)).join('')}</div>`;
-    const benchOf = (project) => content.eras[content.projects[project]?.era]?.bench || content.eras[content.eraOrder[0]].bench;
+    const world = content.world;
+    const C = content.campaign;
+    const benchOf = (chapter) => world.ages[content.ageOf[chapter]]?.bench || 'stone';
 
-    section('Workbenches (320 × 240, with bleed above and below)', ids('benches').map((id) => `<figure><div class="pair">${stack([['benches', id]])}${stack([['benches', id]], 'square')}</div><figcaption>${id}</figcaption></figure>`));
+    section('Era workbenches (320 × 240, with 80 units of bleed on every side), at 2:1 and square', Object.values(world.ages).map((age) => `<figure><div class="pair">${stack([['benches', age.bench]], 'wide')}${stack([['benches', age.bench]], 'square')}</div><figcaption>${age.bench} · ${age.name} (${age.chapters.join(', ')})</figcaption></figure>`));
 
-    for (const project of content.projectOrder) {
-      const looks = ids('objects').filter((id) => id.startsWith(`${project}/`));
-      const bench = benchOf(project);
-      section(`${content.projects[project].name}: object states (${project})`, looks.map((id) => `<figure>${stack([['benches', bench], ['objects', id]])}<figcaption>${id.slice(project.length + 1)}</figcaption></figure>`));
+    // Each drawn life's six states: what shows before each card, and after each answer
+    const look = (v, chapter) => {
+      const o = typeof v === 'string' ? { object: v } : v || {};
+      const obj = o.object && typeof o.object === 'object' ? o.object.left : o.object;
+      return [['benches', benchOf(chapter)], ['objects', obj], ...(o.marks || []).map((m) => ['overlays', m])];
+    };
+    for (const [chapter, states] of Object.entries(world.art || {})) {
+      const c = C.chapters[chapter];
+      section(`${chapter} ${c.title}: its six workbench states`, states.map((st, i) => `<figure>${stack(look(st, chapter))}<figcaption>${i + 1}. ${c.bench[i]}</figcaption>
+        <div class="pair">${['left', 'right'].map((side) => `<div><div class="bench mini">${look(st[side] || st, chapter).map(([k, id]) => img(k, id)).join('')}</div><figcaption>after ${side}</figcaption></div>`).join('')}</div></figure>`));
     }
 
-    // Each overlay over the starting state of the first project that uses it
-    const firstProject = (mark) => {
-      for (const sid of content.sceneOrder) {
-        const s = content.scenes[sid];
-        const ops = [...(s.shows || []), ...s.options.left.ops, ...s.options.right.ops];
-        if (ops.some((o) => o.t === 'mark' && o.id === mark)) return s.project;
-      }
-      return content.projectOrder[0];
-    };
-    section('Overlays (320 × 240)', ids('overlays').map((id) => {
-      const p = firstProject(id);
-      return `<figure>${stack([['benches', benchOf(p)], ['objects', `${p}/${content.projects[p].look}`], ['overlays', id]])}<figcaption>${id}${content.transient.includes(id) ? ' · lasts one scene' : ''}</figcaption></figure>`;
-    }));
+    const undrawn = C.chapterOrder.filter((id) => !world.art?.[id]);
+    out.insertAdjacentHTML('beforeend', `<h2>Not drawn yet</h2><p>${undrawn.length} lives show each workbench state's description as a label: ${undrawn.join(', ')}.</p>`);
 
-    const who = (id) => Object.values(content.characters).filter((c) => c.portrait === id).map((c) => c.name || c.id).join(', ');
-    section('Characters (288 × 360)', ids('characters').map((id) => `<figure><div class="card">${img('characters', id)}</div><figcaption>${id}${who(id) ? ` · ${who(id)}` : ''}</figcaption></figure>`));
+    section('Portraits (288 × 360)', Object.entries(world.portraits || {}).map(([key, id]) => `<figure><div class="card">${img('characters', id)}</div><figcaption>${id} · ${key}</figcaption></figure>`));
     section('Interface (48 × 48)', UI_ART.map((id) => `<figure><div class="tile">${id === 'hand' ? `<div style="background:#ecd9b4;border-radius:8px;padding:6px">${img('ui', id, 'width="48" height="48"')}</div>` : `${mask('ui', id)}${mask('ui', id, 'small')}`}</div><figcaption>${id}</figcaption></figure>`));
   </script>
 </body>

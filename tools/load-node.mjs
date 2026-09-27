@@ -1,22 +1,23 @@
-// Loads content/ from disk for the checker, the bot and the tests.
+// Loads content/ from disk for the checker, the simulator and the tests.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { compileContent, contentFileList } from '../src/content/compile.js';
+import { buildContent, CONTENT_FILES } from '../src/content/game-content.js';
 import { ART_KINDS } from '../src/content/art.js';
 
 export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 export function readContentFiles(dir = join(ROOT, 'content')) {
-  const files = { 'world.json': readFileSync(join(dir, 'world.json'), 'utf8') };
-  for (const path of contentFileList(files['world.json'])) {
-    try { files[path] = readFileSync(join(dir, path), 'utf8'); } catch { /* compile reports it missing */ }
+  const files = {};
+  for (const name of CONTENT_FILES) {
+    try { files[name] = readFileSync(join(dir, name), 'utf8'); } catch { /* buildContent reports it missing */ }
   }
   return files;
 }
 
-// Every picture in content/art, keyed like "art/characters/mother.svg" or
-// "art/objects/vessel/basket.svg". Folders that aren't an art kind (retired/) are skipped.
+// Every picture in content/art, keyed like "art/characters/c01-aru.svg" or
+// "art/objects/vessel/basket.svg". Folders that aren't an art kind (retired/)
+// are skipped.
 export function readArtFiles(dir = join(ROOT, 'content')) {
   const art = {};
   const root = join(dir, 'art');
@@ -33,5 +34,5 @@ export function readArtFiles(dir = join(ROOT, 'content')) {
 }
 
 export function loadContent(dir) {
-  return compileContent(readContentFiles(dir), { art: readArtFiles(dir) });
+  return buildContent(readContentFiles(dir), { art: readArtFiles(dir) });
 }

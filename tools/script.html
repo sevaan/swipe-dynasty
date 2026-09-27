@@ -16,57 +16,48 @@
       color-scheme: dark;
     }
     * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; scroll-padding-top: 16px; }
+    [hidden] { display: none !important; }
+    html { scroll-behavior: smooth; scroll-padding-top: 64px; }
     body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 var(--font); -webkit-text-size-adjust: 100%; }
     main { max-width: 760px; margin: 0 auto; padding: calc(env(safe-area-inset-top) + 20px) 16px calc(env(safe-area-inset-bottom) + 48px); }
     h1 { font-size: 1.7rem; line-height: 1.15; margin: 0 0 6px; }
-    h2 { font-size: 1.35rem; line-height: 1.2; margin: 44px 0 4px; }
-    h3 { font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin: 30px 0 4px; }
+    h2 { font-size: 1.3rem; line-height: 1.2; margin: 44px 0 4px; }
     p { margin: 0; }
     a { color: var(--text); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+    code { font: 0.9em ui-monospace, Menlo, monospace; }
     .lede { color: var(--muted); max-width: 36em; }
-    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 6px; }
-    .btn { min-height: 42px; padding: 0 16px; border: 0; border-radius: 12px; background: var(--accent); color: var(--ink); font: 800 0.95rem var(--font); cursor: pointer; }
-    .btn.quiet { background: var(--panel); color: var(--text); }
-    .toc { margin: 18px 0 0; padding: 14px 16px; border-radius: 14px; background: var(--panel-2); }
-    .toc ol { margin: 6px 0 0; padding-left: 20px; }
-    .toc li { margin: 3px 0; }
-    .project-meta { color: var(--muted); margin: 2px 0 0; }
-    .how { margin: 6px 0 12px; color: var(--muted); font-size: 0.95rem; max-width: 38em; }
-    .path { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin: 10px 0 0; font-size: 0.9rem; }
-    .path a { padding: 2px 8px; border-radius: 999px; background: var(--panel); text-decoration: none; font-weight: 700; }
-    .path .arrow { color: var(--muted); }
-
-    .scene { margin: 12px 0; padding: 14px 16px 16px; border-radius: 16px; background: var(--panel); scroll-margin-top: 12px; }
+    .bar { position: sticky; top: 0; z-index: 5; margin: 14px -16px 0; padding: 10px 16px; background: color-mix(in srgb, var(--bg) 94%, transparent); display: flex; flex-wrap: wrap; gap: 6px; }
+    .bar button, .btn { min-height: 38px; padding: 0 12px; border: 0; border-radius: 10px; background: var(--panel); color: var(--text); font: 800 0.86rem var(--font); cursor: pointer; }
+    .bar button[aria-pressed="true"] { background: var(--accent); color: var(--ink); }
+    .btn.primary { background: var(--accent); color: var(--ink); }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; }
+    .meta { color: var(--muted); margin: 2px 0 0; }
+    .box { margin: 10px 0; padding: 12px 16px; border-radius: 14px; background: var(--panel); }
+    .box p + p { margin-top: 6px; }
+    .box .kicker { font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+    .box b { color: var(--text); }
+    .arrival { font-size: 1.02rem; }
+    .want { font-weight: 700; }
+    .scene { margin: 12px 0; padding: 14px 16px 16px; border-radius: 16px; background: var(--panel); scroll-margin-top: 64px; }
     .scene:target { outline: 3px solid var(--accent); }
-    .who { display: flex; align-items: center; gap: 10px; }
-    .face { position: relative; flex: none; width: 36px; height: 36px; border-radius: 50%; overflow: hidden; background: var(--panel-2); }
-    .face img { position: absolute; width: 250%; left: -75%; top: -40%; }
+    .who { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; }
     .who .name { font-weight: 800; }
-    .who .id { margin-left: auto; font: 0.75rem ui-monospace, Menlo, monospace; color: var(--muted); }
-    .when, .bench, .from, .note { margin-top: 6px; font-size: 0.9rem; color: var(--muted); }
-    .when b, .bench b, .from b { color: var(--text); font-weight: 700; }
-    .note { padding: 6px 10px; border-left: 3px solid var(--line); }
-    .text { margin: 12px 0 4px; font-size: 1.12rem; line-height: 1.42; }
-    .token { padding: 0 6px; border-radius: 6px; background: color-mix(in srgb, var(--accent) 28%, transparent); font-weight: 700; white-space: nowrap; }
+    .who .desc { font-size: 0.86rem; color: var(--muted); }
+    .who .id { margin-left: auto; font: 0.75rem ui-monospace, Menlo, monospace; color: var(--muted); white-space: nowrap; }
+    .text { margin: 10px 0 4px; font-size: 1.1rem; line-height: 1.42; }
     .answers { display: grid; gap: 10px; margin-top: 12px; }
     @media (min-width: 620px) { .answers { grid-template-columns: 1fr 1fr; } }
     .answer { padding: 12px 14px; border-radius: 12px; background: var(--panel-2); }
     .answer .side { font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
-    .answer .label { margin-top: 2px; font-size: 1.05rem; font-weight: 800; line-height: 1.3; }
-    .answer .desc { color: var(--muted); font-size: 0.92rem; }
-    .answer .result { margin-top: 8px; font-size: 0.98rem; }
-    .answer ul { margin: 8px 0 0; padding-left: 18px; font-size: 0.9rem; color: var(--muted); }
-    .answer li { margin: 2px 0; }
-    .answer li b { color: var(--text); }
-    .answer .danger { color: #ffb4a8; }
-
-    .ending { margin: 10px 0; padding: 12px 16px; border-radius: 14px; background: var(--panel); }
-    .ending .title { font-weight: 800; }
-    .ending .line { margin-top: 4px; }
-    .ending .meta { margin-top: 4px; font-size: 0.88rem; color: var(--muted); }
+    .answer .label { margin-top: 2px; font-size: 1.02rem; font-weight: 800; line-height: 1.3; }
+    .answer .result { margin-top: 6px; }
+    .answer .fx { margin-top: 6px; font-size: 0.86rem; color: var(--muted); }
+    .answer .fx.some { color: #ffc9a8; }
+    .cb { margin-top: 8px; padding: 6px 10px; border-left: 3px solid var(--accent); font-size: 0.92rem; }
+    .cb .if { font-size: 0.8rem; font-weight: 800; color: var(--muted); display: block; }
     .placard { margin-top: 8px; padding: 10px 14px; border-radius: 12px; background: var(--card); color: var(--ink); }
     .placard p + p { margin-top: 4px; }
+    .placard b { color: var(--ink); }
     .errors { white-space: pre-wrap; font: 0.8rem ui-monospace, Menlo, monospace; color: #ffb4a8; }
     .fine { color: var(--muted); font-size: 0.85rem; margin-top: 40px; }
   </style>
@@ -74,131 +65,100 @@
 <body>
   <main id="out"><p>Loading the script…</p></main>
   <script type="module">
-    // The whole game as a script, in play order, built live from the same
-    // content files the game loads, so it's never out of date. Each scene
-    // shows who speaks, when it can come up, the situation, and both answers:
-    // what they say, what happens, and where they lead. Endings and what the
-    // next inventor inherits come after each life. The words come from
-    // script-text.js, which also makes the Markdown ("Download as Markdown",
-    // or `node tools/script.mjs`).
+    // The game's script for review, straight from content/script.md as the
+    // game reads it: every life in play order with both results, exact
+    // effects, callbacks, closing records, proposals and endings. The
+    // arrangement comes from script-text.js, which also makes the Markdown.
     import { loadContentWeb } from '../src/content/load-web.js';
-    import { artURL, setArtBase } from '../src/ui/art.js';
     import { scriptText } from './script-text.js';
-    setArtBase('../content/');
+
     const out = document.getElementById('out');
-    const { content: C, errors } = await loadContentWeb('../content/');
+    const { content, errors } = await loadContentWeb('../content/');
     if (errors.length) {
-      out.innerHTML = `<h1>The script</h1><div class="errors">The content has errors:\n\n${errors.map((e) => `${e.file}:${e.line} ${e.message}`).join('\n')}</div>`;
+      out.innerHTML = `<h1>The script</h1><div class="errors">The content has errors:\n\n${errors.map((e) => `${e.file}:${e.line} ${e.column ? `[${e.column}] ` : ''}${e.message}`).join('\n')}</div>`;
       throw new Error('content errors');
     }
+    const C = content.campaign;
+    const T = scriptText(content);
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const link = (id) => `<a href="#${esc(id)}">${esc(id)}</a>`;
+    const params = new URLSearchParams(location.search);
+    let filter = params.get('filter') || 'all';
 
-    const T = scriptText(C);
-    const { esc, nice, invName, recipeWords, fill, condWords, opWords, showsWords, from, scenesOf, scriptedPath, projectLength, PHASE_NAME, PHASE_HOW, HTMLF } = T;
-
-    // ---- HTML
-
-    function sceneHTML(s) {
-      const f = HTMLF;
-      const who = C.characters[s.speaker];
-      const face = who?.portrait ? `<span class="face"><img src="${esc(artURL('characters', who.portrait))}" alt=""></span>` : '';
-      const when = condWords(s.cond, f, s.phase);
-      const shows = showsWords(s);
-      const back = (from[s.id] || []).map((x) => `${f.link(x.id)} (${x.side})`).join(', ');
+    function cardHTML(c, card) {
+      const who = c.cast[card.speaker];
       const answer = (side) => {
-        const o = s.options[side];
-        const ops = o.ops.map((op) => `<li${op.t === 'danger' ? ' class="danger"' : ''}>${opWords(op, f, s.phase)}</li>`).join('');
-        return `<div class="answer"><p class="side">${side === 'left' ? 'Swipe left' : 'Swipe right'}</p>
-          <p class="label">${fill(o.label, f)}</p>${o.preview ? `<p class="desc">${fill(o.preview, f)}</p>` : ''}
-          ${o.result ? `<p class="result">${fill(o.result, f)}</p>` : ''}${ops ? `<ul>${ops}</ul>` : ''}</div>`;
+        const o = card[side];
+        const fx = T.effectWords(o);
+        return `<div class="answer"><p class="side">${side}</p><p class="label">${esc(o.label)}</p>
+          <p class="result">${esc(o.result)}</p><p class="fx${fx === 'no effects' ? '' : ' some'}">${esc(fx)}</p></div>`;
       };
-      return `<article class="scene" id="${esc(s.id)}">
-        <div class="who">${face}<span class="name">${esc(who?.name || 'No one speaks')}</span><span class="id">${esc(s.id)}</span></div>
-        ${when ? `<p class="when"><b>Comes up when:</b> ${when}</p>` : ''}
-        ${back ? `<p class="from"><b>Comes after:</b> ${back}</p>` : ''}
-        ${shows ? `<p class="bench"><b>On the bench:</b> ${esc(shows)}</p>` : ''}
-        ${s.weather ? `<p class="bench"><b>Weather:</b> ${esc(nice(s.weather))}</p>` : ''}
-        <p class="text">${fill(s.text, f)}</p>
+      const after = T.callbacksAfter(card.id).map((cb) => `<p class="cb"><span class="if">Callback ${cb.n}, if ${link(cb.card)} was ${esc(cb.side)}</span>${esc(cb.text)}</p>`).join('');
+      const from = T.callbacksFrom(card.id).map((cb) => `<p class="cb"><span class="if">Sets up callback ${cb.n}: shown after ${link(cb.after)} if this was ${esc(cb.side)}</span></p>`).join('');
+      return `<article class="scene" id="${esc(card.id)}">
+        <div class="who"><span class="name">${esc(who?.name || card.speaker)}</span><span class="desc">${esc(who?.description || '')}</span><span class="id">${esc(card.id)} · ${esc(card.kind)}</span></div>
+        <p class="text">${esc(card.text)}</p>
         <div class="answers">${answer('left')}${answer('right')}</div>
-        ${s.notes ? `<p class="note">Writers' note: ${esc(s.notes)}</p>` : ''}
+        ${after}${from}
       </article>`;
     }
 
-    function endingsHTML(p) {
-      const f = HTMLF;
-      let h = `<h3>How it can end</h3>`;
-      for (const id of p.outcomes) {
-        const inv = C.inventions[id];
-        if (!inv) continue;
-        h += `<div class="ending"><p class="title">Inventing ${esc(inv.name)}</p>
-          <p class="meta">Needs ${esc(recipeWords(inv))}${inv.requires.length ? `, and ${esc(inv.requires.map(invName).join(', '))} must already exist` : ''}.</p>`;
-        for (const lid of inv.legacies) {
-          const l = C.legacies[lid];
-          h += `<div class="placard"><p><b>If it spreads as "${esc(l.adoption)}"</b></p>
-            <p>${fill(inv.made || `Invented ${inv.name}.`, f)} <i>[how you died]</i> ${fill(l.epitaph, f)}</p>
-            <p>Next inventor inherits: ${fill(l.inherit, f)}</p></div>`;
-        }
-        h += '</div>';
+    function chapterHTML(id) {
+      const c = C.chapters[id];
+      const route = c.route ? C.routes[c.route] : null;
+      const o = C.overrides[id];
+      let h = `<h2 id="${esc(id)}">${esc(id)} — ${esc(c.title)}</h2>
+        <p class="meta">${esc(c.era)}${c.prerequisite ? ` · needs ${esc(C.inventions[c.prerequisite]?.name || c.prerequisite)}` : ''}</p>`;
+      if (route && route.chapters[0] === id) h += `<div class="box"><p class="kicker">Proposal</p><p><b>${esc(route.title)}</b> ${esc(route.pitch)}</p><p class="meta">Accept: "${esc(route.acceptLabel)}"</p></div>`;
+      h += `<div class="box"><p><b>${esc(c.inventor.name)}</b>, ${esc(c.inventor.role)}</p><p class="arrival">${esc(c.arrival)}</p><p class="want">You want: ${esc(c.inventor.want)}</p>
+        ${o ? `<p class="meta">After ${esc(o.when.card)} = ${esc(o.when.side)}: "${esc(o.arrival)}" (era: ${esc(o.era)})</p>` : ''}
+        <p class="meta">Invention on card four: <b>${esc(c.invention.name)}</b>. ${esc(c.invention.description)}</p>
+        <p class="meta">Cast: ${c.castOrder.map((k) => `${esc(c.cast[k].name)} (${esc(c.cast[k].description)})`).join('; ')}</p>
+        <p class="meta">Workbench: ${c.bench.map((b, i) => `${i + 1}. ${esc(b)}`).join(' ')}</p></div>`;
+      h += c.cards.map((card) => cardHTML(c, card)).join('');
+      h += `<div class="box"><p class="kicker">Closing record</p>
+        <div class="placard"><p><b>Card six left:</b> ${esc(c.legacy.left)}</p><p><b>Card six right:</b> ${esc(c.legacy.right)}</p>
+        ${c.final ? '<p><b>Final life:</b> no obituary; the ending follows.</p>' : `<p><b>Obituary:</b> ${esc(c.death.natural)}</p>${c.death.risk ? `<p><b>With exposure 2 or more:</b> ${esc(c.death.risk)}</p>` : ''}`}</div></div>`;
+      if (C.redirect?.after === id) {
+        const r = C.redirect;
+        h += `<article class="scene" id="${esc(r.id)}"><div class="who"><span class="name">The Archive</span><span class="id">${esc(r.id)}</span></div><p class="text">${esc(r.text)}</p>
+          <div class="answers">${['left', 'right'].map((side) => `<div class="answer"><p class="side">${side}</p><p class="label">${esc(r[side].label)}</p><p class="result">${esc(r[side].result)}</p><p class="fx some">goes to ${link(r[side].transition)}</p></div>`).join('')}</div></article>`;
       }
-      for (const fid of p.failures) {
-        const fl = C.failures[fid];
-        if (!fl) continue;
-        const when = condWords(fl.cond, f, 'proof');
-        h += `<div class="ending"><p class="title">Leaving a failed design: ${esc(fl.name)}</p>
-          ${when ? `<p class="meta">When: ${when}</p>` : '<p class="meta">When nothing more specific fits</p>'}
-          <div class="placard"><p>Invented ${fill(fl.name, f)}. <i>[how you died]</i> ${fill(fl.epitaph, f)}</p>
-          <p>Next inventor inherits: ${fill(fl.inherit, f)}</p></div>
-          ${fl.notes ? `<p class="meta">Writers' note: ${esc(fl.notes)}</p>` : ''}</div>`;
-      }
-      const deaths = C.deathOrder.map((id) => C.deaths[id]).filter((d) => d.project === p.id || !d.project);
-      for (const kind of ['danger', 'natural']) {
-        const list = deaths.filter((d) => d.kind === kind);
-        if (!list.length) continue;
-        h += `<div class="ending"><p class="title">${kind === 'danger' ? 'Deaths when Danger reaches 6' : 'Deaths of old age'}</p>`;
-        for (const d of list) {
-          const named = C.sceneOrder.flatMap((sid) => ['left', 'right'].filter((side) => C.scenes[sid].options[side].ops.some((o) => o.t === 'death' && o.id === d.id)).map((side) => `${f.link(sid)} (${side})`));
-          const when = condWords(d.cond, f, 'aftermath');
-          const how = d.weight <= 0 ? `only when an answer names it: ${named.join(', ') || 'none does'}` : [when, named.length ? `named by ${named.join(', ')}` : ''].filter(Boolean).join('; ') || 'any time';
-          h += `<p class="line">"${fill(d.text, f)}"</p><p class="meta">${d.id}: ${how}</p>`;
-        }
-        h += '</div>';
+      if (route && c.final) {
+        const e = route.ending;
+        h += `<div class="box"><p class="kicker">Ending — ${esc(e.title)}</p>${e.panels.map((p, i) => `<p>${i + 1}. ${esc(p)}</p>`).join('')}
+          <p class="meta">If ${link(e.card)} was left: ${esc(e.variants.left)}</p><p class="meta">If ${link(e.card)} was right: ${esc(e.variants.right)}</p></div>`;
       }
       return h;
     }
 
-    function projectHTML(p) {
-      const path = scriptedPath(p.id);
-      let h = `<h2 id="project-${esc(p.id)}">${esc(p.name)}</h2>
-        <p class="project-meta">The problem: ${fill(p.problem, HTMLF)}. ${esc(projectLength(p))}.${p.requires.length ? ` Only after ${esc(p.requires.map(invName).join(' and '))} exist.` : ''}</p>`;
-      if (path) h += `<p class="how">This life is scripted: every scene leads to the next, so it always plays in this order.</p><p class="path">${path.map((id) => `<a href="#${esc(id)}">${esc(id)}</a>`).join('<span class="arrow" aria-hidden="true">→</span>')}</p>`;
-      for (const g of scenesOf(p.id)) {
-        h += `<h3>${PHASE_NAME[g.phase]}</h3>${path ? '' : `<p class="how">${PHASE_HOW[g.phase]}</p>`}${g.list.map(sceneHTML).join('')}`;
-      }
-      return h + endingsHTML(p);
+    function draw() {
+      const ids = T.chaptersFor(filter);
+      out.innerHTML = `
+        <h1>One Bright Idea: the script</h1>
+        <p class="lede">Read live from <code>content/script.md</code>, the file the game plays, so it's always current. Story ids appear here, never in the game. Experimental exposure is hidden in the game and picks the obituary; it's shown here for the writers.</p>
+        <div class="actions"><button class="btn primary" type="button" id="md">Download as Markdown</button><a class="btn" href="../" style="display:inline-grid;place-items:center;text-decoration:none">Play the game</a></div>
+        <nav class="bar" aria-label="Show">${T.filters().map(([id, name]) => `<button type="button" data-filter="${esc(id)}" aria-pressed="${id === filter}">${esc(name)}</button>`).join('')}</nav>
+        <p class="meta" style="margin-top:8px">${ids.length} lives: ${ids.map(link).join(' ')}</p>
+        ${ids.map(chapterHTML).join('')}
+        <p class="fine">Script ${esc(C.hash)} · ${C.chapterOrder.length} lives, ${Object.keys(C.cards).length} cards, ${C.callbacks.length} callbacks.</p>`;
+      document.getElementById('md').addEventListener('click', () => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([T.markdown(filter)], { type: 'text/markdown' }));
+        a.download = `one-bright-idea-script${filter === 'all' ? '' : `-${filter}`}.md`;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+      });
     }
-
-    // ---- The page
-
-    const era = C.eras[C.eraOrder[0]];
-    const projects = C.projectOrder.map((id) => C.projects[id]);
-    const stamp = new Date().toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
-    out.innerHTML = `
-      <h1>One Bright Idea: the script</h1>
-      <p class="lede">Everything written so far, in play order, read live from the game's content files, so it's always current. Names the game fills in are highlighted, like ${HTMLF.token('this inventor')}. Danger is hidden in the game; it's shown here for the writers.</p>
-      <div class="actions"><button class="btn" type="button" id="md">Download as Markdown</button><a class="btn quiet" href="../" style="display:inline-grid;place-items:center;text-decoration:none">Play the game</a></div>
-      <nav class="toc" aria-label="Contents"><b>${esc(era.name)}</b>${era.intro ? ` <span class="project-meta">${esc(era.intro)}</span>` : ''}
-        <ol>${projects.map((p, i) => `<li><a href="#project-${esc(p.id)}">Life ${i + 1}${i ? ' onward' : ''}: ${esc(p.name)}</a></li>`).join('')}</ol></nav>
-      ${projects.map(projectHTML).join('')}
-      <p class="fine">Built ${esc(stamp)} from content ${esc(C.hash)}. The first life always works the first project; after that, the game picks a project whose prerequisites exist.</p>`;
-
-    document.getElementById('md').addEventListener('click', () => {
-      const md = T.markdown();
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(new Blob([md], { type: 'text/markdown' }));
-      a.download = 'one-bright-idea-script.md';
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+    out.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-filter]');
+      if (!b) return;
+      filter = b.dataset.filter;
+      history.replaceState(null, '', `?filter=${filter}`);
+      draw();
     });
+    draw();
     if (location.hash) document.querySelector(location.hash)?.scrollIntoView();
   </script>
 </body>
