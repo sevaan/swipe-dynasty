@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="288" height="360" viewBox="0 0 288 360">
+  <!-- Iri: a companion with dry timing and a wet blanket -->
+  <rect width="288" height="360" fill="#a67b5b"/>
+  <circle cx="144" cy="176" r="124" fill="#b08564"/>
+  <!-- neck -->
+  <rect x="122" y="196" width="44" height="84" fill="#8d5a3b"/>
+  <path d="M122 196h44v22c-14 6-30 6-44 0z" fill="#6a4024"/>
+  <path d="M150 218h16v62h-16z" fill="#744829"/>
+  <!-- a wet blanket, pulled up round the shoulders and held shut -->
+  <clipPath id="iri-bl"><path d="M10 360v-44c0-40 34-64 84-68h100c50 4 84 28 84 68v44z"/></clipPath>
+  <path fill="#5b6b7c" d="M10 360v-44c0-40 34-64 84-68h100c50 4 84 28 84 68v44z"/>
+  <g clip-path="url(#iri-bl)">
+    <!-- wetter towards the hem -->
+    <path fill="#4f5d6d" d="M0 318c20 6 34-4 52 2s30 12 50 4 34-8 52-2 30 10 52 2 36-6 82 2V360H0z"/>
+    <path fill="#4a5867" d="M206 240c40 8 78 30 78 76v44h-84z"/>
+  </g>
+  <!-- the right edge wraps under; the left edge crosses over it, gathered in the hands -->
+  <path fill="#4a5867" d="M194 248c-6 20-18 34-34 42l-6 10c10-2 20-8 28-16 10-10 16-22 18-34z"/>
+  <path fill="#6d7d8e" d="M94 248c8 22 26 38 52 44l2 12c-30-4-52-22-62-52z"/>
+  <path fill="#5b6b7c" d="M86 252c10 30 32 48 62 52l2 56h-12c-2-18-8-34-20-46-12-12-26-26-32-62z"/>
+  <path d="M134 312l-10 22M146 314l-4 30M158 312l6 24" fill="none" stroke="#4a5867" stroke-width="4" stroke-linecap="round"/>
+  <!-- two hands, one above the other, holding it shut -->
+  <rect x="124" y="282" width="34" height="22" rx="10" fill="#8d5a3b"/>
+  <path fill="#744829" d="M146 282c7 0 12 5 12 11s-5 11-12 11z"/>
+  <rect x="132" y="300" width="34" height="22" rx="10" fill="#8d5a3b"/>
+  <path fill="#744829" d="M154 300c7 0 12 5 12 11s-5 11-12 11z"/>
+  <path d="M130 289h18M130 296h17M138 307h18M138 314h17" fill="none" stroke="#6a4024" stroke-width="2.4" stroke-linecap="round"/>
+  <!-- drips off the hem -->
+  <g fill="#86c9e3"><path d="M58 345.6C59.3 347.8 61.2 349.8 61.2 352A3.2 3.2 0 0 1 54.8 352C54.8 349.8 56.7 347.8 58 345.6Z"/><path d="M232 342.4C233.1 344.4 234.8 346 234.8 348A2.8 2.8 0 0 1 229.2 348C229.2 346 230.9 344.4 232 342.4Z"/><path d="M102 351.2C103 352.9 104.4 354.3 104.4 356A2.4 2.4 0 0 1 99.6 356C99.6 354.3 101 352.9 102 351.2Z"/></g>
+  <!-- ears and a round face -->
+  <ellipse cx="97" cy="168" rx="9" ry="13" fill="#8d5a3b"/><ellipse cx="191" cy="168" rx="9" ry="13" fill="#744829"/>
+  <clipPath id="iri-face"><path d="M96 146c0-32 21-46 48-46s48 14 48 46v24c0 34-21 54-48 54s-48-20-48-54z"/></clipPath>
+  <path fill="#8d5a3b" d="M96 146c0-32 21-46 48-46s48 14 48 46v24c0 34-21 54-48 54s-48-20-48-54z"/>
+  <path clip-path="url(#iri-face)" d="M170 96h32v134h-48z" fill="#744829"/>
+  <g fill="#e98f8f"><circle cx="144.5" cy="192" r="6.5" opacity=".5"/></g>
+  <!-- short, tight curls -->
+  <g fill="#3b2419"><circle cx="98" cy="142" r="11"/><circle cx="104" cy="126" r="12"/><circle cx="116" cy="112" r="12"/><circle cx="132" cy="104" r="12"/><circle cx="150" cy="102" r="12"/><circle cx="167" cy="106" r="12"/><circle cx="181" cy="116" r="12"/><circle cx="189" cy="131" r="11"/><circle cx="192" cy="146" r="10"/><circle cx="96" cy="156" r="9"/><circle cx="142" cy="92" r="11"/><circle cx="124" cy="96" r="9"/><circle cx="162" cy="94" r="10"/><path d="M98 150c2-26 18-40 46-40s44 14 46 40c-10-12-26-18-46-18s-36 6-46 18z"/></g>
+  <g fill="#52341f"><circle cx="112" cy="110" r="3.4"/><circle cx="128" cy="100" r="3.2"/><circle cx="104" cy="126" r="3"/></g>
+  <!-- face: unimpressed, and trying not to shiver -->
+  <path d="M110 152h25M153 148q12-4 25 1" fill="none" stroke="#3b2419" stroke-width="5" stroke-linecap="round"/>
+  <path fill="#24150e" d="M119 166a6.5 6.5 0 0 0 13 0zM156 166a6.5 6.5 0 0 0 13 0z"/>
+  <path d="M117 166h17M154 166h17" fill="none" stroke="#6a4024" stroke-width="3" stroke-linecap="round"/>
+  <path d="M144 172c-4 6-6 11-6 15 4 3 9 3 13 0 0-4-3-9-7-15z" fill="#744829"/>
+  <path d="M135 206h17" fill="none" stroke="#4a2616" stroke-width="4.5" stroke-linecap="round"/>
+  <!-- a small shiver -->
+  <path d="M58 262l-9-5M54 275l-10-2M230 262l9-5M234 275l10-2" fill="none" stroke="#f4e7cd" stroke-width="3" stroke-linecap="round" opacity=".75"/>
+</svg>

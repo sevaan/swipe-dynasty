@@ -395,10 +395,10 @@ A way to make fire on purpose: the right pair of stones, dry grass to catch the 
 
 **Speaker:** Iri (`iri`)
 
-**Situation:** Most stones just chip. But one dark lump makes bright sparks when you strike it against a sharp flint. Iri sorts your pile into stones that work and stones that only hurt your hands.
+**Situation:** Most stones just chip. But one gold-flecked lump makes bright sparks when you strike it against a sharp flint. Iri sorts your pile into stones that work and stones that only hurt your hands.
 
 **Left: Keep the pair that sparks best.**  
-**Result:** You keep the sharp flint and the dark sparking lump. The useless stones become something to sit on.  
+**Result:** You keep the sharp flint and the gold-flecked lump. The useless stones become something to sit on.  
 **Effects:** experimental exposure unchanged.
 
 **Right: Test every pair, one by one.**  
@@ -449,7 +449,7 @@ A way to make fire on purpose: the right pair of stones, dry grass to catch the 
 **Effects:** experimental exposure unchanged; A affinity +1.
 
 **Right: Make a way to carry embers.**  
-**Result:** You line a curl of bark to hold hot embers. Someone carries the warmth into the dark to fetch a friend who stayed home.  
+**Result:** You make a lined bark carrier for hot embers. Someone carries the warmth into the dark to fetch a friend who stayed home.  
 **Effects:** experimental exposure unchanged; D affinity +1.
 
 

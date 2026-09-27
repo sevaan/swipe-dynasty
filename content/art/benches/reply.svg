@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240">
+  <!-- First Reply workbench (route A): an instrument room with a dish outside the window, archived paper, a signal-trace screen, and an instrument desk; the object sits on the desk at y = 196 -->
+  <!-- the backdrop bleeds 80 units past the frame on every side (x -80 to 400, y -80 to 320): the card can be from about 2:1 to square -->
+  <!-- the wall: plain panels -->
+  <rect x="-80" y="-80" width="480" height="280" fill="#232d38"/>
+  <g fill="#1e2731"><rect x="-80" y="-80" width="480" height="24"/><rect x="-80" y="176" width="480" height="24"/></g>
+  <!-- a window on the left: night sky, and the dish outside -->
+  <rect x="-40" y="-4" width="138" height="140" rx="4" fill="#161d25"/>
+  <clipPath id="rp-win"><rect x="-34" y="2" width="126" height="128" rx="2"/></clipPath>
+  <g clip-path="url(#rp-win)">
+    <rect x="-34" y="2" width="126" height="128" fill="#1a2533"/><rect x="-34" y="80" width="126" height="50" fill="#1e2b3b"/>
+    <g fill="#cfd8e2"><circle cx="-18" cy="14" r="1.2"/><circle cx="6" cy="36" r="1"/><circle cx="30" cy="12" r="1.3"/><circle cx="80" cy="26" r="1"/><circle cx="-10" cy="58" r="1"/><circle cx="84" cy="62" r="1.1"/><circle cx="58" cy="8" r="1"/></g>
+    <!-- the dish: a bowl on a mount, tipped up to the sky -->
+    <g fill="#0e141a"><path d="M18 44C34 30 60 30 76 48C66 70 44 82 20 78C26 66 26 56 18 44Z"/><path d="M40 72h10l10 42H30z"/><rect x="20" y="110" width="48" height="10"/><path d="M46 58l-24-30 3-2 24 30z"/></g>
+    <path fill="#141c24" d="M-34 116C0 108 40 110 92 114V130H-34Z"/>
+  </g>
+  <!-- on the right: a signal-trace screen, and shelves of archived paper -->
+  <rect x="232" y="24" width="82" height="56" rx="4" fill="#161d25"/><rect x="238" y="30" width="70" height="44" rx="2" fill="#0f151c"/>
+  <g fill="#2a3542"><rect x="238" y="51" width="70" height="1.2"/><rect x="255" y="30" width="1.2" height="44"/><rect x="273" y="30" width="1.2" height="44"/><rect x="291" y="30" width="1.2" height="44"/></g>
+  <path fill="#f0b24a" d="M239.5 57.4C239.6 57.9 240.9 59.1 241.7 59.4C242.5 59.7 243.4 59.4 244.1 59.3C244.9 59.1 245.7 58.9 246.3 58.7C246.9 58.4 247.2 57.6 247.8 57.7C248.3 57.9 248.9 59.4 249.6 59.8C250.4 60.1 251.4 60 252.2 59.9C253 59.7 253.5 59 254.2 58.8C254.9 58.6 255.5 59 256.2 58.8C256.9 58.6 257.7 58.1 258.3 57.8C258.9 57.5 259.4 56.9 259.9 57C260.5 57.1 260.9 57.9 261.6 58.2C262.3 58.6 263.5 59.2 264.2 59.1C264.9 58.9 265.2 57.1 265.9 57.2C266.5 57.4 267.1 59.8 267.9 59.8C268.6 59.9 269.7 58.1 270.4 57.7C271.1 57.3 271.7 57.9 272.2 57.7C272.8 57.5 273.1 56.4 273.8 56.5C274.5 56.6 275.5 58.9 276.4 58.5C277.2 58 278 55.5 278.7 54C279.5 52.6 280.1 51.3 280.7 49.6C281.4 47.9 282.2 45.4 282.7 43.8C283.3 42.2 283.8 40.3 284.2 40.1C284.6 39.9 284.8 41.5 285.3 42.8C285.8 44.2 286.6 46.8 287.3 48.3C287.9 49.8 288.6 50.1 289.3 51.8C289.9 53.4 290.5 57.1 291.4 58.1C292.2 59 293.5 57.8 294.2 57.7C294.9 57.6 295 56.9 295.6 57.3C296.2 57.7 297.3 59.9 298 59.9C298.7 59.9 299.3 57.4 299.9 57.4C300.5 57.5 301 60.1 301.8 60.3C302.5 60.5 303.6 58.8 304.3 58.6C304.9 58.4 305.5 59.2 305.9 59C306.2 58.8 306.5 57.7 306.1 57.4C305.8 57.1 304.4 56.8 303.7 57.1C303.1 57.3 302.8 59 302.2 58.8C301.6 58.6 300.8 55.9 300.1 55.9C299.4 55.8 298.6 58.3 298 58.3C297.4 58.3 297.1 56.3 296.4 55.9C295.7 55.5 294.4 55.9 293.8 56.1C293.2 56.3 293.2 57.9 292.6 57.1C292.1 56.3 291.4 52.7 290.7 51.1C290.1 49.6 289.4 49.1 288.7 47.6C288.1 46.2 287.5 43.7 286.7 42.2C285.9 40.6 284.7 38.4 283.8 38.5C282.9 38.7 282 41.5 281.3 43.2C280.5 45 279.9 47.4 279.3 49C278.6 50.7 277.9 52 277.3 53.3C276.7 54.7 276.2 56.8 275.6 57C275.1 57.3 274.8 55.1 274.2 54.9C273.5 54.8 272.5 55.9 271.8 56.1C271 56.4 270.2 56 269.6 56.3C269 56.7 268.7 58.4 268.1 58.3C267.5 58.2 266.9 55.8 266.1 55.7C265.4 55.5 264.4 57.3 263.8 57.5C263.2 57.7 263 57.2 262.4 56.8C261.8 56.5 260.9 55.5 260.1 55.4C259.3 55.3 258.4 56 257.7 56.3C257 56.6 256.5 57.1 255.8 57.2C255.2 57.4 254.5 57.1 253.8 57.3C253.1 57.5 252.4 58.2 251.8 58.3C251.2 58.5 251 58.7 250.4 58.3C249.8 58 249 56.4 248.2 56.2C247.4 56 246.4 56.9 245.7 57.2C245 57.4 244.4 57.6 243.9 57.7C243.3 57.8 242.9 58.2 242.3 57.9C241.8 57.7 241 56.3 240.5 56.2C240.1 56.1 239.3 56.8 239.5 57.4Z"/>
+  <g fill="#f0b24a" opacity=".6"><circle cx="304" cy="36" r="1.8"/></g>
+  <rect x="232" y="112" width="180" height="6" fill="#3a4654"/><rect x="232" y="112" width="180" height="2" fill="#4a5868"/>
+  <rect x="232" y="156" width="180" height="6" fill="#3a4654"/><rect x="232" y="156" width="180" height="2" fill="#4a5868"/>
+  <rect x="236" y="88" width="26" height="24" fill="#5f6b5a"/><rect x="252.12" y="88" width="9.88" height="24" fill="#4f5a4b"/><rect x="241" y="94" width="10.4" height="5" fill="#b9b09c"/>
+  <rect x="264" y="82" width="22" height="30" fill="#6a5e4a"/><rect x="277.64" y="82" width="8.36" height="30" fill="#58503e"/><rect x="269" y="88" width="8.8" height="5" fill="#b9b09c"/>
+  <rect x="288" y="90" width="26" height="22" fill="#5f6b5a"/><rect x="304.12" y="90" width="9.88" height="22" fill="#4f5a4b"/><rect x="293" y="96" width="10.4" height="5" fill="#b9b09c"/>
+  <rect x="316" y="84" width="24" height="28" fill="#4e5a68"/><rect x="330.88" y="84" width="9.120000000000001" height="28" fill="#434e5a"/><rect x="321" y="90" width="9.600000000000001" height="5" fill="#b9b09c"/>
+  <rect x="342" y="88" width="26" height="24" fill="#6a5e4a"/><rect x="358.12" y="88" width="9.88" height="24" fill="#58503e"/><rect x="347" y="94" width="10.4" height="5" fill="#b9b09c"/>
+  <g fill="#b9b09c"><rect x="240" y="140" width="40" height="4"/><rect x="238" y="144" width="42" height="4"/><rect x="241" y="148" width="40" height="4"/><rect x="239" y="152" width="42" height="4"/></g>
+  <g fill="#9d9582"><rect x="264" y="140" width="16" height="16"/></g>
+  <g fill="#b9b09c"><rect x="290" y="134" width="12" height="22" rx="5"/><rect x="304" y="130" width="12" height="26" rx="5"/></g><g fill="#9d9582"><rect x="296" y="134" width="6" height="22"/><rect x="310" y="130" width="6" height="26"/></g>
+  <rect x="324" y="136" width="30" height="20" fill="#4e5a68"/><rect x="330" y="140" width="14" height="4" fill="#b9b09c"/>
+  <!-- the bench: its top edge is the bench line, y = 196 -->
+  <rect x="-80" y="196" width="480" height="68" fill="#34414f"/>
+  <rect x="-80" y="196" width="480" height="3.5" fill="#6f7d8c"/>
+  <rect x="-80" y="199.5" width="480" height="3" fill="#2b3642"/>
+  <g fill="#2b3642"><rect x="-80" y="228" width="480" height="2.4"/></g>
+  <g fill="#56626f"><circle cx="20" cy="214" r="3.6"/><circle cx="34" cy="214" r="3.6"/><rect x="274" y="210" width="26" height="8" rx="2"/></g><g fill="#f0b24a"><circle cx="286" cy="214" r="1.6"/></g>
+  <!-- below the frame: the shadowed underside of the bench, then the floor -->
+  <rect x="-80" y="262" width="480" height="58" fill="#10151b"/>
+  <rect x="-80" y="277" width="480" height="43" fill="#151b22"/>
+</svg>

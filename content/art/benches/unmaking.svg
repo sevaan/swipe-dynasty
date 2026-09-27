@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240">
+  <!-- Unmaking workbench (route U): a pleasant, lived-in room with a soft window, plants and a curtain, and a plain wooden table; the object sits on the table at y = 196 -->
+  <!-- the backdrop bleeds 80 units past the frame on every side (x -80 to 400, y -80 to 320): the card can be from about 2:1 to square -->
+  <!-- a soft wall -->
+  <rect x="-80" y="-80" width="480" height="280" fill="#2e3536"/>
+  <rect x="-80" y="150" width="480" height="50" fill="#283031"/>
+  <!-- a big, rounded window: an evening sky and low hills -->
+  <rect x="-2" y="-18" width="210" height="150" rx="22" fill="#3a4244"/>
+  <clipPath id="um-win"><rect x="6" y="-10" width="194" height="134" rx="16"/></clipPath>
+  <g clip-path="url(#um-win)">
+    <rect x="0" y="-20" width="220" height="160" fill="#3e4a48"/><rect x="0" y="30" width="220" height="110" fill="#46534e"/><rect x="0" y="66" width="220" height="80" fill="#4e5c53"/>
+    <circle cx="150" cy="52" r="12" fill="#b9c9a8" opacity=".35"/>
+    <path fill="#44544a" d="M0 96C30 86 60 84 90 90S150 100 220 88V140H0Z"/><path fill="#3c4a42" d="M0 110C40 104 80 106 120 112S180 118 220 110V140H0Z"/>
+  </g>
+  <rect x="-8" y="124" width="222" height="8" rx="3" fill="#4a5354"/>
+  <!-- a soft curtain, gathered and tied back at the far side of the window -->
+  <clipPath id="um-cur"><path d="M-24-26H12C10 20 6 60 2 90C10 106 16 126 18 150H-28C-26 126-20 106-14 90C-18 60-22 20-24-26Z"/></clipPath>
+  <path fill="#8a7b6d" d="M-24-26H12C10 20 6 60 2 90C10 106 16 126 18 150H-28C-26 126-20 106-14 90C-18 60-22 20-24-26Z"/>
+  <g clip-path="url(#um-cur)" fill="#76685c"><path d="M-16-30h6l4 120-3 70h-8l3-70z"/><path d="M0-30h14v190H4l2-70z"/></g>
+  <rect x="-20" y="86" width="28" height="7" rx="3.5" fill="#b9c9a8"/>
+  <rect x="-34" y="-32" width="54" height="6" rx="3" fill="#4a5354"/>
+  <!-- plants: two pots on the sill, a trailing one on a shelf -->
+  <path fill="#6f8566" d="M19.5 118Q18.4 106.6 6.1 101.6Q8.6 114.7 19.5 118Z"/>
+  <path fill="#5c7055" d="M18.1 118Q22.1 108.6 12.6 102.1Q9.1 113.1 18.1 118Z"/>
+  <path fill="#8fa383" d="M22 118Q26.4 108.8 18.5 100Q14.5 111 22 118Z"/>
+  <path fill="#6f8566" d="M20.6 118Q27.8 110.1 24.9 98Q17.3 107.8 20.6 118Z"/>
+  <path fill="#5c7055" d="M20.1 118Q30.4 110.7 29.5 95.9Q18.2 105.5 20.1 118Z"/>
+  <path fill="#8fa383" d="M21 118Q30.6 115.9 31.3 104.7Q20.7 108.2 21 118Z"/>
+  <path fill="#a88a72" d="M10 116H30L27.6 128H12.4Z"/><path fill="#8e735e" d="M23.2 116H30L27.6 128H22.4Z"/><rect x="8" y="112" width="24" height="5" rx="1.5" fill="#b99a82"/>
+  <path fill="#5c7055" d="M58.5 120Q56.9 110 46.2 105.1Q49 116.5 58.5 120Z"/>
+  <path fill="#6f8566" d="M62 120Q63.3 112.4 56.1 106.9Q55.5 115.9 62 120Z"/>
+  <path fill="#8fa383" d="M59.8 120Q64.8 113.1 60.4 104.2Q55.3 112.7 59.8 120Z"/>
+  <path fill="#5c7055" d="M58.4 120Q64.4 112.9 62.4 102Q56 111 58.4 120Z"/>
+  <path fill="#6f8566" d="M59.6 120Q67.4 116.7 66.3 107.1Q57.8 111.7 59.6 120Z"/>
+  <path fill="#b9c9a8" d="M52 118H68L66.1 128H53.9Z"/><path fill="#9fb08e" d="M62.6 118H68L66.1 128H61.9Z"/><rect x="50" y="114" width="20" height="5" rx="1.5" fill="#c9d6ba"/>
+  <rect x="262" y="60" width="140" height="6" rx="2" fill="#4a5354"/>
+  <path fill="#a88a72" d="M279 46H301L298.4 60H281.6Z"/><path fill="#8e735e" d="M293.5 46H301L298.4 60H292.6Z"/><rect x="277" y="42" width="26" height="5" rx="1.5" fill="#b99a82"/>
+  <path fill="#5c7055" d="M282.9 47.8C281.9 51.4 278.9 62 278.9 70C278.9 78 283.2 87.6 282.9 96C282.6 104.3 277.2 112.6 276.9 120C276.6 127.3 279.9 136.9 280.9 140.2C282 143.5 283.4 143.1 283.1 139.8C282.8 136.4 278.8 127.3 279.1 120C279.4 112.8 284.8 104.4 285.1 96C285.4 87.7 281.1 78 281.1 70C281.1 62 284.8 51.9 285.1 48.2C285.4 44.5 283.9 44.2 282.9 47.8Z"/>
+  <path fill="#8fa383" d="M282 58Q275 54.6 270.7 62.1Q278.8 65.1 282 58Z"/>
+  <path fill="#6f8566" d="M280 76Q283.2 83.1 291.3 80.1Q287 72.6 280 76Z"/>
+  <path fill="#8fa383" d="M283 94Q276 90.6 271.7 98.1Q279.8 101.1 283 94Z"/>
+  <path fill="#6f8566" d="M280 112Q283.2 119.1 291.3 116.1Q287 108.6 280 112Z"/>
+  <path fill="#8fa383" d="M281 130Q274 126.6 269.7 134.1Q277.8 137.1 281 130Z"/>
+  <path fill="#6f8566" d="M293.2 46Q293.5 34.9 282.1 29Q282.9 41.8 293.2 46Z"/>
+  <path fill="#8fa383" d="M290.1 46Q292.4 35.1 283.7 25.2Q282.1 38.2 290.1 46Z"/>
+  <path fill="#5c7055" d="M293.6 46Q298.3 37.2 293.6 26.4Q288.9 37.2 293.6 46Z"/>
+  <path fill="#6f8566" d="M292.2 46Q298.6 39.3 294 29.7Q287.5 38 292.2 46Z"/>
+  <path fill="#8fa383" d="M291.1 46Q298.9 40.4 294.8 30.3Q286.7 37.5 291.1 46Z"/>
+  <path fill="#5c7055" d="M293.2 46Q301.3 43.5 303.1 33.9Q294 37.5 293.2 46Z"/>
+  <rect x="316" y="40" width="12" height="20" rx="2" fill="#8e7a68"/><rect x="330" y="44" width="10" height="16" rx="2" fill="#b9c9a8" opacity=".7"/><path fill="#c9bba8" d="M350 60h22c0-8-5-12-11-12s-11 4-11 12z"/>
+  <!-- a low shelf of books at the far left -->
+  <rect x="-80" y="100" width="72" height="6" rx="2" fill="#4a5354"/>
+  <g><rect x="-74" y="78" width="9" height="22" fill="#7d6f63"/><rect x="-64" y="74" width="8" height="26" fill="#6f8566"/><rect x="-55" y="80" width="10" height="20" fill="#a88a72"/><rect x="-44" y="84" width="16" height="16" rx="2" fill="#b9c9a8" opacity=".6"/></g>
+  <!-- a paper lamp on the right, softly lit -->
+  <g fill="#e6dcc6"><circle cx="360" cy="30" r="44" opacity=".05"/><circle cx="360" cy="30" r="28" opacity=".07"/></g>
+  <rect x="359" y="-80" width="2" height="94" fill="#1f2324"/><circle cx="360" cy="30" r="16" fill="#d9cdb4"/><path fill="#c4b89f" d="M366 15a16 16 0 0 1 0 30z"/><rect x="346" y="29" width="28" height="2" fill="#c4b89f"/>
+  <!-- the bench: its top edge is the bench line, y = 196 -->
+  <rect x="-80" y="196" width="480" height="68" fill="#56574d"/>
+  <rect x="-80" y="196" width="480" height="3.5" fill="#8a8a7c"/>
+  <rect x="-80" y="199.5" width="480" height="3" fill="#4a4b42"/>
+  <g fill="#4a4b42"><rect x="-80" y="232" width="480" height="2"/></g>
+  <!-- below the frame: the shadowed underside of the bench, then the floor -->
+  <rect x="-80" y="262" width="480" height="58" fill="#191c1d"/>
+  <rect x="-80" y="277" width="480" height="43" fill="#1f2324"/>
+  <rect x="-80" y="262" width="480" height="4" fill="#141617"/>
+</svg>

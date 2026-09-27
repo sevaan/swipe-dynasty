@@ -245,11 +245,12 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   background: var(--panel);
 }
 
+/* The crop centres the face: portraits put the eyes about 45% of the way down */
 .face img {
   position: absolute;
   width: 250%;
   left: -75%;
-  top: -40%;
+  top: -92%;
 }
 
 .situation .text {
@@ -473,7 +474,7 @@ svg.silhouette { display: block; width: 100%; height: 100%; }
 .portrait img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .portrait.large { width: 118px; height: 148px; border-radius: 18px; box-shadow: 0 5px 0 rgb(0 0 0 / 28%); }
 .portrait.small { width: 44px; height: 44px; border-radius: 50%; }
-.portrait.small img { width: 250%; height: auto; left: -75%; top: -40%; }
+.portrait.small img { width: 250%; height: auto; left: -75%; top: -92%; }
 
 /* Between lives: the exhibit, the inheritance, a new era, the end */
 

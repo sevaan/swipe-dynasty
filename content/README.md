@@ -14,6 +14,14 @@ To read the whole script back the way the game plays it, open `tools/script.html
 
 The old prototype's content (pottery and provisions as spreadsheets) is kept in `retired/milestone-1/`. The game doesn't read it.
 
+## Writing for players
+
+Write for a casual reader and gamer (Sevaan, Sep 27):
+- Say plainly what happens first, in everyday words.
+- Add at most one easy joke, and nothing the reader has to decode. "The remaining stones are promoted to seating" became "The useless stones become something to sit on."
+- Use short sentences, concrete nouns, and clear names for who does what.
+- Keep situations to about 45 words, results to about 30, and answers to 2–8.
+
 ## How the game reads `script.md`
 
 The rules and notes in the script are for people; the game skips them. What it reads is the structure below. Keep the headings and the bold labels exactly as they are, and the words around them can change freely.

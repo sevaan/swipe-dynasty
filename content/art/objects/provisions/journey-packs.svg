@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240">
+  <!-- Journey packs: travel food wrapped in leaves and tied with cord, beside a small sealed jar -->
+  <defs>
+    <g id="jp-jar">
+      <clipPath id="jps-pot"><path d="M134 196C118 191 106 173 106 150C106 125 119 108 131 101C134 99 131 94 126 91V84H194V91C189 94 186 99 189 101C201 108 214 125 214 150C214 173 202 191 186 196Z"/></clipPath>
+      <path fill="#b8643c" d="M134 196C118 191 106 173 106 150C106 125 119 108 131 101C134 99 131 94 126 91V84H194V91C189 94 186 99 189 101C201 108 214 125 214 150C214 173 202 191 186 196Z"/>
+      <g clip-path="url(#jps-pot)">
+        <path fill="#9a4f2e" d="M190 70H232V200H181Z"/>
+        <path fill="#cf7e52" d="M118 137C118 123 124 112 134 106C128 115 124 125 123 138Z"/>
+        <path fill="#7e3f24" d="M126 90A34 7.5 0 0 0 194 90L191 95.5A31 7 0 0 1 129 95.5Z"/>
+      </g>
+      <!-- sealed: a cap of fat pressed over the mouth, tied round the neck -->
+      <clipPath id="jps-cap"><path d="M122 88C122 73 139 63 160 63C181 63 198 73 198 88C198 92 195.5 95 193.5 97L197 104C188 109.5 132 109.5 123 104L126.5 97C124.5 95 122 92 122 88Z"/></clipPath>
+      <path fill="#e8dcc0" d="M122 88C122 73 139 63 160 63C181 63 198 73 198 88C198 92 195.5 95 193.5 97L197 104C188 109.5 132 109.5 123 104L126.5 97C124.5 95 122 92 122 88Z"/>
+      <g clip-path="url(#jps-cap)">
+        <path fill="#d1c3a2" d="M184 56H206V112H184Z"/>
+        <path fill="#f5eedb" d="M131 84C132 75 140 69 150 67C143 71 138 77 136 85Z"/>
+        <path fill="#d1c3a2" d="M120 100A40 7 0 0 0 200 100V112H120Z"/>
+      </g>
+      <clipPath id="jps-cord"><path d="M126 96A34 6.5 0 0 0 194 96V100A34 6.5 0 0 1 126 100Z"/></clipPath>
+      <path fill="#7a5a32" d="M126 96A34 6.5 0 0 0 194 96V100A34 6.5 0 0 1 126 100Z"/>
+      <g clip-path="url(#jps-cord)" fill="#5a4024"><rect x="125.3" y="95.7" width="1.8" height="6" transform="rotate(40 126.2 98.7)"/><rect x="127" y="97.1" width="1.8" height="6" transform="rotate(40 127.9 100.1)"/><rect x="130.3" y="98.5" width="1.8" height="6" transform="rotate(40 131.2 101.5)"/><rect x="135.1" y="99.6" width="1.8" height="6" transform="rotate(40 136 102.6)"/><rect x="141" y="100.5" width="1.8" height="6" transform="rotate(40 141.9 103.5)"/><rect x="147.9" y="101.1" width="1.8" height="6" transform="rotate(40 148.8 104.1)"/><rect x="155.3" y="101.5" width="1.8" height="6" transform="rotate(40 156.2 104.5)"/><rect x="162.9" y="101.5" width="1.8" height="6" transform="rotate(40 163.8 104.5)"/><rect x="170.3" y="101.1" width="1.8" height="6" transform="rotate(40 171.2 104.1)"/><rect x="177.2" y="100.5" width="1.8" height="6" transform="rotate(40 178.1 103.5)"/><rect x="183.1" y="99.6" width="1.8" height="6" transform="rotate(40 184 102.6)"/><rect x="187.9" y="98.5" width="1.8" height="6" transform="rotate(40 188.8 101.5)"/><rect x="191.2" y="97.1" width="1.8" height="6" transform="rotate(40 192.1 100.1)"/><rect x="192.9" y="95.7" width="1.8" height="6" transform="rotate(40 193.8 98.7)"/></g>
+      <!-- the knot and its two ends -->
+      <path fill="#7a5a32" d="M139.5 103.5l3-1 1.5 11.5-3 .8z M136 103l2.8 1-3.6 10.4-2.8-.9z"/>
+      <ellipse cx="139.5" cy="103" rx="4.2" ry="3.4" fill="#7a5a32"/><ellipse cx="140.5" cy="102.2" rx="1.6" ry="1.1" fill="#9a7648"/>
+    </g>
+  </defs>
+  <!-- contact shadows: the packs, and the jar -->
+  <ellipse cx="141" cy="197" rx="66" ry="3.8" fill="#000" opacity=".2"/>
+  <ellipse cx="236" cy="197" rx="23" ry="3.2" fill="#000" opacity=".2"/>
+  <!-- a small sealed jar, the same jar as before at about half the size -->
+  <use href="#jp-jar" transform="translate(146.4 86.2) scale(0.56)"/>
+  <!-- travel food, wrapped in leaves and tied: three bundles -->
+  <g transform="rotate(2 142 196.5)">
+    <!-- the leaf tips, fanning out above the tie -->
+    <path fill="#587a37" d="M139.4 157.8Q133.1 153.2 131.8 144.7Q139.9 147.9 142.8 155.2Z"/>
+    <path fill="#6f9447" d="M139.5 157Q135.3 148.8 137.3 139Q143.7 146.7 143.7 156Z"/>
+    <path fill="#8db35a" d="M140.1 156.1Q139.5 147.4 145.2 139.8Q148 148.9 144.4 156.9Z"/>
+    <path fill="#587a37" d="M141 155.3Q143.2 148.3 150.7 144.9Q150.3 153.1 144.6 157.7Z"/>
+    <clipPath id="jp-c"><path d="M133.7 154.5C123.3 159.5 116 169.6 116 181.4C116 193.1 126.4 196.5 142 196.5C157.6 196.5 168 193.1 168 181.4C168 169.6 160.7 159.5 150.3 154.5Z"/></clipPath>
+    <path fill="#6f9447" d="M133.7 154.5C123.3 159.5 116 169.6 116 181.4C116 193.1 126.4 196.5 142 196.5C157.6 196.5 168 193.1 168 181.4C168 169.6 160.7 159.5 150.3 154.5Z"/>
+    <g clip-path="url(#jp-c)">
+      <!-- one leaf over another: a light one on the left, a dark one on the right, each with its midrib -->
+      <path fill="#8db35a" d="M133.7 152.5C129 167.1 131.1 183.9 136.8 198.5H112V152.5Z"/>
+      <path fill="#587a37" d="M145.3 152.5C153.4 167.1 155 183.9 151.4 198.5H172V152.5Z"/>
+      <path fill="#a9c878" d="M137 154.5C127.4 169.6 124.8 183.9 125.9 196.5L127.4 196.5C126.9 183.9 129.5 169.6 139.5 154.5Z"/>
+      <path fill="#8db35a" opacity=".7" d="M142.8 154.5C143.6 171.3 144.6 184.7 143 196.5L144.6 196.5C146.2 184.7 145.1 171.3 145.3 154.5Z"/>
+    </g>
+    <!-- the cord, wound round the neck and knotted -->
+    <rect x="131.3" y="153.5" width="21.4" height="5" rx="2" fill="#7a5a32"/>
+    <rect x="149.3" y="153.5" width="3.4" height="5" rx="1.5" fill="#5a4024"/>
+    <path fill="#7a5a32" d="M140 157.5l-4 10 2.4 1 3.6-9.6zM143 157.5l3 9.4 2.4-.8-3-9.4z"/>
+    <ellipse cx="142" cy="156.5" rx="3.6" ry="3" fill="#7a5a32"/><ellipse cx="141.2" cy="155.7" rx="1.4" ry="1" fill="#9a7648"/>
+  </g>
+  <g transform="rotate(-4 106 196.5)">
+    <!-- the leaf tips, fanning out above the tie -->
+    <path fill="#587a37" d="M103.4 155.8Q97.1 151.2 95.8 142.7Q103.9 145.9 106.8 153.2Z"/>
+    <path fill="#6f9447" d="M103.5 155Q99.3 146.8 101.3 137Q107.7 144.7 107.7 154Z"/>
+    <path fill="#8db35a" d="M104.1 154.1Q103.5 145.4 109.2 137.8Q112 146.9 108.4 154.9Z"/>
+    <path fill="#587a37" d="M105 153.3Q107.2 146.3 114.7 142.9Q114.3 151.1 108.6 155.7Z"/>
+    <clipPath id="jp-a"><path d="M96.7 152.5C85.1 157.8 77 168.3 77 180.7C77 193 88.6 196.5 106 196.5C123.4 196.5 135 193 135 180.7C135 168.3 126.9 157.8 115.3 152.5Z"/></clipPath>
+    <path fill="#6f9447" d="M96.7 152.5C85.1 157.8 77 168.3 77 180.7C77 193 88.6 196.5 106 196.5C123.4 196.5 135 193 135 180.7C135 168.3 126.9 157.8 115.3 152.5Z"/>
+    <g clip-path="url(#jp-a)">
+      <!-- one leaf over another: a light one on the left, a dark one on the right, each with its midrib -->
+      <path fill="#8db35a" d="M96.7 150.5C91.5 165.7 93.8 183.3 100.2 198.5H73V150.5Z"/>
+      <path fill="#587a37" d="M109.7 150.5C118.8 165.7 120.5 183.3 116.4 198.5H139V150.5Z"/>
+      <path fill="#a9c878" d="M100.4 152.5C89.8 168.3 86.9 183.3 88 196.5L89.8 196.5C89.2 183.3 92.1 168.3 103.2 152.5Z"/>
+      <path fill="#8db35a" opacity=".7" d="M106.9 152.5C107.7 170.1 108.9 184.2 107.2 196.5L108.9 196.5C110.6 184.2 109.5 170.1 109.7 152.5Z"/>
+    </g>
+    <!-- the cord, wound round the neck and knotted -->
+    <rect x="94.3" y="151.5" width="23.4" height="5" rx="2" fill="#7a5a32"/>
+    <rect x="114.3" y="151.5" width="3.4" height="5" rx="1.5" fill="#5a4024"/>
+    <path fill="#7a5a32" d="M104 155.5l-4 10 2.4 1 3.6-9.6zM107 155.5l3 9.4 2.4-.8-3-9.4z"/>
+    <ellipse cx="106" cy="154.5" rx="3.6" ry="3" fill="#7a5a32"/><ellipse cx="105.2" cy="153.7" rx="1.4" ry="1" fill="#9a7648"/>
+  </g>
+  <g transform="rotate(5 176 196.5)">
+    <!-- the leaf tips, fanning out above the tie -->
+    <path fill="#587a37" d="M173.4 159.8Q167.1 155.2 165.8 146.7Q173.9 149.9 176.8 157.2Z"/>
+    <path fill="#6f9447" d="M173.5 159Q169.3 150.8 171.3 141Q177.7 148.7 177.7 158Z"/>
+    <path fill="#8db35a" d="M174.1 158.1Q173.5 149.4 179.2 141.8Q182 150.9 178.4 158.9Z"/>
+    <path fill="#587a37" d="M175 157.3Q177.2 150.3 184.7 146.9Q184.3 155.1 178.6 159.7Z"/>
+    <clipPath id="jp-b"><path d="M167.4 156.5C156.6 161.3 149 170.9 149 182.1C149 193.3 159.8 196.5 176 196.5C192.2 196.5 203 193.3 203 182.1C203 170.9 195.4 161.3 184.6 156.5Z"/></clipPath>
+    <path fill="#6f9447" d="M167.4 156.5C156.6 161.3 149 170.9 149 182.1C149 193.3 159.8 196.5 176 196.5C192.2 196.5 203 193.3 203 182.1C203 170.9 195.4 161.3 184.6 156.5Z"/>
+    <g clip-path="url(#jp-b)">
+      <!-- one leaf over another: a light one on the left, a dark one on the right, each with its midrib -->
+      <path fill="#8db35a" d="M167.4 154.5C162.5 168.5 164.7 184.5 170.6 198.5H145V154.5Z"/>
+      <path fill="#587a37" d="M179.5 154.5C187.9 168.5 189.5 184.5 185.7 198.5H207V154.5Z"/>
+      <path fill="#a9c878" d="M170.8 156.5C160.9 170.9 158.2 184.5 159.3 196.5L160.9 196.5C160.3 184.5 163 170.9 173.4 156.5Z"/>
+      <path fill="#8db35a" opacity=".7" d="M176.9 156.5C177.6 172.5 178.7 185.3 177.1 196.5L178.7 196.5C180.3 185.3 179.2 172.5 179.5 156.5Z"/>
+    </g>
+    <!-- the cord, wound round the neck and knotted -->
+    <rect x="165" y="155.5" width="22.1" height="5" rx="2" fill="#7a5a32"/>
+    <rect x="183.6" y="155.5" width="3.4" height="5" rx="1.5" fill="#5a4024"/>
+    <path fill="#7a5a32" d="M174 159.5l-4 10 2.4 1 3.6-9.6zM177 159.5l3 9.4 2.4-.8-3-9.4z"/>
+    <ellipse cx="176" cy="158.5" rx="3.6" ry="3" fill="#7a5a32"/><ellipse cx="175.2" cy="157.7" rx="1.4" ry="1" fill="#9a7648"/>
+  </g>
+</svg>

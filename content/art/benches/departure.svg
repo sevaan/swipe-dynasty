@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240">
+  <!-- Departure workbench (route D): a habitat workshop with curved ribs, a curved window to the sky, gardens on one side and an engine part on the other; the object sits on the bench at y = 196 -->
+  <!-- the backdrop bleeds 80 units past the frame on every side (x -80 to 400, y -80 to 320): the card can be from about 2:1 to square -->
+  <!-- the habitat wall, with curved ribs -->
+  <rect x="-80" y="-80" width="480" height="280" fill="#1d2b38"/>
+  <rect x="-79" y="-80" width="14" height="280" fill="#243646"/>
+  <rect x="385" y="-80" width="14" height="280" fill="#243646"/>
+  <path fill="#243646" d="M-80-30C20-70 300-70 400-30V-12C300-52 20-52-80-12Z"/>
+  <!-- a curved window to the sky -->
+  <path fill="#2c4052" d="M92 124V52C92-8 130-40 176-40S260-8 260 52V124Z"/>
+  <clipPath id="dp-sky"><path d="M101 118V54C101 0 134-30 176-30S251 0 251 54V118Z"/></clipPath>
+  <g clip-path="url(#dp-sky)">
+    <rect x="90" y="-40" width="180" height="170" fill="#122636"/>
+    <rect x="90" y="50" width="180" height="80" fill="#15304a"/><rect x="90" y="88" width="180" height="42" fill="#1a3a57"/>
+    <circle cx="226" cy="130" r="52" fill="#27506a"/><path fill="#1f445c" d="M250 84a52 52 0 0 1 0 92z"/>
+    <g fill="#dfeaf2"><circle cx="126" cy="6" r="1.4"/><circle cx="150" cy="30" r="1"/><circle cx="192" cy="-12" r="1.2"/><circle cx="232" cy="20" r="1.4"/><circle cx="116" cy="66" r="1"/><circle cx="170" cy="70" r="1.2"/><circle cx="240" cy="54" r="1"/><circle cx="132" cy="92" r="1"/></g>
+  </g>
+  <path fill="#243646" d="M169-32h14v152h-14z"/><path fill="#243646" d="M101 56H251v7H101z"/>
+  <!-- gardens on the left: two planter shelves under a grow light, and a hanging vine -->
+  <rect x="-80" y="-2" width="170" height="6" fill="#3a4856"/><rect x="-66" y="4" width="140" height="4" rx="2" fill="#9bd36a" opacity=".7"/>
+  <path fill="#9bd36a" opacity=".06" d="M-66 8H74L92 150H-80Z"/><path fill="#9bd36a" opacity=".05" d="M-50 8H60L70 150H-66Z"/>
+  <rect x="-80" y="96" width="166" height="7" fill="#4b5c6b"/><rect x="-80" y="96" width="166" height="2.4" fill="#64788a"/>
+  <rect x="-80" y="150" width="166" height="7" fill="#4b5c6b"/><rect x="-80" y="150" width="166" height="2.4" fill="#64788a"/>
+  <path fill="#4a7a3e" d="M-54.9 136Q-58.3 121.6-74 114Q-68.7 130.6-54.9 136Z"/>
+  <path fill="#3a6232" d="M-55.4 136Q-52.3 122.5-65.2 113.3Q-67.4 129.1-55.4 136Z"/>
+  <path fill="#6e9f4f" d="M-54.7 136Q-50.5 125.1-60.9 116.9Q-64.4 129.7-54.7 136Z"/>
+  <path fill="#4a7a3e" d="M-56.2 136Q-47.5 127.7-54.8 116.2Q-63.6 126.5-56.2 136Z"/>
+  <path fill="#3a6232" d="M-54.4 136Q-46.5 123.3-50.5 106Q-58.9 121.7-54.4 136Z"/>
+  <path fill="#6e9f4f" d="M-54.2 136Q-44.2 126.8-47.3 111.2Q-58 122.9-54.2 136Z"/>
+  <path fill="#4a7a3e" d="M-57.9 136Q-46.5 129.9-45.5 114.9Q-58.1 123.1-57.9 136Z"/>
+  <path fill="#6d5a4a" d="M-68.1 136H-43.9L-46.8 150H-65.2Z"/><path fill="#5a4a3c" d="M-52.1 136H-43.9L-46.8 150H-53.1Z"/><rect x="-70.1" y="132" width="28.2" height="5" rx="1.5" fill="#806a58"/>
+  <path fill="#4a7a3e" d="M-21.8 136Q-22.3 123.7-33.3 114.1Q-31.6 128.6-21.8 136Z"/>
+  <path fill="#3a6232" d="M-19.3 136Q-17.1 124.5-26.4 114.3Q-27.9 128-19.3 136Z"/>
+  <path fill="#6e9f4f" d="M-19.7 136Q-16.1 125.5-23.4 114.7Q-26.7 127.3-19.7 136Z"/>
+  <path fill="#4a7a3e" d="M-19.1 136Q-12.1 127-19.5 116.3Q-26.5 127.3-19.1 136Z"/>
+  <path fill="#3a6232" d="M-20.2 136Q-11.8 128.8-13.4 116Q-22.5 125.2-20.2 136Z"/>
+  <path fill="#6e9f4f" d="M-20.1 136Q-12.6 130.5-15.6 120.2Q-23.6 127.3-20.1 136Z"/>
+  <path fill="#4a7a3e" d="M-19.9 136Q-8.7 130.3-6.7 115.7Q-19.2 123.5-19.9 136Z"/>
+  <path fill="#6d5a4a" d="M-29.9 136H-10.1L-12.5 150H-27.5Z"/><path fill="#5a4a3c" d="M-16.8 136H-10.1L-12.5 150H-17.6Z"/><rect x="-31.9" y="132" width="23.8" height="5" rx="1.5" fill="#806a58"/>
+  <path fill="#4a7a3e" d="M17.5 136Q16 120.8-0.3 114.2Q2.9 131.5 17.5 136Z"/>
+  <path fill="#3a6232" d="M16.1 136Q20.9 123.3 7.9 115.1Q3.9 129.9 16.1 136Z"/>
+  <path fill="#6e9f4f" d="M20 136Q24.8 123.3 13.5 112.5Q9.3 127.6 20 136Z"/>
+  <path fill="#4a7a3e" d="M18.6 136Q26.8 124.4 21.1 108.8Q12.6 123.1 18.6 136Z"/>
+  <path fill="#3a6232" d="M18.1 136Q30.1 124.1 25.7 104.9Q12.9 119.9 18.1 136Z"/>
+  <path fill="#6e9f4f" d="M19 136Q31 130.7 28.9 115.9Q15.9 123.3 19 136Z"/>
+  <path fill="#4a7a3e" d="M19.5 136Q31.5 131.9 31 117.3Q17.8 123.3 19.5 136Z"/>
+  <path fill="#6d5a4a" d="M4.8 136H31.2L28 150H8Z"/><path fill="#5a4a3c" d="M22.2 136H31.2L28 150H21.2Z"/><rect x="2.8" y="132" width="30.4" height="5" rx="1.5" fill="#806a58"/>
+  <path fill="#4a7a3e" d="M56.6 136Q57.1 123.6 43.9 118.3Q44.6 132.5 56.6 136Z"/>
+  <path fill="#3a6232" d="M59.6 136Q59.2 124.1 47.7 116.3Q49.3 130.1 59.6 136Z"/>
+  <path fill="#6e9f4f" d="M56.2 136Q60.5 124.1 51.6 112.3Q47.7 126.5 56.2 136Z"/>
+  <path fill="#4a7a3e" d="M58.9 136Q65.4 126.2 60.2 113.5Q53.5 125.5 58.9 136Z"/>
+  <path fill="#3a6232" d="M58 136Q66.9 128.5 60.5 117.1Q51.4 126.5 58 136Z"/>
+  <path fill="#6e9f4f" d="M57.5 136Q69.1 128.6 68.3 112.6Q55.7 122.4 57.5 136Z"/>
+  <path fill="#4a7a3e" d="M58.7 136Q69.6 131.3 68.7 117.6Q56.8 124.2 58.7 136Z"/>
+  <path fill="#6d5a4a" d="M47 136H69L66.4 150H49.6Z"/><path fill="#5a4a3c" d="M61.5 136H69L66.4 150H60.6Z"/><rect x="45" y="132" width="26" height="5" rx="1.5" fill="#806a58"/>
+  <path fill="#3a6232" d="M-44.4 82Q-45.1 72.6-55.2 68.7Q-53.5 79.4-44.4 82Z"/>
+  <path fill="#4a7a3e" d="M-42.3 82Q-40.5 71-51.6 64.5Q-52.5 77.3-42.3 82Z"/>
+  <path fill="#6e9f4f" d="M-43.9 82Q-38.6 73.5-44.7 63.8Q-49.9 74.1-43.9 82Z"/>
+  <path fill="#3a6232" d="M-45.1 82Q-37.9 74.5-44.6 64.9Q-51.9 74.1-45.1 82Z"/>
+  <path fill="#4a7a3e" d="M-42.8 82Q-33.2 74.9-32.4 61Q-43 70.1-42.8 82Z"/>
+  <path fill="#6e9f4f" d="M-43.1 82Q-32 77.3-31.5 63.5Q-43.7 70-43.1 82Z"/>
+  <path fill="#6d5a4a" d="M-53 84H-35L-37.2 96H-50.8Z"/><path fill="#5a4a3c" d="M-41.1 84H-35L-37.2 96H-41.8Z"/><rect x="-55" y="80" width="22" height="5" rx="1.5" fill="#806a58"/>
+  <path fill="#3a6232" d="M1.2 82Q1.5 68.1-12.7 60.7Q-11.6 76.7 1.2 82Z"/>
+  <path fill="#4a7a3e" d="M-1.9 82Q0.9 68.3-9.9 56Q-11.9 72.3-1.9 82Z"/>
+  <path fill="#6e9f4f" d="M1.6 82Q7.5 71 1.6 57.5Q-4.3 71 1.6 82Z"/>
+  <path fill="#3a6232" d="M0.2 82Q8.2 73.6 2.5 61.7Q-5.7 72.1 0.2 82Z"/>
+  <path fill="#4a7a3e" d="M-0.9 82Q8.8 74.9 3.7 62.4Q-6.4 71.4-0.9 82Z"/>
+  <path fill="#6e9f4f" d="M1.2 82Q11.4 78.9 13.6 66.8Q2.2 71.4 1.2 82Z"/>
+  <path fill="#6d5a4a" d="M-10 84H10L7.6 96H-7.6Z"/><path fill="#5a4a3c" d="M3.2 84H10L7.6 96H2.4Z"/><rect x="-12" y="80" width="24" height="5" rx="1.5" fill="#806a58"/>
+  <path fill="#3a6232" d="M43.9 82Q43.4 70.7 32.7 62.8Q34.3 76 43.9 82Z"/>
+  <path fill="#4a7a3e" d="M43.9 82Q44.8 70.7 33.7 63.7Q33.8 76.8 43.9 82Z"/>
+  <path fill="#6e9f4f" d="M43.1 82Q47.9 71.3 39.7 60.4Q35.2 73.3 43.1 82Z"/>
+  <path fill="#3a6232" d="M44.2 82Q51.8 74.8 47.6 63.5Q39.7 72.5 44.2 82Z"/>
+  <path fill="#4a7a3e" d="M45.2 82Q52.8 74.8 50.8 62.8Q42.6 71.9 45.2 82Z"/>
+  <path fill="#6e9f4f" d="M45.4 82Q55.6 78.2 58.9 65.8Q47.3 71.2 45.4 82Z"/>
+  <path fill="#6d5a4a" d="M35.5 84H52.5L50.5 96H37.5Z"/><path fill="#5a4a3c" d="M46.7 84H52.5L50.5 96H46Z"/><rect x="33.5" y="80" width="21" height="5" rx="1.5" fill="#806a58"/>
+  <path fill="#3a6232" d="M76.8 3.9C76.1 8.2 74.5 21.7 74.8 30C75.1 38.4 78.8 45.7 78.8 54C78.8 62.3 75.1 75.5 74.8 79.8C74.5 84.2 76.1 84.5 77.2 80.2C78.3 75.9 81.2 62.4 81.2 54C81.2 45.6 77.5 38.3 77.2 30C76.9 21.6 79.3 8.4 79.2 4.1C79.1-0.2 77.5-0.4 76.8 3.9Z"/>
+  <path fill="#6e9f4f" d="M77 22Q70 18.6 65.7 26.1Q73.8 29.1 77 22Z"/>
+  <path fill="#4a7a3e" d="M79 40Q82.2 47.1 90.3 44.1Q86 36.6 79 40Z"/>
+  <path fill="#6e9f4f" d="M78 58Q71 54.6 66.7 62.1Q74.8 65.1 78 58Z"/>
+  <path fill="#4a7a3e" d="M77 74Q80.2 81.1 88.3 78.1Q84 70.6 77 74Z"/>
+  <!-- engines on the right: a thruster bell on its stand, a hose, a tool rail -->
+  <rect x="286" y="126" width="9" height="70" fill="#3a4856"/><rect x="274" y="187" width="34" height="9" rx="2" fill="#4b5c6b"/>
+  <path fill="#4b5c6b" d="M278 74H302L314 120H266Z"/><path fill="#3a4856" d="M293 74H302L314 120H297Z"/><rect x="274" y="65" width="32" height="11" rx="3" fill="#64788a"/><path fill="#2a3642" d="M270 120H310L308 127H272Z"/>
+  <g fill="#3a4856"><rect x="281" y="85" width="19" height="3"/><rect x="277" y="100" width="27" height="3"/></g>
+  <path fill="#26323d" d="M306.9 72.3C310.3 71.8 320.4 62.7 325.1 64.3C329.9 66 334.8 72.9 335.5 82.3C336.2 91.6 327.8 107.2 329.5 120.3C331.2 133.4 340.6 147.5 345.7 160.9C350.7 174.3 356.5 194.4 359.6 200.8C362.8 207.2 365.9 206.1 364.4 199.2C362.8 192.2 355.3 172.4 350.3 159.1C345.4 145.9 336.1 132.6 334.5 119.7C332.8 106.8 341.8 91.7 340.5 81.7C339.2 71.7 332.8 62 326.9 59.7C321 57.3 308.4 65.6 305.1 67.7C301.7 69.8 303.6 72.9 306.9 72.3Z"/>
+  <rect x="316" y="20" width="90" height="6" fill="#4b5c6b"/><g fill="#64788a"><rect x="330" y="26" width="4" height="30"/><rect x="346" y="26" width="4" height="22"/><rect x="362" y="26" width="4" height="36"/></g>
+  <!-- and a plant has found its way onto the engine too -->
+  <path fill="#4a7a3e" d="M291.7 64Q291.2 55.2 282 50.6Q283.5 60.7 291.7 64Z"/>
+  <path fill="#6e9f4f" d="M288.7 64Q291.1 55.4 283.7 48.1Q281.9 58.3 288.7 64Z"/>
+  <path fill="#3a6232" d="M288.4 64Q293.1 56 289 45.9Q284.2 55.7 288.4 64Z"/>
+  <path fill="#4a7a3e" d="M290.8 64Q296.3 56.7 294.2 46.1Q288.4 55.2 290.8 64Z"/>
+  <path fill="#6e9f4f" d="M290.6 64Q300.2 61 303.7 49.8Q292.9 54.2 290.6 64Z"/>
+  <rect x="372" y="150" width="40" height="7" fill="#4b5c6b"/>
+  <path fill="#4a7a3e" d="M386.7 136Q385.1 123.5 372.4 116Q375.4 130.4 386.7 136Z"/>
+  <path fill="#3a6232" d="M385.1 136Q386.5 123.7 373.8 117.4Q373.6 131.5 385.1 136Z"/>
+  <path fill="#6e9f4f" d="M386.2 136Q391.7 124.2 382.6 112.3Q377.5 126.4 386.2 136Z"/>
+  <path fill="#4a7a3e" d="M384.6 136Q391.4 125.2 382.4 113.7Q375.9 126.7 384.6 136Z"/>
+  <path fill="#3a6232" d="M384.3 136Q392.5 124.8 386.4 109.9Q378 123.7 384.3 136Z"/>
+  <path fill="#6e9f4f" d="M387.4 136Q396.2 128.7 395.2 115.4Q385.6 124.7 387.4 136Z"/>
+  <path fill="#4a7a3e" d="M386 136Q396.9 127.9 398.8 112Q386.6 122.5 386 136Z"/>
+  <path fill="#6d5a4a" d="M375 136H397L394.4 150H377.6Z"/><path fill="#5a4a3c" d="M389.5 136H397L394.4 150H388.6Z"/><rect x="373" y="132" width="26" height="5" rx="1.5" fill="#806a58"/>
+  <!-- the bench: its top edge is the bench line, y = 196 -->
+  <rect x="-80" y="196" width="480" height="68" fill="#34495b"/>
+  <rect x="-80" y="196" width="480" height="3.5" fill="#6f8698"/>
+  <rect x="-80" y="199.5" width="480" height="3" fill="#2c3f4f"/>
+  <g fill="#2c3f4f"><rect x="-80" y="232" width="480" height="2.4"/></g>
+  <g fill="#9bd36a" opacity=".5"><rect x="12" y="214" width="16" height="3" rx="1.5"/><rect x="292" y="214" width="16" height="3" rx="1.5"/></g>
+  <!-- below the frame: the shadowed underside of the bench, then the floor -->
+  <rect x="-80" y="262" width="480" height="58" fill="#0c141c"/>
+  <rect x="-80" y="277" width="480" height="43" fill="#101a24"/>
+</svg>

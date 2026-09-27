@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240">
+  <!-- Workshop workbench (C05-C08): a plank wall with written instructions pinned up, a rack of metal tools, and a timber bench; the object sits on the bench at y = 196 -->
+  <!-- the backdrop bleeds 80 units past the frame on every side (x -80 to 400, y -80 to 320): the card can be from about 2:1 to square -->
+  <!-- the wall: upright boards, dark and plain in the middle -->
+  <rect x="-80" y="-80" width="480" height="280" fill="#3a2f25"/>
+  <rect x="-80" y="-80" width="32.4" height="280" fill="#372c23"/><rect x="-46" y="-80" width="32.4" height="280" fill="#3e3228"/><rect x="-12" y="-80" width="32.4" height="280" fill="#372c23"/><rect x="22" y="-80" width="32.4" height="280" fill="#3e3228"/><rect x="56" y="-80" width="32.4" height="280" fill="#372c23"/><rect x="90" y="-80" width="32.4" height="280" fill="#3e3228"/><rect x="124" y="-80" width="32.4" height="280" fill="#372c23"/><rect x="158" y="-80" width="32.4" height="280" fill="#3e3228"/><rect x="192" y="-80" width="32.4" height="280" fill="#372c23"/><rect x="226" y="-80" width="32.4" height="280" fill="#3e3228"/><rect x="260" y="-80" width="32.4" height="280" fill="#372c23"/><rect x="294" y="-80" width="32.4" height="280" fill="#3e3228"/><rect x="328" y="-80" width="32.4" height="280" fill="#372c23"/><rect x="362" y="-80" width="32.4" height="280" fill="#3e3228"/><rect x="396" y="-80" width="32.4" height="280" fill="#372c23"/>
+  <g fill="#2a221b"><ellipse cx="-38" cy="40" rx="3" ry="4.5"/><ellipse cx="97" cy="-30" rx="2.6" ry="4"/><ellipse cx="236" cy="150" rx="2.8" ry="4.4"/><ellipse cx="372" cy="12" rx="3" ry="4.6"/><ellipse cx="170" cy="92" rx="2.2" ry="3.4"/></g>
+  <!-- a crossbeam up top -->
+  <rect x="-80" y="-44" width="480" height="20" fill="#30271f"/><rect x="-80" y="-28" width="480" height="4" fill="#261f19"/>
+  <!-- papers pinned to the boards on the left: written instructions and a drawing -->
+  <g transform="rotate(-4 -35 44)">
+    <rect x="-58" y="44" width="46" height="60" fill="#d7cbb0"/>
+    <path fill="#bfb193" d="M-29.48 44H-12V104H-25.800000000000004Z"/>
+    <g fill="#8c7e66"><rect x="-53" y="53" width="36" height="2.2" rx="1.1"/><rect x="-53" y="60" width="30" height="2.2" rx="1.1"/><rect x="-53" y="67" width="24" height="2.2" rx="1.1"/><rect x="-53" y="74" width="36" height="2.2" rx="1.1"/><rect x="-53" y="81" width="30" height="2.2" rx="1.1"/><rect x="-53" y="88" width="24" height="2.2" rx="1.1"/><rect x="-53" y="95" width="36" height="2.2" rx="1.1"/></g>
+    <circle cx="-35" cy="48" r="2.4" fill="#d9a441"/>
+  </g>
+  <g transform="rotate(3 28 30)">
+    <rect x="6" y="30" width="44" height="58" fill="#d7cbb0"/>
+    <path fill="#bfb193" d="M33.28 30H50V88H36.8Z"/>
+    <g fill="#8c7e66"><rect x="11" y="39" width="34" height="2.2" rx="1.1"/><rect x="11" y="46" width="28" height="2.2" rx="1.1"/><rect x="11" y="53" width="22" height="2.2" rx="1.1"/></g>
+    <path fill="#8c7e66" fill-rule="evenodd" d="M28 60a10 10 0 1 0 .1 0zM28 62.2a7.8 7.8 0 1 1-.1 0z"/>
+    <g fill="#8c7e66"><rect x="27" y="61" width="2" height="18" rx="1"/><rect x="19" y="69" width="18" height="2" rx="1"/><rect x="13" y="81" width="30" height="2" rx="1"/></g>
+    <circle cx="28" cy="34" r="2.4" fill="#d9a441"/>
+  </g>
+  <g transform="rotate(-3 27 100)">
+    <rect x="8" y="100" width="38" height="34" fill="#d7cbb0"/>
+    <path fill="#bfb193" d="M31.56 100H46V134H34.599999999999994Z"/>
+    <g fill="#8c7e66"><rect x="13" y="109" width="28" height="2.2" rx="1.1"/><rect x="13" y="116" width="22" height="2.2" rx="1.1"/><rect x="13" y="123" width="16" height="2.2" rx="1.1"/></g>
+    <circle cx="27" cy="104" r="2.4" fill="#d9a441"/>
+  </g>
+  <g transform="rotate(2 -48 118)">
+    <rect x="-66" y="118" width="36" height="30" fill="#d7cbb0"/>
+    <path fill="#bfb193" d="M-43.68 118H-30V148H-40.8Z"/>
+    <g fill="#8c7e66"><rect x="-61" y="127" width="26" height="2.2" rx="1.1"/><rect x="-61" y="134" width="20" height="2.2" rx="1.1"/></g>
+    <circle cx="-48" cy="122" r="2.4" fill="#d9a441"/>
+  </g>
+  <!-- a rack of metal tools on the right: tongs, a hammer, a set square, a file -->
+  <rect x="248" y="30" width="160" height="8" fill="#5e4430"/><rect x="248" y="30" width="160" height="2.4" fill="#7a5a3a"/>
+  <g fill="#2a221b"><rect x="266" y="38" width="3" height="6"/><rect x="298" y="38" width="3" height="6"/><rect x="332" y="38" width="3" height="6"/><rect x="366" y="38" width="3" height="6"/></g>
+  <g transform="rotate(4 268 44)"><path fill="#6c6862" d="M265 42h4l3 70-5 2zM270 42h4l-2 72-5-2z"/><circle cx="269.5" cy="60" r="3.2" fill="#55524d"/><path fill="#55524d" d="M263 112l6 14 2-1-3-13zM276 112l-5 14-2-1 3-13z"/></g>
+  <rect x="297" y="44" width="5.4" height="62" rx="2.4" fill="#7a5a3a"/><rect x="299.8" y="44" width="2.6" height="62" fill="#5e4430"/><path fill="#6c6862" d="M288 102h24v10h-24z"/><path fill="#55524d" d="M304 102h8v10h-8z"/><path fill="#8a857e" d="M288 102h24v2.4h-24z"/>
+  <path fill="#6c6862" d="M326 44h6v60h28v6h-34z"/><path fill="#55524d" d="M329 44h3v60h-3z"/><g fill="#55524d"><rect x="336" y="104" width="1.6" height="3"/><rect x="342" y="104" width="1.6" height="3"/><rect x="348" y="104" width="1.6" height="3"/><rect x="354" y="104" width="1.6" height="3"/></g>
+  <rect x="365" y="44" width="5" height="18" rx="2" fill="#7a5a3a"/><path fill="#6c6862" d="M364.5 62h6l-.5 44-2.5 4-2.5-4z"/><path fill="#55524d" d="M367.5 62h3l-.5 44-2.5 4z"/>
+  <!-- a shelf at the far left with a pot of ink and a candle -->
+  <rect x="-80" y="160" width="88" height="6" fill="#5e4430"/><rect x="-80" y="160" width="88" height="2" fill="#7a5a3a"/>
+  <path fill="#2a2a30" d="M-50 146h14v14h-14z"/><path fill="#1e1e22" d="M-40 146h4v14h-4z"/><rect x="-47" y="143" width="8" height="3" fill="#2a2a30"/>
+  <rect x="-14" y="136" width="8" height="24" fill="#e8dcc0"/><rect x="-9" y="136" width="3" height="24" fill="#cfc2a4"/><path fill="#f2c94c" d="M-10 124c3 4 4 7 4 9a4 4 0 0 1-8 0c0-2 1-5 4-9z"/><g fill="#d9a441"><circle cx="-10" cy="131" r="16" opacity=".08"/><circle cx="-10" cy="131" r="9" opacity=".12"/></g>
+  <!-- the bench: its top edge is the bench line, y = 196 -->
+  <rect x="-80" y="196" width="480" height="68" fill="#6b5238"/>
+  <rect x="-80" y="196" width="480" height="3.5" fill="#9a7a54"/>
+  <rect x="-80" y="226" width="480" height="2.2" fill="#4f3c2a"/>
+  <g fill="#4f3c2a"><circle cx="-40" cy="211" r="2.2"/><circle cx="-40" cy="244" r="2.2"/><circle cx="360" cy="211" r="2.2"/><circle cx="360" cy="244" r="2.2"/><circle cx="160" cy="211" r="2.2"/><circle cx="160" cy="244" r="2.2"/></g>
+  <g fill="#5c4630"><path d="M40 206h30v2H40zM230 238h40v2h-40zM-60 236h26v2h-26zM300 208h28v2h-28z"/></g>
+  <!-- below the frame: the shadowed underside of the bench, then the floor -->
+  <rect x="-80" y="262" width="480" height="58" fill="#1e1813"/>
+  <rect x="-80" y="277" width="480" height="43" fill="#261f19"/>
+  <!-- the bench's legs, in the shadow below -->
+  <g fill="#2e251c"><rect x="-40" y="262" width="16" height="58"/><rect x="344" y="262" width="16" height="58"/></g>
+  <rect x="-80" y="262" width="480" height="5" fill="#15110d"/>
+</svg>

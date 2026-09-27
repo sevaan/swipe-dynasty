@@ -27,8 +27,8 @@
   <g fill="#a33a28" opacity=".3"><circle cx="276" cy="150" r="2.6"/><circle cx="285" cy="152" r="2.6"/><circle cx="294" cy="153" r="2.6"/></g>
   <!-- the stone slab: its top edge is the bench line, y = 196 -->
   <rect x="-80" y="196" width="480" height="68" fill="#5d4b3c"/>
-  <path fill="#4e3e32" d="M-80 223-40 225 0 224 40 222 96 225 150 222 210 224 262 221 320 224 360 222 400 224V264H-80Z"/>
-  <path fill="#463729" d="M-80 247-30 249 0 248 50 246 120 249 190 246 250 248 320 246 364 248 400 246V264H-80Z"/>
+  <path fill="#4e3e32" d="M-80 223-40 225 0 224 40 222 96 225 150 222 210 224 262 221 320 224 360 222 400 224V265H-80Z"/>
+  <path fill="#463729" d="M-80 247-30 249 0 248 50 246 120 249 190 246 250 248 320 246 364 248 400 246V265H-80Z"/>
   <rect x="-80" y="196" width="480" height="3.5" fill="#8b7662"/>
   <path fill="#4e3e32" d="M22 203h14l-3 5h-9z M288 206h16l-2 4h-12z M118 232h22l-2 4h-18z M226 230h16l-2 4h-12z M-50 205h14l-3 5h-9z M352 210h16l-2 4h-12z"/>
   <!-- below the frame: the shadowed underside of the slab, then the cave floor -->
