@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1d1a1e">
+<title>The Card · One Bright Idea prototype</title>
+<!--
+  DESIGN NOTE: THE CARD
+
+  The idea
+    One tactile card is the whole interface. A life is a small face-down
+    deck: the character card, six decisions, the reveal and the epitaph,
+    nine cards in all. You hold the top card, and the deck under it is the
+    rest of the life. It gets thinner as you play, and the special cards
+    show before they arrive: a gold edge in the stack means the reveal is
+    close, and a black edge means the life is nearly over. A decision's
+    back is where its result gets written, so choosing is turning the card
+    over. Moving on slides the used card off the table, and the next one
+    rises from the deck and turns face up.
+
+  The card
+    Cream paper, a fine grain and a very subtle inner border. The workbench
+    picture is inset at the top, the same size on every card (the space
+    left after the longest words, up to 4:3). Under it, the speaker's round
+    face and name, then the situation; the two are centred in the box
+    under the picture, as card games set short rules text. The answers are
+    two tear-off tabs along the lower edge, split by a perforation, each
+    with its arrow. A result is printed on the kraft back, with the new
+    workbench picture in the same place and the deck's lattice and spark in
+    the spare room. Every card's action lives on the tab at its foot.
+
+  Type scale (Atkinson Hyperlegible Next for anything read; Fraunces,
+  soft and upright, for names, headings and the stamp)
+    Story and results  Atkinson 500, 19/1.42 (18 on a short screen), ink on paper
+    Answers            Atkinson 700, 18/1.22 in the tabs, two lines from 375 wide
+    Speaker name       Fraunces 700, 18
+    Result heading     Fraunces 700, 23/1.16 (the chosen answer)
+    Titles             Fraunces 800: name 38, invention 29, epitaph name 34
+    Small labels       Atkinson 700-800, 12.5-15 (the era chip, "You want:",
+                       the context line)
+
+  Palette (all from life.theme, with a few mixes)
+    Sky      theme.bg #2a1c14, fading up into the era's night sky #121828
+    Paper    theme.card #ecd9b4 for faces; kraft (paper + 16% brown) for backs
+    Ink      theme.ink #2a1c14; ink-soft (80% ink) at 6.9:1 on paper
+    Ember    theme.accent #e8793a: the stamp, a lit tab, Begin, and a glow
+             that rises behind the deck as the fire gets going
+    Gilt     #d7a445 / #f4d88f / #9c6a1c for the reveal
+    Mourning #19120e for the epitaph's border
+    Light text on the sky is theme.text; its soft tone is 7.9:1.
+
+  Motion language: weight, then spring
+    Press: the card gives a little (scale .985). Drag: it lifts (1.02, a
+    bigger, softer shadow) and swings on a pivot below the card, with the
+    grabbed point staying under the finger. Letting go early springs it
+    home with drag.js spring(), which overshoots slightly. Choosing throws
+    it: it keeps the finger's momentum out toward that side, turns over
+    in the air (a real 3D flip, rising as it turns edge-on, its shadow
+    narrowing and softening) and lands back on the deck with its result
+    showing: edge-on at about 150 ms, down by about 500. Moving on slides
+    the used card off the table, speeding up as it goes, while the next
+    one lifts off the deck and turns face up and the stack shuffles
+    forward (about 300 ms). The opening deal drops the deck onto the table
+    and turns the top card over (about a second). With reduced motion,
+    every move becomes a quick fade of 90-160 ms.
+
+  How the swipe works
+    The card itself is swiped. Drag it left or right: a stamp with that
+    answer grows in at the top of the card, hovering, and that answer's
+    tab fills with ember from the perforation outward. Past 30% of the
+    card's width (or on a quick flick) the stamp thumps down in ember and
+    the tab is full, and letting go now chooses. Tapping a tab plays the
+    same throw. A result card can be tapped anywhere, or flicked away in
+    any direction. Arrow keys choose, and Enter continues. A press that
+    began before a card settled is ignored.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400..800&family=Fraunces:opsz,wght,SOFT@9..144,500..900,0..100&display=swap">
+<link rel="stylesheet" href="card.css">
+<script type="module" src="card.js"></script>
+</head>
+<body>
+  <div class="sky" aria-hidden="true">
+    <svg class="stars" id="stars"></svg>
+    <div class="glow"></div>
+  </div>
+
+  <div class="app" id="app">
+    <header class="top">
+      <a class="home" href="../"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg>Prototypes</a>
+      <p class="context" id="context"><strong id="who"></strong><span class="era" id="era"></span></p>
+      <ol class="pips" id="pips"></ol>
+    </header>
+
+    <main class="table" id="table">
+      <div class="deck" id="deck" aria-live="off"></div>
+    </main>
+  </div>
+
+  <p class="sr-only" id="live" aria-live="polite"></p>
+  <noscript><p class="noscript">This prototype needs JavaScript.</p></noscript>
+</body>
+</html>

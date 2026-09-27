@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1c1410">
+  <title>Layout prototypes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400..800&display=swap">
+  <style>
+    :root { --bg: #1c1410; --panel: #2c2019; --text: #f4e7cd; --muted: #d8c9ad; --accent: #e8793a; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.45 "Atkinson Hyperlegible Next", system-ui, sans-serif; -webkit-text-size-adjust: 100%; }
+    main { max-width: 520px; margin: 0 auto; padding: calc(env(safe-area-inset-top) + 28px) 18px calc(env(safe-area-inset-bottom) + 32px); }
+    h1 { margin: 0 0 6px; font-size: 1.7rem; line-height: 1.15; }
+    p { margin: 0; color: var(--muted); }
+    ol { list-style: none; margin: 22px 0 0; padding: 0; display: grid; gap: 12px; }
+    a.opt { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: center; padding: 16px 16px 17px; border-radius: 18px; background: var(--panel); color: var(--text); text-decoration: none; box-shadow: 0 4px 0 rgb(0 0 0 / 30%); transition: transform 120ms ease-out; }
+    a.opt:active { transform: translateY(2px); box-shadow: 0 2px 0 rgb(0 0 0 / 30%); }
+    .n { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; background: var(--accent); color: #1c1410; font-weight: 800; font-size: 1.2rem; }
+    .name { font-weight: 800; font-size: 1.1rem; }
+    .what { color: var(--muted); font-size: 0.95rem; margin-top: 2px; }
+    .fine { margin-top: 26px; font-size: 0.9rem; }
+    .fine a { color: var(--text); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Five ways to play a life</h1>
+    <p>The same opening life, Aru on a cold evening, in five layouts. Play a few cards of each and see which one feels right in the hand.</p>
+    <ol>
+      <li><a class="opt" href="1-card/"><span class="n">1</span><span><span class="name">The Card</span><span class="what">One tactile card you deal, drag, flick and flip.</span></span></a></li>
+      <li><a class="opt" href="2-notebook/"><span class="n">2</span><span><span class="name">The Notebook</span><span class="what">The inventor's journal: ink, paper, a taped-in sketch, page turns.</span></span></a></li>
+      <li><a class="opt" href="3-cinema/"><span class="n">3</span><span><span class="name">Cinema</span><span class="what">The picture fills the screen; the words play like subtitles.</span></span></a></li>
+      <li><a class="opt" href="4-chat/"><span class="n">4</span><span><span class="name">Chat</span><span class="what">The scene arrives as messages; you reply with one of two answers.</span></span></a></li>
+      <li><a class="opt" href="5-bigtype/"><span class="n">5</span><span><span class="name">Big Type</span><span class="what">Editorial and bold: huge words, big answer rows, swipe the page.</span></span></a></li>
+    </ol>
+    <p class="fine">These are feel prototypes, not the game: each plays one life and loops. <a href="../">Back to the game</a></p>
+  </main>
+</body>
+</html>

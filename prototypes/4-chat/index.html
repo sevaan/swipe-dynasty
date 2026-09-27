@@ -1,0 +1,98 @@
+<!doctype html>
+<!--
+  One Bright Idea, layout prototype 4: CHAT
+
+  THE IDEA
+  A life is one conversation, like Florence, Lifeline or A Normal Lost
+  Phone. The thread opens on Aru's contact card. Then the evening arrives as
+  messages: a photo of the workbench, then the situation one sentence at a
+  time, each after a short typing beat. You answer with one of two reply
+  chips pinned at the bottom; your answer goes out as your own bubble on the
+  right, and what happened comes back as centred narration. The whole life
+  stays in the thread to scroll back through, and closes on a memorial card
+  as the reply tray slides away, because the conversation is over.
+
+  Three voices, three places, never mixed:
+    left     the card's speaker: warm brown bubbles, their face at the foot
+             of each run, their name above it and in the header
+    right    you: bold ember-orange bubbles, so your decisions read as a
+             trail when you scroll back
+    centre   the world: narration, the results, the reveal, the epitaph.
+             A situation sentence that talks about the speaker ("Iri blows
+             on it hard...") isn't their speech, so it is narration too.
+             Interface help sits in a soft system-notice pill.
+
+  TYPE: Atkinson Hyperlegible Next only. It's a messaging app, so the UI
+  face is the voice; weight does the hierarchy.
+    13/800  a run's sender name          14/600  era line, era tag
+    15/600  hint pills; 15/800 kicker    18/400  bubbles, narration, arrival,
+    18/700  reply chips, your bubbles,           descriptions (line-height 1.4)
+            buttons                      18/800  header name
+    23/800  invention name               30/800  contact and memorial names
+
+  PALETTE: the hearth theme, deepened for a night-time thread.
+    The wall follows the evening: #201518 at dusk, #18161e as it gets
+    colder, #22160f once there's a flame (a 1.6s drift you feel, not read).
+    Incoming #3f2d20; outgoing ember #ef8a45 with ink #26140a (7:1).
+    Text #f7ecd9 (15:1 on the wall), narration #eadcc2 (13:1),
+    muted #cdbb9d (9.5:1). Reply chips are cream #f4e7cd with ink (14:1)
+    and an accent #e8793a arrow disc; a chip turns ember as it is sent.
+
+  MOTION: messages arrive.
+    Typing dots, then the bubble pops up from its tail corner (10px rise,
+    scale .92 to 1, 300ms, a little overshoot) while the thread eases up
+    (320ms ease-out). About 350 to 600ms a bubble. Tap the thread and the
+    rest arrives at once.
+    Sending: the chosen chip lifts out of the tray, shrinks and warms to
+    ember as it flies into place as your bubble (400ms); the other chip
+    drops away.
+    The reveal lands bigger and its spotlight switches on. The epitaph
+    rises as the reply tray slides away for good. "Someone takes it further"
+    lifts the whole thread away and a new contact card rises.
+    Reduced motion: every move becomes a quick fade.
+
+  SWIPE: the reply tray is the swipe surface, like swipe-to-reply.
+    Drag left and the left answer's chip follows your finger; drag right and
+    the right answer's does, while the other dims. A send disc opens in the
+    space it leaves. It's a short throw, like swipe-to-reply: past about a
+    fifth of the tray's width (80px on a phone) the chip turns ember, the
+    disc fills (a haptic tick on Android) and the chip stops against a soft
+    rubber band, its whole label still in view: let go to send. Let go
+    sooner and it springs back. Tapping a chip sends it too; on a keyboard
+    the arrows choose and Enter or Space continues.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#201518">
+  <meta name="color-scheme" content="dark">
+  <title>Chat · One Bright Idea</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%231e1510'/%3E%3Cpath d='M7 9.5C7 7.6 8.6 6 10.5 6h11C23.4 6 25 7.6 25 9.5v8c0 1.9-1.6 3.5-3.5 3.5H14l-5 4.5V21h-.5A1.5 1.5 0 0 1 7 19.5z' fill='%23ef8a45'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400..800&display=swap">
+  <link rel="stylesheet" href="chat.css">
+</head>
+<body>
+  <div id="app">
+    <header id="top">
+      <div class="who" id="who">
+        <span class="av" id="hAv" hidden></span>
+        <span class="names"><span class="n" id="hName"></span><span class="e" id="hEra"></span></span>
+      </div>
+      <a class="back" href="../">Prototypes</a>
+    </header>
+    <main id="main">
+      <div id="log" role="log" aria-live="polite" aria-relevant="additions">
+        <div id="thread"></div>
+      </div>
+      <button id="jump" class="jump hide" type="button" aria-label="Newest message" tabindex="-1">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 9.5 12 15l5.5-5.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div id="tray" class="off"><div id="trayIn"></div></div>
+    </main>
+  </div>
+  <script type="module" src="chat.js"></script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!doctype html>
+<!--
+  BIG TYPE: a layout prototype for One Bright Idea (the opening life, Aru)
+
+  The idea
+    Each decision is a page of a magazine: the words are set big and plain,
+    as if printed on warm paper, and they are the hero. The drawing sits at
+    the head of the page like a small photograph. The two answers are
+    headlines at the foot, full width, under a heavy rule and split by a
+    hairline, each pointing to its side. Choosing paints the answer with the
+    accent colour, like a highlighter, and the page turns. The result page
+    reverses the order: what you chose (the painted answer, carried over as a
+    tag), what happened, set bigger, then the drawing of it, then Continue, so
+    it never looks like another decision. The arrival, the reveal and the
+    epitaph are covers made of type: the name huge, the last two printed
+    white on the dark wall of the gallery the exhibit drawing stands in.
+
+  Type scale (two families)
+    Display: Newsreader, an editorial serif, weight 620 to 680 (optical size 72)
+      names on the arrival and epitaph  fitted to the measure, about 190px, leading 0.8
+      invention name on the reveal      fitted, 50 to 64px, up to three lines, leading 0.95
+      pull quote, role, "Invented ..."  30 to 31px / 1.1
+    Reading: Atkinson Hyperlegible Next (the game's reading face)
+      situation                         26px / 1.28, weight 500 (22 to 27px by screen)
+      result                            28.5px / 1.24 (the payoff, one step up)
+      arrival, description, epitaph     20 to 21px / 1.4
+      answer rows                       21px / 1.22, weight 700; chosen tag 16px
+      helper line                       15px / 1.38
+      speaker, kickers, dateline        12.5 to 13px, weight 700, caps tracked 0.17em
+    Steps run roughly 13, 15, 21, 26, 31, 60, 190. On very short screens the
+    reading sizes step down together, never below 18px (20px for the
+    situation and the result).
+
+  Layout
+    Margins of 26px at 390 wide (22 to 30px). The situation's measure is about
+    25 characters. On a decision, the free space is shared 2:3 above and below
+    the words, so a short situation sits a little high of centre, not under a
+    hole; the drawing gives up height first when space is short. On the
+    arrival the era is set as a dateline leading into the arrival text.
+
+  Palette
+    paper #f4eee3, the page. under #e5dccc, the desk a dragged page uncovers
+    ink #1a140f on paper, 15.8:1. ink-2 #4a3f35 for the helper, 8.8:1
+    rules: ink at 100% (2px) over the answers, ink at 17% between them
+    accent: life.theme.accent (#e8793a, the hearth orange), used as a fill:
+      the answer wipes, the chosen-answer tag, the spark, the progress bar's
+      current segment. Ink on the accent is 6.3:1, so words stay black on it.
+    accent-ink: the accent darkened until it reads at 6:1 or more on paper,
+      for the small speaker, kicker and dateline labels
+    night #25221f, the exhibit's own gallery wall, for the reveal and epitaph,
+      with paper text (13.7:1) and accent-lite (the accent lightened to 7:1)
+
+  Motion language: pages are sheets of paper
+    Press a row: the accent starts to wipe in from that row's side (110ms).
+    Choose: the wipe completes (210ms, ease-out) and holds a beat (50ms); the
+      sheet slides toward the chosen side, shifting 30% and dimming, while the
+      result sheet slides over it from the other side (430ms, ease-out, no
+      overshoot, a soft edge shadow). Continue turns the page to the left.
+    Result: once the sheet lands, the drawing develops into its new state
+      (a 640ms crossfade, the object settling onto the bench).
+    Progress: each segment wipes in from the left, accent when its decision
+      arrives, then ink over it once answered.
+    Reveal: the Continue wipe becomes a band of accent that rises from the row,
+      fills the screen and keeps rising off the top (340ms + 460ms), uncovering
+      the dark gallery; the invention's name rises line by line out of masks,
+      then the exhibit fades up under its spotlight.
+    Epitaph: night rises from the foot of the screen (540ms) and stays; the
+      name rises slowly (1100ms), then each line follows.
+    Play again: the dark sheet lifts away like a curtain (660ms) and the new
+      arrival's type rises underneath.
+    The first decision nudges the page left then right once, each row's colour
+      peeking in from its side, to show the gesture.
+    Reduced motion: every change is a 180ms crossfade; fills are instant; a
+      dragged page doesn't move, only its row fills.
+
+  How the swipe works
+    Drag anywhere on the page. The page follows the finger, damped (about
+    35px when the finger has gone 117px), and the answer on that side fills
+    with the accent from its own edge, in proportion to the drag. It is full
+    at 30% of the width, with a haptic tick and a nudge of its arrow: let go
+    there, or flick faster than 0.5px/ms, and it's chosen. Anything less
+    springs back. On pages with one action (arrival, result, reveal,
+    epitaph) a swipe either way fills and presses that action. Taps that
+    began before a page appeared are ignored. Arrow keys choose; Enter or
+    Space continues.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f4eee3" id="themeColor">
+  <meta name="color-scheme" content="light">
+  <title>Big Type - One Bright Idea</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400..800&family=Newsreader:opsz,wght@6..72,400..800&display=swap">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="main.js"></script>
+</head>
+<body>
+  <main class="stage" id="stage">
+    <div class="bar hidden" id="bar" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  </main>
+  <p class="sr" id="live" aria-live="polite"></p>
+  <noscript><p class="error">This prototype needs JavaScript.</p></noscript>
+</body>
+</html>

@@ -1,0 +1,631 @@
+/* The Notebook. See the design note at the top of index.html. */
+
+:root {
+  --R: 28px;               /* the rule: every line of text sits on one */
+  --base: 22px;            /* where a rule falls inside its 28px row, just under the baseline */
+  --paper: #f4ecda;
+  --paper-back: #ece1c8;
+  --ink: #2a2119;          /* 13.4:1 on the paper */
+  --pencil: #5b5047;       /* 6.7:1: small print and notes */
+  --blue: #243a5e;         /* 9.7:1: the player's hand, results, the obituary */
+  --red: #b3452f;          /* red pencil, for emphasis marks only */
+  --rule: rgb(84 120 154 / 30%);
+  --rule-strong: rgb(84 120 154 / 58%);
+  --margin: rgb(196 84 70 / 46%);
+  --cover: #3b2a20;
+  --print: #fbf6ea;
+  --text-x: 60px;          /* where writing starts, past the margin line */
+  --margin-x: 48px;        /* the margin line */
+  --right: 18px;
+  --grid-top: 4px;
+  --rows: 23;
+  --safe-b: 0px;
+  --font: "Atkinson Hyperlegible Next", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --hand: "Caveat", "Bradley Hand", "Segoe Print", cursive;
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .34 0 0 0 0 .24 0 0 0 0 .12 0 0 0 .13 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)'/%3E%3C/svg%3E");
+  --mottle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='520'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.006' numOctaves='3' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .55 0 0 0 0 .4 0 0 0 0 .2 0 0 0 .22 -.06'/%3E%3C/filter%3E%3Crect width='520' height='520' filter='url(%23m)'/%3E%3C/svg%3E");
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  color-scheme: light;
+}
+
+@media (max-width: 380px) {
+  :root { --text-x: 56px; --margin-x: 44px; --right: 16px; }
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  background: var(--cover);
+  overscroll-behavior: none;
+}
+
+/* Below the page, where the phone's home bar is: the edges of the pages
+   beneath, then the cover */
+html {
+  background:
+    linear-gradient(180deg,
+      #d9ccb0 0, #d9ccb0 2px, #b9a987 2px, #b9a987 3px,
+      #d6c8aa 3px, #d6c8aa 5px, #b3a27f 5px, #b3a27f 6px,
+      #cfc0a0 6px, #cfc0a0 8px, #a8966f 8px, #a8966f 9px,
+      rgb(59 42 32) 9px) bottom / 100% calc(var(--safe-b) + 0px) no-repeat,
+    var(--cover);
+}
+body { background: transparent; }
+
+body {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  font-family: var(--font);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: none;
+}
+
+p, h1, figure { margin: 0; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Measures the safe areas for the script */
+#safe {
+  position: fixed;
+  visibility: hidden;
+  pointer-events: none;
+  padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+}
+
+/* ---- The book: the right-hand page of an open notebook. The spine is the
+   screen's left edge; below the page, in the home-indicator strip, the
+   cover shows. */
+.book {
+  --book-w: min(100vw, 480px);
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: var(--book-w);
+  margin-left: calc(var(--book-w) / -2);
+  bottom: var(--safe-b);
+  overflow: hidden;
+  touch-action: none;
+  outline: none;
+  background: var(--paper);
+}
+/* Wider than a phone: the page sits on the cover, the pages beneath at its edge */
+@media (min-width: 481px) {
+  .book { box-shadow: 1px 0 0 #d8cbb0, 2px 0 0 #b7a687, 3px 0 0 #d4c6a9, 4px 0 0 #ae9c79, 5px 0 0 #cdbfa0, 6px 0 0 rgb(0 0 0 / 25%), 18px 0 30px rgb(0 0 0 / 35%); }
+}
+
+.book::after {
+  /* the page block's edge along the bottom, where the cover shows */
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: rgb(80 55 30 / 25%);
+  z-index: 6;
+  pointer-events: none;
+}
+
+.page {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.page.under { z-index: 1; pointer-events: none; }
+.turn-cast { z-index: 2; }
+.page.top { z-index: 3; }
+.flap-wrap { z-index: 4; }
+.corner-hit { z-index: 5; }
+
+/* ---- Paper */
+.paper, .flap-paper {
+  position: absolute;
+  inset: 0;
+  background-color: var(--paper);
+  background-image:
+    /* the gutter, where the page bends into the binding */
+    linear-gradient(90deg, rgb(92 62 30 / 24%), rgb(92 62 30 / 9%) 9px, rgb(92 62 30 / 0) 30px),
+    /* aged edges */
+    radial-gradient(140% 95% at 58% 42%, rgb(255 250 238 / 0) 58%, rgb(150 108 58 / 13%) 100%),
+    var(--mottle),
+    var(--grain);
+}
+
+/* The rules, from the second row of the page down */
+.paper::before, .flap-paper::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--grid-top) + var(--R) + var(--base) + 1px);
+  bottom: 0;
+  background: repeating-linear-gradient(to bottom,
+    transparent 0, transparent calc(var(--R) - 1px),
+    var(--rule) calc(var(--R) - 1px), var(--rule) var(--R));
+}
+
+/* The margin: a double red line */
+.paper::after, .flap-paper::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--margin-x);
+  width: 1px;
+  background: var(--margin);
+  box-shadow: 3px 0 0 var(--margin);
+}
+
+/* The back of the leaf: the next spread's left page, its margin on the far side */
+.flap-paper { background-color: var(--paper-back); filter: brightness(0.97); }
+.flap-paper::after { left: auto; right: var(--margin-x); box-shadow: -3px 0 0 var(--margin); opacity: 0.8; }
+
+/* ---- The writing on a page: every block is a whole number of rows */
+.sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--grid-top);
+  height: calc(var(--rows) * var(--R));
+  padding: 0 var(--right) 0 var(--text-x);
+  display: flex;
+  flex-direction: column;
+  outline: none;
+}
+
+.hand { font-family: var(--hand); }
+
+.head {
+  position: relative;
+  flex: none;
+  height: calc(var(--R) * 2);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+/* the heading rule, a little stronger, with a second line under it */
+.head::after {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--text-x));
+  right: calc(-1 * var(--right));
+  top: calc(var(--R) + var(--base) + 1px);
+  height: 1px;
+  background: var(--rule-strong);
+  box-shadow: 0 3px 0 var(--rule);
+}
+.era, .folio {
+  position: relative;
+  top: -1px;
+  font: 600 25px/var(--R) var(--hand);
+  color: var(--ink);
+}
+.folio { color: var(--pencil); font-weight: 500; }
+
+.gap { flex: none; height: var(--R); }
+
+/* The story, in the reading face, on the rules */
+.story {
+  font-size: 20px;
+  line-height: var(--R);
+  font-weight: 400;
+  color: var(--ink);
+}
+.story.blue { color: var(--blue); }
+
+/* A note in the hand: short, and never the story */
+.note {
+  font: 600 23px/var(--R) var(--hand);
+  color: var(--pencil);
+  position: relative;
+  top: -1px;
+}
+
+/* ---- Pictures taped in */
+.print-block { position: relative; flex: none; margin: 0 calc(-1 * var(--right)) 0 calc(-1 * var(--text-x)); }
+.print {
+  position: absolute;
+  left: 50%;
+  top: 11px;
+  width: var(--pw, 300px);
+  height: var(--ph, 200px);
+  margin-left: calc(var(--pw, 300px) / -2 + var(--px, 0px));
+  transform: rotate(var(--rot, -1deg));
+  background: var(--print);
+  box-shadow:
+    0 0.5px 1px rgb(60 40 20 / 22%),
+    0 3px 6px -2px rgb(60 40 20 / 22%),
+    0 12px 20px -12px rgb(60 40 20 / 45%);
+}
+.print .art {
+  position: absolute;
+  inset: 6px;
+  overflow: hidden;
+  background: #3a2a20;
+}
+.print .layers { position: absolute; inset: 0; }
+.print .layers img, .portrait img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+/* Tape: translucent, a little fibrous, with torn ends */
+.tape {
+  position: absolute;
+  width: 78px;
+  height: 24px;
+  background: linear-gradient(180deg, rgb(250 243 220 / 78%), rgb(236 224 190 / 70%));
+  box-shadow: inset 0 0 0 0.5px rgb(150 120 70 / 22%);
+  filter: drop-shadow(0 1px 1px rgb(70 50 20 / 16%));
+  clip-path: polygon(3% 0, 97% 0, 100% 14%, 96% 30%, 99% 46%, 95% 62%, 100% 78%, 97% 100%, 3% 100%, 0 84%, 4% 68%, 1% 52%, 5% 36%, 0 20%);
+  z-index: 1;
+}
+.tape::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 30%), rgb(255 255 255 / 0) 45%),
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 16%) 0 1px, transparent 1px 4px, rgb(160 130 80 / 6%) 4px 5px, transparent 5px 7px);
+}
+.tape.a { left: -26px; top: -3px; transform: rotate(-38deg); }
+.tape.b { right: -26px; top: -3px; transform: rotate(40deg); }
+
+/* A portrait photo, taped in */
+.portrait {
+  position: relative;
+  flex: none;
+  width: var(--fw, 100px);
+  aspect-ratio: 288 / 360;
+  background: var(--print);
+  transform: rotate(var(--rot, -3deg));
+  box-shadow:
+    0 0.5px 1px rgb(60 40 20 / 22%),
+    0 3px 6px -2px rgb(60 40 20 / 22%),
+    0 12px 18px -12px rgb(60 40 20 / 45%);
+}
+.portrait .frame { position: absolute; inset: 5px 5px 5px; overflow: hidden; }
+.portrait .tape { width: 58px; height: 20px; }
+.portrait .tape.a { left: -20px; top: -2px; transform: rotate(-40deg); }
+.portrait .tape.b { left: auto; right: -20px; top: auto; bottom: -2px; transform: rotate(-40deg); }
+
+/* ---- The speaker, in the margin beside the first line */
+.story-block { position: relative; flex: none; }
+.who {
+  position: absolute;
+  top: 0;
+  left: calc(-1 * var(--text-x));
+  width: var(--margin-x);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.who .name {
+  font: 700 23px/var(--R) var(--hand);
+  color: var(--ink);
+  position: relative;
+  top: -1px;
+}
+.face {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  margin-top: 2px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #687d9c;
+  box-shadow: 0 0 0 2px var(--print), 0 1px 3px 1.5px rgb(60 40 20 / 28%);
+}
+.face img { position: absolute; width: 250%; left: -75%; top: -92%; }
+
+/* ---- The two answers: lines you'd tick */
+.options { flex: none; position: relative; }
+.option {
+  appearance: none;
+  border: 0;
+  background: none;
+  font: 600 20px/var(--R) var(--font);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  width: calc(100% + var(--text-x) + var(--right));
+  margin: 0 calc(-1 * var(--right)) 0 calc(-1 * var(--text-x));
+  padding: 0 var(--right) 0 var(--text-x);
+  height: calc(2 * var(--R));
+  touch-action: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+/* the press: the paper darkens a little under the finger */
+.option::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  top: -6px;
+  height: calc(100% - 10px);
+  border-radius: 12px;
+  background: rgb(60 42 20 / 7%);
+  opacity: 0;
+  transition: opacity 180ms ease-out;
+  pointer-events: none;
+}
+.option.pressing::before { opacity: 1; transition-duration: 0ms; }
+.option.leaning::before { opacity: 0.75; transition-duration: 90ms; }
+.armed .option.leaning::before { opacity: 1; background: rgb(36 58 94 / 9%); }
+.armed .option.leaning .ring-line { stroke-width: 2.6; }
+.option:focus-visible::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  top: -8px;
+  height: calc(100% - 6px);
+  border-radius: 12px;
+  outline: 2.5px solid var(--blue);
+}
+.option .mark {
+  position: relative;
+  flex: none;
+  width: 22px;
+  height: var(--R);
+  margin: 0 13px 0 0;
+  transition: transform 160ms var(--ease-out);
+}
+.option.pressing .mark { transform: scale(0.9); transition-duration: 60ms; }
+.option svg { overflow: visible; position: absolute; pointer-events: none; }
+.option .mark svg { left: 0; top: 3px; width: 22px; height: 22px; }
+.option .label { position: relative; flex: 1; min-width: 0; transform: translateX(var(--lean, 0px)); transition: transform 320ms var(--ease-out); }
+.dragging .option .label { transition: none; }
+.option .ring { left: 0; top: 0; width: 100%; height: 100%; }
+.option .dir { left: 10px; top: 6px; width: 26px; height: 16px; }
+
+.box-line { fill: none; stroke: var(--ink); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.tick-line, .ring-line { fill: none; stroke: var(--blue); stroke-linecap: round; stroke-linejoin: round; }
+.tick-line { stroke-width: 2.9; }
+.ring-line { stroke-width: 2.1; }
+.dir-line { fill: none; stroke: var(--pencil); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: stroke 160ms ease-out; }
+.option.leaning .dir-line, .option.chosen .dir-line { stroke: var(--blue); }
+.decided .option { cursor: default; }
+.decided .option .dir { opacity: 0; transition: opacity 200ms ease-out; }
+
+.hint .dir { animation: nudge-left 520ms ease-in-out; }
+.hint .option[data-side="right"] .dir { animation-name: nudge-right; }
+@keyframes nudge-left { 30% { transform: translateX(-6px); } 65% { transform: translateX(1px); } }
+@keyframes nudge-right { 30% { transform: translateX(6px); } 65% { transform: translateX(-1px); } }
+
+/* ---- The result, written in below in the second ink */
+.result-area { position: relative; flex: none; }
+.result-area .note { position: absolute; left: 0; right: 0; top: 0; }
+.result {
+  position: relative;
+  flex: none;
+  font-size: 20px;
+  line-height: var(--R);
+  font-weight: 450;
+  color: var(--blue);
+}
+.result .w { display: inline-block; }
+.result-area .note { transition: opacity 200ms ease-out; }
+.result-area .note.out { opacity: 0; }
+
+/* ---- The foot of the page: the corner's label, on the last line */
+.foot {
+  flex: none;
+  margin-top: auto;
+  position: relative;
+  height: var(--R);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+/* The way back to the prototypes, quietly in the top margin: the chevron
+   out in the margin, the word on the writing line */
+.back {
+  position: absolute;
+  top: -1px; /* its words sit about 13px under the safe area */
+  left: 9px;
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--text-x) - 31px);
+  height: 44px;
+  padding: 0 12px 0 8px;
+  font: 500 14px/1 var(--font);
+  color: var(--pencil);
+  text-decoration: none;
+  border-radius: 8px;
+  outline: none;
+}
+.back svg { width: 14px; height: 14px; overflow: visible; }
+.back path { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.back:focus-visible { outline: 2.5px solid var(--blue); }
+.pto {
+  position: relative;
+  top: -1px;
+  margin-right: 56px;
+  font: 700 var(--pto-size, 27px)/var(--R) var(--hand);
+  color: var(--blue);
+  white-space: nowrap;
+  clip-path: inset(-4px 100% -8px 0);
+  transition: clip-path 380ms cubic-bezier(.3,.55,.35,1);
+}
+.pto.on { clip-path: inset(-4px -6px -8px -4px); }
+.pto.pressing { color: #1a2b47; }
+
+/* The corner's hit area: the label and the dog-ear together */
+.corner-hit {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 180px;
+  height: 64px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  border-radius: 14px 0 0 0;
+  outline: none;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.corner-hit:focus-visible { outline: 2.5px solid var(--blue); outline-offset: -5px; }
+
+/* ---- The turn */
+.turn-cast {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.turn-cast .band, .flap-shade {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 400vmax;
+  transform-origin: 0 0;
+  pointer-events: none;
+}
+.turn-cast .band {
+  --reach: 40px;
+  background: linear-gradient(90deg,
+    rgb(40 24 8 / 55%) 0,
+    rgb(40 24 8 / 30%) calc(var(--reach) * 0.35),
+    rgb(40 24 8 / 13%) var(--reach),
+    rgb(40 24 8 / 5%) calc(var(--reach) * 2.2),
+    rgb(40 24 8 / 0) calc(var(--reach) * 3.6));
+}
+.flap-wrap {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  filter: drop-shadow(-1px 2px 6px rgb(55 35 12 / 34%));
+}
+.flap {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: 0 0;
+  overflow: hidden;
+}
+.flap-shade {
+  --curl: 14px;
+  background: linear-gradient(90deg,
+    rgb(70 44 18 / 34%) 0,
+    rgb(70 44 18 / 14%) calc(var(--curl) * 0.5),
+    rgb(255 251 240 / 46%) calc(var(--curl) * 1.1),
+    rgb(255 251 240 / 12%) calc(var(--curl) * 2.6),
+    rgb(120 84 40 / 0) calc(var(--curl) * 4),
+    rgb(120 84 40 / 14%) 100%);
+}
+
+/* ---- The opening page */
+.title {
+  font: 800 31px/1.15 var(--font);
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.title-block { flex: none; display: flex; align-items: flex-end; }
+.title-block .title { position: relative; } /* sitOnRule() sets it on its line */
+.who-block { flex: none; position: relative; display: flex; align-items: center; gap: 18px; }
+.who-block .portrait { margin-left: -4px; }
+.who-text { min-width: 0; }
+.big-name {
+  font: 700 58px/1 var(--hand);
+  color: var(--ink);
+  margin: 0 0 4px -2px;
+}
+.role { font: 400 18px/24px var(--font); color: var(--pencil); }
+.want-label { font: 600 24px/var(--R) var(--hand); color: var(--pencil); position: relative; top: -1px; }
+.want { font: 700 20px/var(--R) var(--font); color: var(--ink); position: relative; }
+.want svg { position: absolute; overflow: visible; pointer-events: none; }
+.want-block { flex: none; }
+
+.underline-line { fill: none; stroke: var(--red); stroke-width: 2.4; stroke-linecap: round; }
+
+/* ---- The reveal */
+.kicker { font: 700 30px/var(--R) var(--hand); color: var(--ink); position: relative; top: -1px; display: inline-block; align-self: flex-start; }
+
+.inv-block { flex: none; display: flex; align-items: flex-end; }
+.inv-name {
+  position: relative;
+  font: 800 29px/34px var(--font);
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.inv-name svg { position: absolute; left: -4px; bottom: -9px; width: calc(100% + 8px); height: 14px; overflow: visible; }
+.spark {
+  position: absolute;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 2;
+}
+.spark path { fill: none; stroke: var(--red); stroke-width: 2.2; stroke-linecap: round; }
+
+/* ---- The epitaph: an obituary, written in by someone else's hand */
+.obit .portrait img { filter: saturate(0.55) sepia(0.22) contrast(0.96); }
+.obit { flex: none; display: flex; flex-direction: column; align-items: stretch; text-align: center; }
+.obit-photo { flex: none; position: relative; display: flex; justify-content: center; align-items: center; }
+.obit-name-block { flex: none; display: flex; justify-content: center; align-items: flex-end; }
+.obit-name { position: relative; font: 800 40px/1 var(--font); color: var(--blue); letter-spacing: -0.01em; }
+.obit-invented { font: 700 20px/var(--R) var(--font); color: var(--blue); text-wrap: balance; }
+.obit .story { text-align: center; text-wrap: balance; }
+.obit-rule { flex: none; position: relative; }
+.obit-rule svg { position: absolute; left: 50%; top: 10px; width: 150px; height: 10px; margin-left: -75px; overflow: visible; }
+.divider-line { fill: none; stroke: var(--blue); stroke-linecap: round; }
+.divider-line.thick { stroke-width: 2.4; }
+.divider-line.thin { stroke-width: 1.2; }
+.portrait .band {
+  /* a dark ribbon across the photo's corner */
+  position: absolute;
+  right: -11px;
+  top: 14px;
+  width: 58px;
+  height: 8px;
+  background: linear-gradient(180deg, #3a393f, #232226);
+  transform: rotate(45deg);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 28%);
+  z-index: 2;
+}
+
+/* ---- Arriving: the first page settles onto the desk */
+.page.top.arrive { animation: arrive 520ms var(--ease-out) both; }
+@keyframes arrive {
+  from { opacity: 0; transform: translateY(14px) scale(0.985); }
+}
+
+/* Reduced motion: movement becomes quick fades */
+.page.fade-out { transition: opacity 170ms ease-out; opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .page.top.arrive { animation: fade-in 200ms ease-out both; }
+  .hint .dir { animation: none; }
+  .pto { transition: clip-path 1ms; }
+}
+@keyframes fade-in { from { opacity: 0; } }

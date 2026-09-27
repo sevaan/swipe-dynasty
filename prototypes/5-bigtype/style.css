@@ -1,0 +1,574 @@
+/* Big Type. The design note is at the top of index.html. */
+
+:root {
+  --paper: #f4eee3;
+  --under: #e5dccc;
+  --ink: #1a140f;
+  --ink-2: #4a3f35;
+  --rule: rgb(26 20 15 / 17%);
+  --accent: #e8793a;      /* set from life.theme.accent */
+  --accent-ink: #92400f;  /* the accent, darkened to read as small text on paper */
+  --accent-lite: #ec905b; /* the accent, lightened to read on the dark pages */
+  --night: #25221f;       /* the exhibit's gallery wall */
+  --night-ink: #f4eee3;
+  --night-2: #d3cabd;
+  --night-rule: rgb(244 238 227 / 17%);
+  --display: 'Newsreader', 'Iowan Old Style', Georgia, serif;
+  --font: 'Atkinson Hyperlegible Next', 'Atkinson Hyperlegible', system-ui, -apple-system, sans-serif;
+  --safe-t: env(safe-area-inset-top, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --gutter: clamp(22px, 6.8vw, 30px);
+  --ease-out: cubic-bezier(.2, .82, .24, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { margin: 0; height: 100%; }
+
+html {
+  background: var(--under);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* No page scroll, bounce, zoom or text selection: the page is held, not scrolled */
+body {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  background: var(--under);
+  color: var(--ink);
+  font-family: var(--font);
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+p, h1, figure, blockquote { margin: 0; }
+
+/* The column the pages live in: the whole phone, or a phone-width column on a desktop */
+.stage {
+  position: absolute;
+  inset: 0;
+  margin: 0 auto;
+  max-width: 500px;
+  overflow: hidden;
+  container-type: size;
+  background: var(--under);
+}
+
+@media (min-width: 560px) {
+  .stage { box-shadow: 0 0 0 1px rgb(26 20 15 / 7%), 0 30px 90px rgb(26 20 15 / 16%); }
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- The progress bar: six thin segments, one per decision ---------- */
+
+.bar {
+  position: absolute;
+  z-index: 20;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: 5px;
+  padding: calc(var(--safe-t) + 14px) var(--gutter) 0;
+  pointer-events: none;
+  transition: opacity .35s ease;
+}
+
+.bar.hidden { opacity: 0; }
+
+.bar i {
+  position: relative;
+  flex: 1;
+  height: 3px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: rgb(26 20 15 / 13%);
+  transition: background-color .35s ease;
+}
+
+/* Each segment wipes in from the left, like the answers: the accent when its
+   decision arrives, then ink over it once it has been answered */
+.bar i::before,
+.bar i::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform .5s var(--ease-out), background-color .35s ease;
+}
+
+.bar i::before { background: var(--accent); }
+.bar i::after { background: var(--ink); transition-delay: .12s; }
+.bar i.now::before, .bar i.done::before, .bar i.done::after { transform: none; }
+.bar.dark i { background: rgb(244 238 227 / 18%); }
+.bar.dark i::after { background: var(--night-ink); }
+
+/* ---------- Pages ---------- */
+
+.page {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  container-type: size;
+  background: var(--paper);
+  color: var(--ink);
+  touch-action: none;
+  outline: none;
+  --k: 1; /* a last-resort text scale, lowered by the fitter on very short screens */
+}
+
+.page.dark { background: var(--night); color: var(--night-ink); }
+.page.leaving { pointer-events: none; }
+
+/* A sheet sliding over another casts a soft edge */
+.page.moving { box-shadow: 0 0 0 1px rgb(26 20 15 / 5%), 0 0 50px rgb(26 20 15 / 26%); }
+
+.shade {
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  background: #0d0a07;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---------- The decision page and the result page ---------- */
+
+.page.bench { padding-top: calc(var(--safe-t) + 31px); }
+
+/* The drawing: a small photograph at the head of the page. The art is drawn
+   on a 4:3 frame that paints 80 units past every edge, so it holds any shape
+   down to 2:1; flatter than that, the frame is cropped, keeping the bench and
+   the object on it. */
+.pic {
+  position: relative;
+  flex: 0 1 clamp(112px, 21cqh, 190px);
+  min-height: 100px;
+  margin: 0 var(--gutter);
+  border-radius: 14px;
+  overflow: hidden;
+  background: #3a2a20;
+  container-type: size;
+  isolation: isolate;
+}
+
+.pic .frame {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: max(100cqh, 50cqw);
+  top: calc((100cqh - max(100cqh, 50cqw)) * .62);
+}
+
+.pic img,
+.exhibit img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+.pic img.after { opacity: 0; transform-origin: 50% 81.7%; }
+
+/* On a result the words come first, and the drawing of what happened fills
+   the space under them: from 2:1 up to 4:3, never taller */
+.result .pic {
+  flex: 1 1 auto;
+  min-height: 108px;
+  max-height: calc((100cqw - 2 * var(--gutter)) * .75);
+  margin-top: clamp(18px, 3.2cqh, 30px);
+}
+
+.result .say {
+  font-size: max(20px, calc(clamp(22px, min(7.3cqw, 3.9cqh), 30px) * var(--k)));
+  line-height: 1.24;
+}
+
+.words {
+  flex: none;
+  margin: clamp(16px, 2.9cqh, 26px) var(--gutter) 0;
+}
+
+/* On a decision the free space is shared 2:3 above and below the words, so a
+   short situation sits a little high of centre instead of leaving a hole
+   over the answers; the space above stops growing at 76px */
+.decide .words { margin-top: 0; }
+.decide .foot { margin-top: 0; }
+.gap { flex: 2 1 0; min-height: clamp(16px, 2.9cqh, 26px); max-height: 76px; }
+.gap.below { flex: 3 1 0; min-height: 0; max-height: none; }
+
+/* Who is speaking: a small byline */
+.speaker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: clamp(9px, 1.6cqh, 14px);
+  color: var(--accent-ink);
+  font: 700 13px/1 var(--font);
+  letter-spacing: .17em;
+  text-transform: uppercase;
+}
+
+.face {
+  position: relative;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #b98f6e;
+}
+
+.face img {
+  position: absolute;
+  width: 250%;
+  height: auto;
+  left: -75%;
+  top: -92%;
+}
+
+/* The hero: the situation, and after a choice its result */
+.say {
+  font-family: var(--font);
+  font-weight: 500;
+  font-size: max(20px, calc(clamp(21px, min(6.67cqw, 3.8cqh), 27px) * var(--k)));
+  line-height: 1.28;
+  letter-spacing: -.011em;
+  text-wrap: pretty;
+}
+
+/* The answer you chose, carried over from its row as a tag */
+.chosen { margin-bottom: clamp(11px, 1.9cqh, 16px); }
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  max-width: 100%;
+  padding: 6px 11px 7px;
+  border-radius: 5px;
+  background: var(--accent);
+  color: var(--ink);
+  font: 700 16px/1.25 var(--font);
+  letter-spacing: -.002em;
+}
+
+.tag .arrow { width: 20px; height: 12px; stroke-width: 2.6; }
+
+/* ---------- The answers: full-width rows at the foot of every page ---------- */
+
+.foot {
+  flex: none;
+  margin-top: auto;
+  padding-top: 14px;
+}
+
+.helper {
+  margin: 0 var(--gutter) 14px;
+  max-width: 30em;
+  color: var(--ink-2);
+  font: 500 15px/1.38 var(--font);
+}
+
+.row {
+  --f: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: clamp(60px, 9.2cqh, 78px);
+  margin: 0;
+  padding: 14px var(--gutter);
+  border: 0;
+  border-top: 1px solid var(--rule);
+  border-radius: 0;
+  background: none;
+  color: inherit;
+  font: 700 max(18px, calc(clamp(18px, 5.35cqw, 21px) * var(--k)))/1.22 var(--font);
+  letter-spacing: -.004em;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.row:last-child {
+  padding-bottom: calc(14px + var(--safe-b));
+  min-height: calc(clamp(60px, 9.2cqh, 78px) + var(--safe-b));
+}
+
+.row.right, .row.go { flex-direction: row-reverse; }
+.row .label { flex: 1 1 auto; min-width: 0; text-wrap: balance; }
+.row.right .label { text-align: right; }
+
+.dark .row { border-top-color: var(--night-rule); }
+.foot .row:first-of-type { border-top: 2px solid var(--ink); }
+.dark .foot .row:first-of-type { border-top-color: var(--night-ink); }
+
+/* The wipe: an accent copy of the row, revealed from the row's own side.
+   Its words are always ink, so they read on the accent on light and dark pages. */
+.fill {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  flex-direction: inherit;
+  gap: inherit;
+  padding: inherit;
+  background: var(--accent);
+  color: var(--ink);
+  clip-path: inset(0 calc(100% - var(--f) * 100%) 0 0);
+  pointer-events: none;
+}
+
+.row.right .fill { clip-path: inset(0 0 0 calc(100% - var(--f) * 100%)); }
+
+.arrow {
+  display: block;
+  flex: none;
+  width: 28px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform .28s cubic-bezier(.3, 1.6, .5, 1);
+}
+
+/* With a mouse, the arrow leans toward its side on hover */
+@media (hover: hover) and (pointer: fine) {
+  .row.left:hover .arrow { transform: translateX(-3px); }
+  .row.right:hover .arrow, .row.go:hover .arrow { transform: translateX(3px); }
+}
+
+/* Past the line, the arrow leans out toward its side */
+.row.left.armed .arrow { transform: translateX(-6px); }
+.row.right.armed .arrow, .row.go.armed .arrow { transform: translateX(6px); }
+
+.row:focus-visible { outline: 3px solid var(--ink); outline-offset: -6px; }
+.dark .row:focus-visible { outline-color: var(--night-ink); }
+
+/* ---------- Covers: the arrival, the reveal, the epitaph ---------- */
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  margin: 0 var(--gutter);
+}
+
+.kicker {
+  color: var(--accent-ink);
+  font: 700 12.5px/1.25 var(--font);
+  letter-spacing: .17em;
+  text-transform: uppercase;
+}
+
+.dark .kicker { color: var(--accent-lite); }
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-right: -4px;
+  padding: 14px 4px 14px 14px;
+  color: var(--ink-2);
+  font: 600 11px/1 var(--font);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+.back .arrow { width: 16px; height: 10px; stroke-width: 2.2; }
+.back:active { text-decoration: underline; text-underline-offset: 4px; }
+.back:focus-visible { outline: 3px solid currentColor; outline-offset: -2px; }
+.dark .back { color: var(--night-2); }
+
+/* The huge names. JS fits their size to the measure. */
+.name {
+  margin: 0 calc(var(--gutter) + .05em) 0 var(--gutter);
+  font-family: var(--display);
+  font-weight: 680;
+  font-size: 200px;
+  font-optical-sizing: auto;
+  line-height: .8;
+  letter-spacing: -.045em;
+  text-wrap: balance;
+}
+
+/* Each line of a huge name rises out of its own mask */
+.lines .ln {
+  display: block;
+  overflow: hidden;
+  padding: .07em .1em .17em;
+  margin: -.07em -.1em -.17em;
+}
+
+.lines .ln-i { display: block; }
+
+/* The arrival */
+.arrival { padding-top: var(--safe-t); }
+.arrival .head { margin-top: 6px; justify-content: flex-end; }
+
+/* The era, set like a newspaper's dateline, leads into the arrival */
+.dateline { margin: 0 var(--gutter) 9px; }
+.arrival .name { margin-top: clamp(6px, 3.2cqh, 34px); margin-right: calc(var(--gutter) + .05em); }
+
+.role {
+  margin: clamp(8px, 1.5cqh, 14px) var(--gutter) 0;
+  font: 500 max(20px, calc(clamp(24px, 7.5cqw, 30px) * var(--k)))/1.08 var(--display);
+  letter-spacing: -.012em;
+  text-wrap: balance;
+}
+
+.rule {
+  flex: none;
+  height: 1px;
+  margin: clamp(16px, 3.2cqh, 30px) var(--gutter);
+  background: var(--rule);
+}
+
+.dark .rule { background: var(--night-rule); }
+
+.lede {
+  margin: 0 var(--gutter);
+  font: 500 max(18px, calc(clamp(18px, 5.3cqw, 21px) * var(--k)))/1.4 var(--font);
+  letter-spacing: -.004em;
+  text-wrap: pretty;
+}
+
+.want {
+  margin: clamp(18px, 3.6cqh, 32px) var(--gutter) 0;
+  padding-left: 16px;
+  border-left: 5px solid var(--accent);
+}
+
+.want-k {
+  margin-bottom: 7px;
+  color: var(--accent-ink);
+  font: 700 12.5px/1.25 var(--font);
+  letter-spacing: .17em;
+  text-transform: uppercase;
+}
+
+.want-t {
+  font: 620 max(20px, calc(clamp(25px, 7.9cqw, 31px) * var(--k)))/1.1 var(--display);
+  letter-spacing: -.012em;
+  text-wrap: balance;
+}
+
+/* The reveal: the object under the gallery's own spotlight */
+.reveal { padding-top: calc(var(--safe-t) + 31px); }
+.reveal .kicker { margin: clamp(10px, 2cqh, 18px) var(--gutter) 0; }
+
+.inv {
+  margin: clamp(8px, 1.4cqh, 14px) calc(var(--gutter) + .03em) 0 var(--gutter);
+  font-family: var(--display);
+  font-weight: 650;
+  font-size: 60px;
+  line-height: .95;
+  letter-spacing: -.03em;
+  text-wrap: balance;
+}
+
+/* Full bleed. The drawing is 4:3 and centred; the gradient carries its floor
+   out to the edges, so the wall, the floor and the page are one surface. */
+.exhibit {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 118px;
+  max-height: 75cqw;
+  margin-top: clamp(8px, 1.6cqh, 16px);
+  background: linear-gradient(#25221f 0 87.5%, #302c28 87.5% 89.17%, #1a1816 89.17% 100%);
+}
+
+.desc {
+  margin: clamp(14px, 2.4cqh, 22px) var(--gutter) 0;
+  font: 500 max(18px, calc(clamp(18px, 5.1cqw, 20px) * var(--k)))/1.4 var(--font);
+  text-wrap: pretty;
+}
+
+.first {
+  margin: clamp(10px, 1.8cqh, 16px) var(--gutter) 0;
+  color: var(--accent-lite);
+  font: 600 max(19px, calc(clamp(20px, 6cqw, 24px) * var(--k)))/1.15 var(--display);
+  letter-spacing: -.008em;
+  text-wrap: balance;
+}
+
+/* The epitaph */
+.epitaph { padding-top: calc(var(--safe-t) + 22px); }
+.epitaph .head { justify-content: flex-end; }
+.epitaph .name { margin-top: 0; margin-right: calc(var(--gutter) + .05em); }
+.epitaph .gap.above { min-height: 4px; max-height: 60px; }
+.epitaph .foot { margin-top: 0; }
+
+.invented {
+  margin: clamp(10px, 2cqh, 18px) var(--gutter) 0;
+  color: var(--accent-lite);
+  font: 600 max(20px, calc(clamp(24px, 7.7cqw, 31px) * var(--k)))/1.1 var(--display);
+  letter-spacing: -.012em;
+  text-wrap: balance;
+}
+
+.obit, .legacy {
+  margin: 0 var(--gutter);
+  font: 500 max(18px, calc(clamp(18px, 5.3cqw, 21px) * var(--k)))/1.4 var(--font);
+  text-wrap: pretty;
+}
+
+.legacy { margin-top: .9em; font-weight: 650; }
+
+/* ---------- Floods: the colour that fills the screen between big moments ---------- */
+
+.flood {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.flood.spark { background: var(--accent); }
+.flood.night { background: var(--night); }
+
+.error {
+  padding: 60px var(--gutter);
+  font: 500 18px/1.4 var(--font);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar i::before, .bar i::after, .bar i, .bar { transition-duration: .01s; transition-delay: 0s; }
+  .arrow { transition: none; }
+}

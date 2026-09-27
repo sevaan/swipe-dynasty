@@ -1,0 +1,815 @@
+/* The Card: one tactile card, dealt from a small deck. The design note is
+   at the top of index.html. Colours come from life.theme (card.js sets
+   them); the values here are the opening era's, so the first paint matches. */
+
+:root {
+  --bg: #2a1c14;
+  --panel: #3b2a1e;
+  --paper: #ecd9b4;
+  --ink: #2a1c14;
+  --text: #f4e7cd;
+  --accent: #e8793a;
+  --night: #121828;
+
+  --kraft: color-mix(in srgb, var(--paper) 84%, #7a5530);
+  --tab: color-mix(in srgb, var(--paper) 88%, var(--ink));
+  --tab-edge: color-mix(in srgb, var(--paper) 62%, var(--ink));
+  --ink-soft: color-mix(in srgb, var(--ink) 80%, var(--paper));
+  --text-soft: color-mix(in srgb, var(--text) 74%, var(--bg));
+  --hair: color-mix(in srgb, var(--ink) 17%, transparent);
+  --perf: color-mix(in srgb, var(--ink) 32%, transparent);
+  --ember-edge: color-mix(in srgb, var(--accent) 58%, var(--ink));
+  --gilt: #d7a445;
+  --gilt-hi: #f4d88f;
+  --gilt-lo: #9c6a1c;
+  --mourn: #19120e;
+
+  --read: 'Atkinson Hyperlegible Next', ui-sans-serif, system-ui, sans-serif;
+  --show: 'Fraunces', ui-serif, Georgia, serif;
+  --story: 19px;
+
+  /* Set by card.js from the space on screen */
+  --w: 362px;
+  --h: 620px;
+  --pic: 240px;
+  --r: 20px;
+  --warmth: 0;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: var(--bg);
+}
+
+body {
+  position: fixed;
+  inset: 0;
+  color: var(--text);
+  font: 500 16px/1.4 var(--read);
+  -webkit-font-smoothing: antialiased;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus { outline: none; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+p, h1, h2 { margin: 0; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---- The sky: the era's colour, darker and cooler toward the top, a few
+   still stars, and firelight that rises behind the deck as the fire grows */
+
+.sky {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom,
+    color-mix(in srgb, var(--night) 72%, var(--bg)) 0%,
+    color-mix(in srgb, var(--night) 30%, var(--bg)) 42%,
+    var(--bg) 78%);
+}
+
+.stars {
+  position: absolute;
+  left: 0;
+  top: calc(env(safe-area-inset-top) + 58px);
+  width: 100%;
+  height: 46%;
+  fill: var(--text);
+}
+
+.glow {
+  position: absolute;
+  left: -40%;
+  right: -40%;
+  bottom: -28%;
+  height: 86%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 30%, transparent), transparent);
+  opacity: var(--warmth);
+  transition: opacity 1.8s ease;
+}
+
+/* ---- The frame: a context line over the deck, and the deck in the middle */
+
+.app {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+.top {
+  flex: none;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 6px;
+  height: 50px;
+  padding: 2px 12px 0;
+}
+
+.home {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  min-height: 44px;
+  padding: 0 8px 0 0;
+  border-radius: 10px;
+  color: var(--text-soft);
+  font: 600 13px/1 var(--read);
+  text-decoration: none;
+}
+.home svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.home:active { color: var(--text); }
+
+.context {
+  font: 700 15px/1.2 var(--read);
+  color: var(--text);
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+.context .era { color: var(--text-soft); font-weight: 600; }
+.context .era::before { content: '\00a0\00b7\00a0'; }
+
+.pips {
+  justify-self: end;
+  display: flex;
+  gap: 5px;
+  margin: 0;
+  padding: 0 2px 0 0;
+  list-style: none;
+}
+
+/* Six pips, one per decision, drawn as tiny cards */
+.pip {
+  width: 9px;
+  height: 12px;
+  border-radius: 2.5px;
+  background: color-mix(in srgb, var(--text) 22%, transparent);
+  transition: background-color 0.3s, transform 0.35s cubic-bezier(0.3, 1.7, 0.5, 1);
+}
+.pip.done { background: var(--text-soft); }
+.pip.now { background: var(--accent); transform: translateY(-1px) scale(1.2); }
+
+.table {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  padding: 2px 0 14px;
+}
+
+.deck {
+  position: relative;
+  width: var(--w);
+  height: calc(var(--h) + 26px);
+}
+.deck::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  top: 22px;
+  height: calc(var(--h) - 20px);
+  border-radius: var(--r);
+  box-shadow: 0 18px 40px -12px rgb(0 0 0 / 62%), 0 6px 14px -6px rgb(0 0 0 / 40%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.deck.laid::before { opacity: 1; }
+
+/* ---- A card: two faces on a flipper, over its two shadows. The outer
+   element swings on a point below the card; the flipper turns it over. */
+
+.card {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--w);
+  height: var(--h);
+  transform-origin: 50% 150%;
+  perspective: 1400px;
+  touch-action: none;
+  will-change: transform;
+}
+.card.top { cursor: grab; }
+.card.top.held { cursor: grabbing; }
+
+.shade {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r);
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+.shade.far { box-shadow: 0 24px 44px -12px rgb(0 0 0 / 62%), 0 10px 18px -8px rgb(0 0 0 / 34%); opacity: 0; }
+.shade.near { box-shadow: 0 1px 1.5px rgb(0 0 0 / 42%), 0 0 0 1px rgb(0 0 0 / 22%); }
+
+.flipper {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  will-change: transform;
+  transition: scale 90ms ease-out;
+}
+.card.held .flipper { scale: 0.985; }
+
+.face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--r);
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--paper);
+  color: var(--ink);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.face.front { transform: rotateY(0deg); }   /* Safari hides a back face only on a 3D-transformed element */
+.face.back { transform: rotateY(180deg); }
+
+/* Paper: a soft light from the upper left (the art's light), a fine grain,
+   and a very subtle inner border */
+.face::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(130% 75% at 10% 0%, rgb(255 255 255 / 22%), transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.3' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .2 0 0 0 0 .12 0 0 0 0 .05 0 0 0 1.2 -.55'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: auto, 160px 160px;
+  opacity: 0.32;
+  pointer-events: none;
+}
+.sheet {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.sheet::after {
+  content: '';
+  position: absolute;
+  inset: 7px 7px 5px;
+  border-radius: 14px 14px 5px 5px;
+  box-shadow: inset 0 0 0 1px var(--hair);
+  pointer-events: none;
+}
+
+/* ---- The workbench picture, inset at the top. The art bleeds past its
+   frame, so any shape from about 2:1 to 4:3 looks finished. */
+
+.pic {
+  position: relative;
+  flex: none;
+  height: var(--pic);
+  margin: 12px 12px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--panel);
+}
+.pic img {
+  position: absolute;
+  inset: -6px;
+  width: calc(100% + 12px);
+  height: calc(100% + 12px);
+  display: block;
+  pointer-events: none;
+  will-change: transform;
+}
+.pic::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 2px 0 rgb(0 0 0 / 26%), inset 0 0 0 1px rgb(0 0 0 / 22%);
+  pointer-events: none;
+}
+
+/* ---- A decision's face */
+
+/* Who's speaking and what's happening, centred in the space under the
+   picture, as card games set short rules text in a fixed box */
+.words { margin: auto 0; padding-bottom: 14px; }
+
+.who {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 22px 0;
+}
+.face-crop {
+  position: relative;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--panel);
+  box-shadow: 0 0 0 2px var(--paper), 0 0 0 3px var(--hair);
+}
+.face-crop img { position: absolute; width: 250%; left: -75%; top: -92%; }
+.who .name {
+  font: 700 18px/1 var(--show);
+  font-variation-settings: 'SOFT' 50;
+  letter-spacing: 0.01em;
+}
+.who .rule { flex: 1; height: 1px; background: var(--hair); }
+
+.text {
+  margin: 9px 22px 0;
+  font: 500 var(--story)/1.42 var(--read);
+  text-wrap: pretty;
+}
+
+.hint {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  margin: 12px 22px 0;
+  color: var(--ink-soft);
+  font: 600 15px/1.35 var(--read);
+}
+.hint svg { flex: none; width: 30px; height: 20px; margin-top: 0; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* The two answers: tear-off tabs along the lower edge, inside the inner
+   border, with a perforation above them and between them */
+.tabs {
+  position: relative;
+  flex: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 0;
+  border-radius: 0 0 var(--r) var(--r);
+  background: var(--tab);
+  box-shadow: inset 0 1.5px 0 rgb(0 0 0 / 5%);
+}
+.tabs::before,
+.tabs:not(.one)::after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+}
+.tabs::before {
+  left: 7px;
+  right: 7px;
+  top: -2px;
+  height: 4px;
+  background: radial-gradient(circle, var(--perf) 1.3px, transparent 1.8px) 0 50% / 8px 4px repeat-x;
+}
+.tabs:not(.one)::after {
+  left: calc(50% - 2px);
+  top: 8px;
+  bottom: 8px;
+  width: 4px;
+  background: radial-gradient(circle, var(--perf) 1.3px, transparent 1.8px) 50% 0 / 4px 8px repeat-y;
+}
+
+.tab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 74px;
+  margin: 0;
+  padding: 12px 12px 15px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  font: 700 18px/1.22 var(--read);
+  text-align: left;
+  overflow: hidden;
+  isolation: isolate;
+}
+.tab.left { border-bottom-left-radius: var(--r); }
+.tab.right { justify-content: flex-end; text-align: right; border-bottom-right-radius: var(--r); }
+.tab .label { text-wrap: balance; }
+.tab .hold { white-space: nowrap; }
+.tab .arrow {
+  display: inline-block;
+  width: 17px;
+  height: 17px;
+  vertical-align: -2.5px;
+  transition: translate 140ms ease-out;
+}
+.tab.left .arrow { margin-right: 4px; }
+.tab.right .arrow { margin-left: 4px; }
+.tab::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgb(0 0 0 / 8%);
+  opacity: 0;
+  transition: opacity 90ms ease-out;
+}
+.tab:active::before { opacity: 1; transition: none; }
+
+/* The ember fill that grows with the drag, from the perforation outward */
+.tab .fill {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: 100% 50%;
+  will-change: transform;
+}
+.tab.right .fill { transform-origin: 0 50%; }
+.tab.left.lit .arrow { translate: -3px 0; }
+.tab.right.lit .arrow { translate: 3px 0; }
+
+/* A single tab across the foot: Continue, and the special cards' actions */
+.tabs.one { grid-template-columns: 1fr; background: none; box-shadow: none; }
+.tab.wide {
+  justify-content: center;
+  gap: 8px;
+  min-height: 60px;
+  border-radius: 0 0 var(--r) var(--r);
+  background: var(--tab);
+  font-weight: 800;
+  text-align: center;
+}
+.tab.wide .arrow { margin: 0; }
+.tab.go { background: var(--accent); }
+.tab.gold { background: var(--gilt); }
+.tab.mourn { background: var(--mourn); color: var(--paper); }
+.tab.mourn::before { background: rgb(255 255 255 / 10%); }
+
+/* The stamp: the answer being chosen, hovering down toward the top of the
+   card as you drag, and thumping onto it once letting go would choose */
+.stamp {
+  position: absolute;
+  top: 22px;
+  left: 18px;
+  z-index: 4;
+  max-width: 55%;
+  opacity: 0;
+  pointer-events: none;
+  transform-origin: 20% 50%;
+  will-change: transform, opacity;
+}
+.stamp.on-right { left: auto; right: 18px; transform-origin: 80% 50%; }
+.stamp-in {
+  display: block;
+  padding: 7px 11px 8px;
+  border: 2.5px solid var(--accent);
+  border-radius: 9px;
+  background: var(--paper);
+  color: var(--ink);
+  font: 700 18px/1.14 var(--show);
+  font-variation-settings: 'SOFT' 50;
+  text-wrap: balance;
+  box-shadow: 0 16px 24px -10px rgb(0 0 0 / 60%);
+}
+.stamp.on-right .stamp-in { text-align: right; }
+.stamp.inked .stamp-in {
+  background: var(--accent);
+  border-color: var(--ember-edge);
+  box-shadow: 0 1px 0 rgb(0 0 0 / 30%);
+  animation: thunk 220ms cubic-bezier(0.3, 1.9, 0.5, 1);
+}
+@keyframes thunk { from { scale: 1.12; } }
+
+/* ---- A result: the back of the card, kraft paper with a double rule */
+
+.face.back.result { background: var(--kraft); }
+.face.result .sheet::after { box-shadow: inset 0 0 0 1px var(--hair), inset 0 0 0 4px var(--kraft), inset 0 0 0 5px var(--hair); }
+.spare {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  margin: 16px 16px 14px;
+  container-type: size;
+}
+.spare .field {
+  position: absolute;
+  inset: 0;
+  border-radius: 9px;
+  background:
+    repeating-linear-gradient(45deg, transparent 0 11px, rgb(60 36 16 / 8%) 11px 12.5px),
+    repeating-linear-gradient(-45deg, transparent 0 11px, rgb(60 36 16 / 8%) 11px 12.5px);
+  -webkit-mask: radial-gradient(closest-side, #000 55%, transparent);
+  mask: radial-gradient(closest-side, #000 55%, transparent);
+}
+.spare .emblem {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 54px;
+  height: 54px;
+  translate: -50% -50%;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--kraft);
+  box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--ink) 26%, transparent), 0 0 0 6px var(--kraft), 0 0 0 7px color-mix(in srgb, var(--ink) 14%, transparent);
+}
+.spare .emblem svg { width: 62%; height: 62%; }
+@container (max-height: 56px) { .spare .field { display: none; } }
+@container (max-height: 100px) { .spare .emblem { display: none; } }
+
+.chosen {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 16px 22px 0;
+  font: 700 23px/1.16 var(--show);
+  font-variation-settings: 'SOFT' 50;
+  text-wrap: balance;
+}
+.chosen .mark {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-top: -1px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--ink);
+  box-shadow: 0 1.5px 0 var(--ember-edge);
+}
+.chosen .mark svg { width: 18px; height: 18px; }
+
+.face.result .tab.on { background: color-mix(in srgb, var(--kraft) 86%, var(--ink)); }
+
+/* ---- The deck's backs: kraft with a diamond lattice and a spark */
+
+.back-art {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background:
+    repeating-linear-gradient(45deg, transparent 0 11px, rgb(60 36 16 / 9%) 11px 12.5px),
+    repeating-linear-gradient(-45deg, transparent 0 11px, rgb(60 36 16 / 9%) 11px 12.5px),
+    var(--kraft);
+}
+.back-art::before {
+  content: '';
+  position: absolute;
+  inset: 9px;
+  border-radius: 13px;
+  box-shadow: 0 0 0 9px var(--kraft), inset 0 0 0 1.5px color-mix(in srgb, var(--ink) 30%, transparent), inset 0 0 0 5px var(--kraft), inset 0 0 0 6px color-mix(in srgb, var(--ink) 18%, transparent);
+}
+.back-art .emblem {
+  position: relative;
+  width: 34%;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--kraft);
+  box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--ink) 30%, transparent), 0 0 0 7px var(--kraft), 0 0 0 8px color-mix(in srgb, var(--ink) 18%, transparent);
+}
+.back-art .emblem svg { width: 64%; height: 64%; }
+
+.v-gilt .back-art { background: repeating-linear-gradient(45deg, transparent 0 11px, rgb(120 70 10 / 12%) 11px 12.5px), repeating-linear-gradient(-45deg, transparent 0 11px, rgb(120 70 10 / 12%) 11px 12.5px), var(--kraft); }
+.v-gilt .back-art::after,
+.face.reveal .gilt {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--gilt-lo), inset 0 0 0 8px var(--gilt), inset 0 0 0 10px var(--gilt-hi), inset 0 0 0 11px var(--gilt-lo);
+  pointer-events: none;
+}
+
+.v-mourn .back-art { background: repeating-linear-gradient(45deg, transparent 0 11px, rgb(255 240 210 / 6%) 11px 12.5px), repeating-linear-gradient(-45deg, transparent 0 11px, rgb(255 240 210 / 6%) 11px 12.5px), var(--mourn); }
+.v-mourn .back-art::before { box-shadow: 0 0 0 9px var(--mourn), inset 0 0 0 1.5px color-mix(in srgb, var(--paper) 45%, transparent); }
+.v-mourn .back-art .emblem { background: var(--mourn); box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--paper) 45%, transparent), 0 0 0 7px var(--mourn), 0 0 0 8px color-mix(in srgb, var(--paper) 25%, transparent); }
+
+/* ---- The character card */
+
+.face.arrival { text-align: center; }
+.portrait {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 112px;
+  max-height: 250px;
+  margin: 12px 12px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #607595;
+}
+.portrait img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 26%;
+  pointer-events: none;
+}
+.portrait::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 2px 0 rgb(0 0 0 / 22%), inset 0 0 0 1px rgb(0 0 0 / 22%);
+}
+.chip {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+  padding: 6px 10px 6px;
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  font: 700 13px/1 var(--read);
+  letter-spacing: 0.02em;
+  box-shadow: 0 1.5px 0 rgb(0 0 0 / 25%);
+}
+.plate {
+  position: relative;
+  align-self: center;
+  margin: -26px 0 0;
+  padding: 9px 24px 7px;
+  border-radius: 14px 14px 0 0;
+  background: var(--paper);
+  font: 800 38px/1 var(--show);
+  font-variation-settings: 'SOFT' 100;
+  letter-spacing: 0.005em;
+}
+.role {
+  margin: 2px 22px 0;
+  color: var(--ink-soft);
+  font: 600 16px/1.3 var(--read);
+}
+.face.arrival .text { margin-top: 12px; text-align: left; }
+.want {
+  margin: 12px 14px 18px;
+  padding: 10px 13px 11px;
+  border-radius: 11px;
+  background: var(--kraft);
+  font: 700 18px/1.3 var(--read);
+  text-align: left;
+}
+.want .pre {
+  display: block;
+  margin-bottom: 3px;
+  font: 800 12.5px/1.2 var(--read);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+
+/* ---- The reveal: gilt edges, and one pass of light along them */
+
+.face.reveal { text-align: center; }
+.face.reveal .gilt::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 11px;
+  background: linear-gradient(115deg, transparent 38%, rgb(255 250 230 / 85%) 50%, transparent 62%) no-repeat;
+  background-size: 300% 100%;
+  background-position: 100% 0;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  opacity: 0;
+}
+.card.shine .face.reveal .gilt::after { animation: sheen 1300ms ease-in-out 120ms 1 both; }
+@keyframes sheen {
+  0% { background-position: 100% 0; opacity: 1; }
+  100% { background-position: 0% 0; opacity: 1; }
+}
+.kicker {
+  margin: 28px 26px 0;
+  font: 700 22px/1.15 var(--show);
+  font-variation-settings: 'SOFT' 60;
+  text-wrap: balance;
+}
+.face.reveal .pic {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 110px;
+  max-height: 232px;
+  margin: 14px 22px 0;
+}
+.invention {
+  margin: 16px 24px 0;
+  font: 800 29px/1.08 var(--show);
+  font-variation-settings: 'SOFT' 100;
+  text-wrap: balance;
+}
+.face.reveal .text { margin: 8px 26px 16px; text-align: center; text-wrap: balance; }
+.face.reveal .tabs { margin: auto 15px 15px; border-radius: 3px 3px 8px 8px; }
+.face.reveal .tab.wide { border-radius: 3px 3px 8px 8px; }
+
+/* ---- The epitaph: a memorial card with a dark border */
+
+.face.epitaph { text-align: center; }
+.face.epitaph::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 13px var(--mourn), inset 0 0 0 16px var(--paper), inset 0 0 0 17px var(--mourn);
+}
+.cameo {
+  position: relative;
+  flex: none;
+  align-self: center;
+  width: 104px;
+  height: 130px;
+  margin-top: 34px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #607595;
+  box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--mourn);
+}
+.cameo img { position: absolute; width: 176%; left: -38%; top: -26%; pointer-events: none; }
+.face.epitaph .name {
+  margin: 16px 26px 0;
+  font: 800 34px/1 var(--show);
+  font-variation-settings: 'SOFT' 100;
+}
+.invented {
+  margin: 8px 30px 0;
+  font: 700 19px/1.25 var(--show);
+  font-variation-settings: 'SOFT' 60;
+  text-wrap: balance;
+}
+.orn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 14px 0 2px;
+}
+.orn::before, .orn::after { content: ''; width: 42px; height: 1px; background: color-mix(in srgb, var(--ink) 35%, transparent); }
+.orn i { width: 6px; height: 6px; rotate: 45deg; background: var(--ink); }
+.face.epitaph .text { margin: 10px 30px 0; text-align: center; text-wrap: balance; }
+.face.epitaph .legacy { font-weight: 700; margin-bottom: 16px; }
+.face.epitaph .tabs { margin: auto 21px 21px; border-radius: 2px; }
+.face.epitaph .tabs::before { left: 2px; right: 2px; }
+.face.epitaph .tab.wide { border-radius: 2px; }
+
+/* ---- Short screens (Safari with its toolbars): tighter, never smaller than 18px */
+
+.short { --story: 18px; }
+.short .who { margin-top: 11px; }
+.short .text { margin-top: 7px; }
+.short .tab { min-height: 64px; padding-top: 10px; padding-bottom: 12px; }
+.short .tab.wide { min-height: 54px; }
+.short .chosen { margin-top: 13px; font-size: 22px; }
+.short .plate { font-size: 34px; }
+.short .want { margin-top: 10px; margin-bottom: 13px; padding-top: 8px; padding-bottom: 9px; }
+.short .kicker { margin-top: 22px; }
+.short .invention { margin-top: 12px; font-size: 27px; }
+.short .cameo { width: 84px; height: 104px; margin-top: 28px; }
+.short .face.epitaph .name { margin-top: 12px; font-size: 31px; }
+.short .orn { margin-top: 10px; }
+.short .face.epitaph .text { margin-top: 8px; }
+
+.noscript { padding: 40px 24px; font-size: 19px; }

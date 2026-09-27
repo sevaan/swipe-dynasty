@@ -1,0 +1,96 @@
+<!doctype html>
+<!--
+  THE NOTEBOOK: a layout prototype for One Bright Idea
+
+  The idea
+    The life is the inventor's own notebook, open on the desk. Each step is
+    a page: the workbench sketch taped in, the situation in dark ink, and the
+    two answers as lines you'd tick. You choose by ticking one; the pen
+    circles it, and the result is written in below in a second ink. Then you
+    turn the page by its corner. The opening page introduces the inventor,
+    the invention gets a full-page entry, and the last page is their
+    obituary. Paper, ink, tape and one convincing page turn: calm, literary,
+    cosy, and plain to read.
+
+  Type scale (every line of text sits on a 28px rule)
+    Story, answers, results: Atkinson Hyperlegible Next 20/28. The story is
+      400, the answers 600, and results 450 in the second ink.
+    Titles: Atkinson 800, 29 to 34px, on the rules.
+    Role line: Atkinson 18/24. The Prototypes link: 14px.
+    In the hand (Caveat), only for short notes: the era line and page number
+      25px, the speaker's name 23px, notes 23px, the corner labels 27px,
+      and the inventor's name 58px, written in on the opening page.
+
+  Layout
+    The screen is the right-hand page of an open notebook; the spine is its
+      left edge. The page is a stack of whole 28px rows, and each page is
+      fitted to them: the text takes the lines it needs, the result's lines
+      are kept blank below the answers (so nothing moves when it's written
+      in), and the taped sketch grows into whatever is left, from a strip
+      at 390x664 to nearly square at 390x844. A breathing line before the
+      answers comes before a bigger sketch.
+    The speaker's name and face sit in the margin beside the first line,
+      like a script. The answers have a left and a right arrow in the margin,
+      for the swipe.
+    The foot is one line: the corner's label, then the dog-ear. The
+      Prototypes link is small, in the top margin, and last in the tab order.
+
+  Palette
+    Paper #f4ecda, and the back of the leaf #ece1c8.
+    Ink #2a2119 (13.4:1).
+    Blue-black #243a5e (9.7:1): the player's hand, used for ticks, rings,
+      results and the obituary.
+    Pencil #5b5047 (6.7:1) for small print.
+    Pale blue rules, a faded double red margin line, and red pencil
+      #b3452f for the reveal's underline only.
+    Translucent tape, and a leather cover #3b2a20 wherever the page ends.
+
+  Motion language: ink is drawn, paper is turned
+    Marks draw along their length in 160 to 460ms, with a quick start and a
+      soft finish.
+    Results write in word by word, left to right and sentence by sentence,
+      at about 7.5ms a character. A tap finishes the writing; it never
+      skips it.
+    The dog-ear lifts on an underdamped spring.
+    The page turns as a flat fold from the bottom-right corner (about
+      480ms: a slow lift, a quick sweep, a soft landing). The back of the
+      leaf is mirrored across the crease, and the crease's shadow sweeps
+      across the page beneath, which is already drawn.
+    Reduced motion: marks appear, results fade in, and the turn becomes a
+      170ms crossfade.
+
+  How the swipe works
+    On a card page, drag sideways anywhere. Left draws in the first answer
+    (the one with the left arrow in the margin) and right the second. The
+    pen draws the tick as you go, then loops a ring round the line, and the
+    ring closes at 28% of the page's width. Letting go there chooses;
+    letting go short of it makes the ink retract.
+    On a finished page (a result, the opening page, the reveal, the
+    epitaph), a sideways drag lifts the page by its corner and the fold
+    follows your finger. Let go past a fifth of the turn, or flick, and it
+    turns; otherwise it settles back.
+    Tapping an answer, tapping the corner, the arrow keys, and Enter all do
+    the same things.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#f4ecda">
+  <title>The Notebook · One Bright Idea</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400..800&family=Caveat:wght@500..700&display=swap">
+  <link rel="stylesheet" href="notebook.css">
+  <script type="module" src="notebook.js"></script>
+</head>
+<body>
+  <div id="safe" aria-hidden="true"></div>
+  <main class="book" id="book">
+    <button class="corner-hit" id="corner" type="button" hidden></button>
+  </main>
+  <p class="sr-only" id="live" aria-live="polite"></p>
+  <noscript><p style="font: 20px/1.4 system-ui; padding: 24px; color: #f4ecda">This prototype needs JavaScript.</p></noscript>
+</body>
+</html>

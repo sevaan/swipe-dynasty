@@ -1,0 +1,645 @@
+/* Cinema: the picture fills the top of the screen like a film frame, and the
+   words play beneath it like subtitles. See the design note in index.html. */
+
+:root {
+  --night: #0c0907;
+  --night-rgb: 12 9 7;
+  --ink: #f9f1e5;
+  --parch: #dccab0;
+  --ember: #f4aa5c;
+  --cream: #f6ead5;
+  --cream-ink: #1c130d;
+  --glass: rgb(255 232 204 / 7%);
+  --hair: rgb(255 232 204 / 16%);
+
+  --read: "Atkinson Hyperlegible Next", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --title: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --sub-size: 20px;
+
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --ease-io: cubic-bezier(.65, 0, .35, 1);
+
+  --gut: 22px;
+  --st: env(safe-area-inset-top, 0px);
+  --sb: env(safe-area-inset-bottom, 0px);
+  --fl: 170px;          /* the length of the frame's fade into night */
+  --sub-top: 60%;       /* set by cinema.js from the frame's height */
+  --frame-h: 60%;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: var(--night);
+}
+
+body {
+  position: fixed;
+  inset: 0;
+  color: var(--ink);
+  font-family: var(--read);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button { font: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
+svg { display: block; }
+
+/* A phone-shaped column on a wide screen; the whole screen on a phone */
+.app { position: fixed; inset: 0; max-width: 480px; margin: 0 auto; overflow: hidden; }
+.app.dragging { cursor: grabbing; }
+
+:focus { outline: none; }
+:focus-visible { outline: 3px solid var(--ember); outline-offset: 3px; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.probe {
+  position: absolute; left: 0; top: 0; width: 0;
+  padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px);
+  visibility: hidden; pointer-events: none;
+}
+
+/* ---- The picture ----------------------------------------------------- */
+
+.stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--night);
+  pointer-events: none;
+}
+
+.shots, .shot, .drift { position: absolute; inset: 0; }
+
+/* The Ken Burns drift: each shot pushes in, very slowly, toward its own point */
+.drift {
+  animation: drift 22s cubic-bezier(.3, 0, .45, 1) both;
+  will-change: transform;
+}
+@keyframes drift {
+  from { transform: scale(1.03); }
+  to { transform: scale(1.08); }
+}
+
+.rig { position: absolute; transform-origin: 0 0; }
+.rig img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  will-change: transform;
+}
+/* A picture that couldn't be widened to its bleed: just its 320 x 240 frame */
+.rig img.inset { left: 16.667%; top: 20%; width: 66.667%; height: 60%; }
+
+/* Firelight in the drawing: centred on the bench's fire, in drawing units
+   (the rig is the 480 x 400 bleed), flickering very gently */
+.rig .glow {
+  position: absolute;
+  left: calc((186 + 80) / 480 * 100% - 30%);
+  top: calc((164 + 80) / 400 * 100% - 30%);
+  width: 60%;
+  height: 60%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(255 172 84 / 30%), rgb(255 146 62 / 13%) 45%, rgb(255 130 50 / 0) 100%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: flicker 3.2s ease-in-out infinite;
+}
+@keyframes flicker {
+  0%, 100% { opacity: .82; }
+  22% { opacity: 1; }
+  48% { opacity: .9; }
+  71% { opacity: .98; }
+}
+
+/* Firelight for the reveal */
+.bloom {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: radial-gradient(circle at var(--bx, 58%) var(--by, 40%), rgb(255 168 76 / 34%) 0, rgb(255 140 60 / 14%) 22%, rgb(255 120 50 / 0) 48%);
+  mix-blend-mode: screen;
+  transition: opacity 1200ms var(--ease-io);
+}
+.bloom.on { opacity: 1; animation: breathe 3.6s ease-in-out 1.2s infinite alternate; }
+@keyframes breathe { from { opacity: 1; } to { opacity: .78; } }
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(130% 75% at 50% 42%, rgb(var(--night-rgb) / 0) 60%, rgb(var(--night-rgb) / 32%) 100%);
+}
+
+/* The fade into night. One tall layer: an eased gradient, then solid night.
+   cinema.js slides it to where the frame should end. */
+.fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: calc(100% + var(--fl) + 40px);
+  transform: translateY(100vh);
+  will-change: transform;
+  background: linear-gradient(to bottom,
+    rgb(var(--night-rgb) / 0) 0,
+    rgb(var(--night-rgb) / .04) calc(var(--fl) * .18),
+    rgb(var(--night-rgb) / .12) calc(var(--fl) * .32),
+    rgb(var(--night-rgb) / .24) calc(var(--fl) * .45),
+    rgb(var(--night-rgb) / .38) calc(var(--fl) * .56),
+    rgb(var(--night-rgb) / .53) calc(var(--fl) * .66),
+    rgb(var(--night-rgb) / .68) calc(var(--fl) * .75),
+    rgb(var(--night-rgb) / .81) calc(var(--fl) * .83),
+    rgb(var(--night-rgb) / .91) calc(var(--fl) * .91),
+    rgb(var(--night-rgb) / .97) calc(var(--fl) * .96),
+    var(--night) var(--fl),
+    var(--night) 100%);
+}
+
+/* Under the status bar, and behind the Prototypes link */
+.shade-top {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: calc(var(--st) + 96px);
+  background: linear-gradient(to bottom, rgb(var(--night-rgb) / 54%), rgb(var(--night-rgb) / 18%) 55%, rgb(var(--night-rgb) / 0));
+}
+
+/* A few embers rising behind the credits, over the glow of what's left of
+   the fire, so the black stays warm */
+.embers {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(90% 30% at 50% 104%, rgb(232 121 58 / 20%), rgb(232 121 58 / 6%) 55%, rgb(232 121 58 / 0) 100%);
+  transition: opacity 1800ms ease;
+}
+.embers.on { opacity: 1; }
+.embers i {
+  position: absolute;
+  bottom: -12px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #f5a24e;
+  box-shadow: 0 0 10px 2px rgb(240 138 46 / 55%);
+  opacity: 0;
+}
+.embers.on i { animation: ember 9s linear infinite; }
+.embers i:nth-child(1) { left: 14%; animation-delay: 0s; }
+.embers i:nth-child(2) { left: 31%; animation-delay: 3.4s; width: 3px; height: 3px; }
+.embers i:nth-child(3) { left: 47%; animation-delay: 1.6s; }
+.embers i:nth-child(4) { left: 62%; animation-delay: 5.2s; width: 3px; height: 3px; }
+.embers i:nth-child(5) { left: 76%; animation-delay: 2.5s; }
+.embers i:nth-child(6) { left: 88%; animation-delay: 6.8s; width: 3px; height: 3px; }
+.embers i:nth-child(7) { left: 22%; animation-delay: 7.6s; width: 3px; height: 3px; }
+@keyframes ember {
+  0% { transform: translate(0, 0); opacity: 0; }
+  12% { opacity: .75; }
+  60% { opacity: .45; }
+  100% { transform: translate(18px, -62vh); opacity: 0; }
+}
+
+/* ---- While a finger is on the picture -------------------------------- */
+
+.edges { position: absolute; left: 0; right: 0; top: calc(var(--frame-h) * .54); pointer-events: none; }
+.edge {
+  position: absolute;
+  top: -22px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgb(var(--night-rgb) / 42%);
+  box-shadow: inset 0 0 0 1px rgb(255 240 222 / 20%);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  transition: opacity 160ms ease, transform 220ms var(--ease-out), background-color 160ms ease;
+}
+.edge[data-side="left"] { left: 12px; transform: translateX(-8px); }
+.edge[data-side="right"] { right: 12px; transform: translateX(8px); }
+.edge svg { width: 22px; height: 22px; fill: none; stroke: var(--ink); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.edges.show .edge { opacity: 1; transform: none; }
+.edges[data-side="left"] .edge[data-side="right"],
+.edges[data-side="right"] .edge[data-side="left"] { opacity: .25; }
+.edges[data-side] .edge[data-side]:not(.dim) { background: rgb(74 40 18 / 70%); }
+.edges[data-side="left"] .edge[data-side="left"] svg,
+.edges[data-side="right"] .edge[data-side="right"] svg { stroke: var(--ember); }
+
+.peek {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--frame-h) * .36);
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.peek-in {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100% - 56px);
+  padding: 13px 18px;
+  border-radius: 18px;
+  background: rgb(var(--night-rgb) / 50%);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  backdrop-filter: blur(14px) saturate(1.2);
+  box-shadow: inset 0 0 0 1px rgb(255 240 222 / 24%), 0 10px 30px rgb(0 0 0 / 30%);
+  color: #fffaf2;
+  font: 700 18px/1.25 var(--read);
+  text-wrap: balance;
+  transition: background-color 140ms ease, box-shadow 140ms ease, transform 200ms var(--ease-out);
+}
+.peek-dir { flex: none; width: 20px; height: 20px; fill: none; stroke: var(--ember); stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; }
+.peek[data-side="left"] .peek-dir.r, .peek[data-side="right"] .peek-dir.l { display: none; }
+.peek.armed .peek-in {
+  background: rgb(92 48 18 / 78%);
+  box-shadow: inset 0 0 0 1.5px var(--ember), 0 10px 34px rgb(240 138 46 / 28%);
+  transform: scale(1.04);
+}
+
+.helper {
+  position: absolute;
+  top: calc(var(--st) + 60px);
+  left: 50%;
+  width: max-content;
+  max-width: calc(100% - 40px);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px 10px 13px;
+  border-radius: 16px;
+  background: rgb(var(--night-rgb) / 58%);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: inset 0 0 0 1px rgb(255 240 222 / 16%);
+  color: var(--ink);
+  font: 600 15px/1.35 var(--read);
+  text-wrap: balance;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.helper svg { flex: none; width: 22px; height: 22px; fill: none; stroke: var(--ember); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.helper.in { animation: fade-in 500ms var(--ease-out) 900ms both; }
+.helper.out { animation: fade-out 220ms ease-in forwards; }
+.helper.flash { animation: flash 700ms ease-in-out; }
+.helper.aside { opacity: 0 !important; transition: opacity 140ms ease; }
+@keyframes flash { 40% { box-shadow: inset 0 0 0 1.5px var(--ember); } }
+
+/* ---- The words -------------------------------------------------------- */
+
+.words { position: absolute; inset: 0; pointer-events: none; }
+.words button { pointer-events: auto; }
+.words > .out { animation: words-out 140ms ease-in forwards !important; }
+@keyframes words-out { to { opacity: 0; transform: translateY(-6px); } }
+
+/* Things that arrive: a line fades up, a sentence fades in, a title focuses */
+.enter { animation: fade-up 460ms var(--ease-out) var(--d, 0ms) backwards; }
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(9px); }
+  to { opacity: 1; transform: none; }
+}
+.s { animation: sentence 340ms var(--ease-out) calc(var(--d, 0ms) + var(--i, 0) * 100ms) backwards; }
+@keyframes sentence {
+  from { opacity: 0; filter: blur(2.5px); }
+  to { opacity: 1; filter: blur(0); }
+}
+.focus-in { animation: focus-in 1000ms var(--ease-out) var(--d, 0ms) backwards; }
+@keyframes focus-in {
+  from { opacity: 0; transform: scale(1.035); filter: blur(7px); }
+  60% { filter: blur(0); }
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fade-out { to { opacity: 0; } }
+
+/* Subtitles: who is speaking, then what is happening */
+.sub {
+  position: absolute;
+  left: var(--gut);
+  right: var(--gut);
+  top: var(--sub-top);
+}
+.speaker { display: flex; align-items: center; gap: 12px; margin: 0 0 12px; }
+.face {
+  position: relative;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #9c6f52;
+  box-shadow: 0 0 0 1.5px rgb(244 170 92 / 75%), 0 3px 12px rgb(0 0 0 / 50%);
+}
+.face img { position: absolute; width: 250%; left: -75%; top: -92%; display: block; }
+.who {
+  font: 800 14px/1 var(--read);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--ember);
+}
+.line {
+  margin: 0;
+  font-size: var(--sub-size);
+  line-height: 1.42;
+  font-weight: 500;
+  color: var(--ink);
+  text-wrap: pretty;
+  text-shadow: 0 1px 14px rgb(0 0 0 / 55%);
+}
+/* A result sits at the foot of the screen, just above Continue, and the
+   picture grows down to meet it */
+.sub.result { top: auto; bottom: calc(var(--sb) + 14px + 58px + 2px); }
+.chosen {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 12px;
+  font: 700 16px/1.3 var(--read);
+  color: var(--ember);
+  text-shadow: 0 0 2px rgb(0 0 0 / 60%), 0 1px 12px rgb(0 0 0 / 80%);
+}
+.chosen svg { flex: none; width: 18px; height: 18px; margin-top: 1px; fill: none; stroke: currentColor; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---- The answers ------------------------------------------------------- */
+
+.answers {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: calc(var(--sb) + 14px);
+  display: grid;
+  gap: 10px;
+  visibility: hidden;
+}
+.answers.in { visibility: visible; }
+.answers.out { visibility: hidden; pointer-events: none; transition: visibility 0s linear 300ms; }
+
+.answer {
+  --lit: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 58px;
+  margin: 0;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 17px;
+  background: var(--glass);
+  box-shadow: inset 0 0 0 1px var(--hair);
+  color: var(--ink);
+  font: 650 18px/1.28 var(--read);
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 140ms var(--ease-out), background-color 140ms ease;
+  isolation: isolate;
+}
+.answer[data-side="right"] { justify-content: flex-end; text-align: right; }
+.answer .label { flex: 1 1 auto; text-wrap: balance; }
+.answer .dir {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgb(244 170 92 / 13%);
+  transition: background-color 140ms ease;
+}
+.answer .dir svg { width: 18px; height: 18px; fill: none; stroke: var(--ember); stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; }
+/* Lit: firelight comes up inside the button as a swipe heads its way */
+.answer::before, .answer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: var(--lit);
+  z-index: -1;
+}
+.answer::before { background: linear-gradient(180deg, #6a3a17, #4b2912); }
+.answer::after { box-shadow: inset 0 0 0 1.5px var(--ember), 0 0 26px rgb(240 138 46 / 34%); z-index: 0; }
+.answer::before, .answer::after { transition: opacity 90ms linear; }
+.answer:active { transform: scale(.985); background-color: rgb(255 240 222 / 11%); }
+.answer:active .dir { background: rgb(244 170 92 / 22%); }
+
+.answers.in .answer { animation: fade-up 400ms var(--ease-out) calc(var(--d, 220ms) + var(--n, 0) * 70ms) backwards; }
+/* They clear before the result arrives where they were: the chosen one
+   flares ember, then goes */
+.answers.out .answer { opacity: 0; transition: opacity 140ms ease-in, transform 140ms ease-in; }
+.answers.out .answer.chosen { transition: opacity 190ms ease-in 70ms; }
+
+/* ---- Continue ---------------------------------------------------------- */
+
+.continue {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: calc(var(--sb) + 14px);
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 17px;
+  background: none;
+  color: var(--ember);
+  font: 800 14px/1 var(--read);
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.continue .chev { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; }
+.continue.in { animation: fade-in 420ms var(--ease-out) var(--d, 600ms) both; }
+.continue.in .chev { animation: nudge-r 1.8s ease-in-out calc(var(--d, 600ms) + 800ms) infinite; }
+.continue.out { animation: fade-out 180ms ease-in forwards; pointer-events: none; }
+.continue:active, .continue.pressed { background: rgb(255 240 222 / 7%); }
+.continue.pressed .chev { transform: translateX(3px); transition: transform 120ms var(--ease-out); }
+@keyframes nudge-r { 0%, 60%, 100% { transform: none; } 30% { transform: translateX(4px); } }
+
+/* ---- The opening title ------------------------------------------------ */
+
+.opening {
+  position: absolute;
+  left: var(--gut);
+  right: var(--gut);
+  bottom: calc(var(--sb) + 14px);
+}
+.era {
+  margin: 0 0 10px;
+  font: 800 13px/1.2 var(--read);
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  color: var(--ember);
+  text-shadow: 0 0 2px rgb(0 0 0 / 70%), 0 1px 14px rgb(0 0 0 / 85%);
+}
+.opening .name {
+  margin: 0;
+  font-family: var(--title);
+  font-size: 68px;
+  font-weight: 560;
+  line-height: .95;
+  letter-spacing: -.012em;
+  font-variation-settings: "opsz" 144, "SOFT" 100;
+  text-shadow: 0 2px 24px rgb(0 0 0 / 55%);
+}
+.role { margin: 8px 0 18px; font: 500 18px/1.3 var(--read); color: var(--parch); }
+.arrival { margin: 0 0 14px; font: 400 18px/1.45 var(--read); text-wrap: pretty; }
+.want { margin: 0 0 22px; font: 600 18px/1.4 var(--read); text-wrap: pretty; }
+.want .k { color: var(--ember); font-weight: 800; }
+
+.primary {
+  display: block;
+  width: 100%;
+  min-height: 58px;
+  margin: 0;
+  padding: 14px 20px;
+  border: 0;
+  border-radius: 17px;
+  background: var(--cream);
+  color: var(--cream-ink);
+  font: 800 18px/1.2 var(--read);
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 35%);
+  transition: transform 140ms var(--ease-out), background-color 140ms ease;
+}
+.primary:active { transform: scale(.985); background: #fff4e2; }
+
+/* ---- The title card (the reveal) ------------------------------------- */
+
+.titlecard {
+  position: absolute;
+  left: var(--gut);
+  right: var(--gut);
+  bottom: calc(var(--sb) + 14px);
+  text-align: center;
+}
+.kicker {
+  margin: 0 0 12px;
+  font: 800 13px/1.3 var(--read);
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: var(--ember);
+  text-shadow: 0 1px 10px rgb(0 0 0 / 70%);
+}
+.titlecard .title {
+  margin: 0 auto 14px;
+  max-width: 11em;
+  font-family: var(--title);
+  font-size: 42px;
+  font-weight: 540;
+  line-height: 1.05;
+  letter-spacing: -.01em;
+  font-variation-settings: "opsz" 144, "SOFT" 100;
+  text-wrap: balance;
+  text-shadow: 0 2px 24px rgb(0 0 0 / 60%);
+}
+.desc { margin: 0 auto; max-width: 21em; font: 400 18px/1.45 var(--read); text-wrap: pretty; }
+.first { margin: 16px auto 22px; max-width: 21em; font: 600 18px/1.4 var(--read); color: var(--parch); text-wrap: balance; }
+
+/* ---- The credits (the epitaph) ---------------------------------------- */
+
+.credits {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: calc(var(--st) + 56px) 28px calc(var(--sb) + 100px);
+  text-align: center;
+}
+.rise { animation: rise 900ms var(--ease-out) var(--d, 0ms) backwards; }
+@keyframes rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+.credits .name {
+  margin: 0 0 14px;
+  font-family: var(--title);
+  font-size: 72px;
+  font-weight: 520;
+  line-height: 1;
+  letter-spacing: -.01em;
+  font-variation-settings: "opsz" 144, "SOFT" 100;
+}
+.credits .invented { margin: 0; font: 700 18px/1.4 var(--read); color: var(--ember); text-wrap: balance; }
+.credits .rule { display: block; width: 44px; height: 2px; margin: 26px auto; border-radius: 2px; background: rgb(244 170 92 / 55%); }
+.credits .death, .credits .legacy { margin: 0 auto; max-width: 20em; font: 400 18px/1.5 var(--read); text-wrap: pretty; }
+.credits .death { color: var(--parch); margin-bottom: 18px; }
+.credits .primary { position: absolute; left: 16px; right: 16px; bottom: calc(var(--sb) + 14px); width: auto; }
+
+/* ---- The Prototypes link ---------------------------------------------- */
+
+.proto {
+  position: absolute;
+  top: calc(var(--st) + 6px);
+  left: 8px;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-height: 44px;
+  padding: 0 12px 0 6px;
+  color: rgb(249 241 229 / 92%);
+  font: 700 13px/1 var(--read);
+  letter-spacing: .04em;
+  text-decoration: none;
+  text-shadow: 0 1px 8px rgb(0 0 0 / 70%);
+  touch-action: manipulation;
+}
+.proto svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.proto:active { opacity: .7; }
+
+.oops { position: fixed; inset: auto 20px 40px; color: var(--ink); font: 500 16px/1.4 var(--read); }
+
+/* ---- Reduced motion: no drift, pan or push; short fades instead ------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .drift { animation: none; transform: scale(1.03); }
+  .enter, .s, .focus-in, .rise { animation: fade-in 160ms linear 0ms backwards !important; }
+  .rig .glow { animation: none; opacity: .9; }
+  .answers.in .answer { animation: fade-in 160ms linear 0ms backwards; }
+  .answers.out, .answers.out .answer, .answers.out .answer.chosen { transition: none; }
+  .continue.in { animation-duration: 160ms; animation-delay: 150ms; }
+  .continue.in .chev, .bloom.on, .embers.on i { animation: none; }
+  .embers { display: none; }
+  .helper.in { animation: fade-in 160ms linear both; }
+  .answer:active, .primary:active { transform: none; }
+  .words > .out { animation: fade-out 120ms linear forwards !important; }
+}
