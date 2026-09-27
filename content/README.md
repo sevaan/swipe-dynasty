@@ -21,6 +21,7 @@ Write for a casual reader and gamer (Sevaan, Sep 27):
 - Add at most one easy joke, and nothing the reader has to decode. "The remaining stones are promoted to seating" became "The useless stones become something to sit on."
 - Use short sentences, concrete nouns, and clear names for who does what.
 - Keep situations to about 45 words, results to about 30, and answers to 2–8.
+- Answers are button labels: no full stop at the end. Apostrophes and quotes are curly (’ “ ”).
 
 ## How the game reads `script.md`
 
