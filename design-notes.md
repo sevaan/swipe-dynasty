@@ -6,7 +6,18 @@ Sep 25, 2026 · @Sevaan Franks
 
 ## Decisions since the spec
 
-- **Plain language for a casual reader (Sep 27, Sevaan).** The script is being rewritten line by line so a casual reader and gamer understands it at once: what happens first, in everyday words, then at most one easy joke, and nothing to decode. Choices, effects, names and story beats stay the same. C01 and C02 are done as the sample. The rest follow once Sevaan approves the voice. The rule is in CLAUDE.md under "Writing the script".
+- **The play screen is The Card (Sep 27, Sevaan).** Sevaan said the layout "just isn't feeling right" and asked for options to feel, not screenshots. Of five playable prototypes of Aru's life (`prototypes/`), Sevaan chose 1, The Card:
+  - A life is a small face-down deck of nine cards: the character card, six decisions, the reveal and the epitaph. The deck thins as you play, and the reveal's gold edge and the epitaph's black edge show in the stack before they arrive.
+  - A decision card has the workbench picture at the top, the speaker and the situation under it, and the two answers as tear-off tabs along its foot. Tap a tab, or drag the card: it swings on a pivot, the answer stamps down at 30% of its width, and letting go throws it over to show the result on its kraft back. Moving on slides the card away and turns the next one up.
+  - Names and headings use Fraunces; everything read stays in Atkinson Hyperlegible Next.
+  - Built into the game the same day, replacing the layout in the entry "The card is at the bottom" below. The other four prototypes are in the Graveyard, and all five still play at `prototypes/`.
+  - The prototype covered one life, so the rest of the game got the same card language (my calls, open to change):
+    - Each life is its own deck. A new deck falls onto the table for the next life, the proposals, the redirect or an ending, and each era's deck takes that era's colours.
+    - The Archive's lead-in ("No one inherited all of it…") is a card of its own before the first proposal. Each proposal is a card showing that project's first workbench and inventor, with "accept" and "Hear another proposal" as its tabs. The last proposal names both projects on the two halves of its picture, and its tabs are the two projects.
+    - The redirect is a decision card spoken by the Archive. An ending is a short deck of panel cards over that future's empty workbench, the last one gilt. The credits are a card with "Another future" and "Start from the first spark" as tabs.
+    - The title is the deck's own back with the name printed on it. The menu (history, settings) is a sheet of the same paper.
+    - Firelight rises behind the deck as each life goes on, brightest at the reveal. The weather still plays over the sky.
+- **Plain language for a casual reader (Sep 27, Sevaan).** The script is being rewritten line by line so a casual reader and gamer understands it at once: what happens first, in everyday words, then at most one easy joke, and nothing to decode. Choices, effects, names and story beats stay the same. C01 and C02 were the sample Sevaan approved, and the other 32 lives, the callbacks, the proposals and the endings followed the same day. The rule is in CLAUDE.md under "Writing the script".
 - **The complete game script replaces the spec's systems (Sep 27, Sevaan).** `content/script.md` (v1.0) is the whole game, and the game reads it directly: 34 lives, 204 cards, 28 callbacks, five routes, five endings and one redirect. Where it differs from `spec.md`, the script wins:
   - every life plays exactly six cards, with the invention on card four and the legacy on card six, and nothing ends a life early;
   - "danger" is now hidden experimental exposure, which only picks the obituary;
@@ -25,7 +36,7 @@ Sep 25, 2026 · @Sevaan Franks
 - **Milestone 1 first (Sep 26).** Build the spec's Milestone 1, the pottery-to-preservation causal prototype, then stop for Sevaan's playtest against its exit condition.
 - **Danger is hidden (Sep 26, Sevaan).** The engine still tracks it, and reaching 6 still kills, but the screen shows no meter, no "Danger +1" tags and no Fatal marks. This overrides spec §7.1's visible segments, §7.2's visible consequences and §12.1's "Danger remains visible". An answer's description carries the risk in words ("Fast and very hot"), and each risky answer names the death that fits it. The `?dev` panel and the simulator still show Danger.
 - **No phase indicator (Sep 26, Sevaan).** "Investigating · 1 of 4" is gone from the screen, overriding spec §12.1's small phase indicator. The phases still run as written.
-- **The card is at the bottom, with the answers along its foot (Sep 26, Sevaan).**
+- **The card is at the bottom, with the answers along its foot (Sep 26, Sevaan).** Replaced on Sep 27 by The Card (above); kept as the record of what came before.
   - The object on its workbench is a card at the bottom of the screen, under the thumb. The situation sits just above it, and the context stays at the top. This replaces spec §12.1's layer order.
   - The two answers are the card's two halves: the label at the top of each, the description at the bottom, so the small text lines up across both.
   - Tapping an answer chooses it. Dragging the card shows that side's answer and its description across the top of the picture, and the band turns to the accent colour once letting go would choose it. Letting go before then puts the card back.
@@ -460,6 +471,13 @@ Meters: Harvest, Village, Priests, The Neighbours.
 
 Discarded, but kept in case something here comes back.
 
+**Four layout prototypes (Sep 27), not chosen; The Card was.** Each still plays Aru's life at `prototypes/`.
+- **The Notebook:** the inventor's journal. Ruled paper with every line on its rule, a taped-in sketch, a pen that ticks and rings your answer as you drag, the result written in a second ink, and real page turns.
+- **Cinema:** the picture fills the screen and the words play like subtitles, with a camera that moves toward the side you choose, a push-in for the reveal, and the epitaph as end credits over black.
+- **Chat:** the scene arrives as messages from the speaker, with typing dots. You reply with one of two chips, or swipe one like swipe-to-reply, and your choices stay in the thread.
+- **Big Type:** editorial. Huge type, full-width answer rows under a heavy rule that fill with the accent as you drag, and sheets of paper sliding over each other.
+- **Worth borrowing later:** Cinema's end credits, the Notebook's second ink for results, and Chat's trail of past choices.
+
 **The Milestone 1 prototype (Sep 26), replaced by the complete script.** Pottery and provisions as two randomized projects, with observations, recipes, a scene scheduler, callbacks by decision three, failed designs, a Danger track that killed at 6, and two legacy packages per invention. Its content is kept in `content/retired/milestone-1/`; its engine is in git history (the commits before "The complete game script"). Its pottery and food drawings live on in C02 and C03.
 
 **Swipe-only answers (Sep 26), replaced by the answers along the card's foot.** Sevaan tried the card with no answer buttons: you dragged it to read each answer and let go to choose. The buttons came back the same day, after swiping turned out not to work on the iPhone (a touch bug, since fixed). Swiping stays as the second way to answer.
@@ -583,7 +601,12 @@ Updated Sep 27 for the complete script.
   - The save follows the script's section 7: the current view, the choices by card id, inventions, legacies, exposure, interests, the route and the proposal order.
   - A reload on a result shows the stored result and never repeats its effects.
 - **Saves:** an IndexedDB snapshot with a revision check and the previous one kept, under a new key. Beside it sit the post-C14 checkpoint for "Another future" and the endings seen, which outlive a restart. The old prototype save stays untouched under its old key.
-- **Screen:** see the Sep 26 decisions. There's a title screen, the framing panel, a life's arrival, the card, the result with Continue, the reveal, the epitaph, The Archive's proposals, the ending panels and the credits. History lists each life's invention, legacy, obituary and the answers actually chosen.
+- **Screen:** The Card (Sep 27).
+  - `src/ui/table.js` holds the deck and the physics: springs that keep the finger's momentum, a pivot below the card, a 3D turn-over, and cards that slide away. It knows nothing about the story.
+  - `src/ui/faces.js` draws every face from the script, world.json and ui.json.
+  - `src/ui/app.js` maps each engine view to a step: its deck, its place in the deck and its face. It also runs the actions, saves, and holds the menu.
+  - Each life's picture is sized once, from its longest card, so it sits the same on every card of the life.
+  - History lists each life's invention, legacy and obituary, and the answers actually chosen.
 - **Art:**
   - Each era has a palette, skies and a workbench.
   - C01–C03 have drawn workbench states; the other lives show each state's description as an exhibit label until drawn.

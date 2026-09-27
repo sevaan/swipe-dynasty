@@ -1,31 +1,46 @@
-/* One Bright Idea. Phone first, flat like Reigns: every picture is an SVG in
-   content/art (simple shapes, one hard shadow, no outlines), corners are
-   rounded, motion is smooth. Each era sets its own colours on :root. Text
-   stays in a readable font, at readable sizes and contrast: nothing a player
-   needs to read is italic, faded or blinking. The screen's layers follow
-   spec 12.1: context, object, evidence, situation, choices. */
+/* One Bright Idea. Phone first. Every moment of the game is a card dealt
+   from a small deck (design-notes.md, "The play screen is The Card"): cream
+   paper with a fine grain, the workbench picture inset at the top, the words
+   under it, and the answers as tear-off tabs along the foot. Choosing turns
+   the card over; the result is printed on its kraft back. Each era sets its
+   own colours on :root (app.js, from content/world.json). Nothing a player
+   needs to read is italic, faded or blinking. */
 
 :root {
   --bg: #2a1c14;
   --panel: #3b2a1e;
-  --card: #ecd9b4;
+  --paper: #ecd9b4;
   --ink: #2a1c14;
   --text: #f4e7cd;
   --accent: #e8793a;
-  /* Secondary text: at least 6:1 on every sky and panel */
-  --muted: color-mix(in srgb, var(--text) 80%, transparent);
-  /* The line between the card's picture and its answers, and between the answers */
-  --rule: color-mix(in srgb, var(--ink) 55%, transparent);
+  --night: #121828;
   --sky: var(--bg);
+
+  --kraft: color-mix(in srgb, var(--paper) 84%, #7a5530);
+  --tab: color-mix(in srgb, var(--paper) 88%, var(--ink));
+  --ink-soft: color-mix(in srgb, var(--ink) 80%, var(--paper));
+  --text-soft: color-mix(in srgb, var(--text) 74%, var(--bg));
+  --hair: color-mix(in srgb, var(--ink) 17%, transparent);
+  --perf: color-mix(in srgb, var(--ink) 32%, transparent);
+  --ember-edge: color-mix(in srgb, var(--accent) 58%, var(--ink));
+  --gilt: #d7a445;
+  --gilt-hi: #f4d88f;
+  --gilt-lo: #9c6a1c;
+  --mourn: #19120e;
+
+  /* Atkinson Hyperlegible Next (Braille Institute, SIL OFL) for anything
+     read; Fraunces, soft and upright, for names, headings and the stamp */
+  --read: 'Atkinson Hyperlegible Next', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --show: 'Fraunces', ui-serif, Georgia, serif;
   --scale: 1;
-  /* A small hard drop shadow for small text drawn straight on the sky.
-     (Weather also thins out behind text: see setQuiet in src/ui/fx.js.) */
-  --lift: 0 2px 0 rgb(0 0 0 / 45%);
-  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
-  /* Atkinson Hyperlegible Next (Braille Institute, SIL Open Font License) is
-     drawn for legibility: I, l and 1 all differ, and it stays clear at small
-     sizes. Without a connection it falls back to the system font. */
-  --font: "Atkinson Hyperlegible Next", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --story: calc(19px * var(--scale));
+
+  /* Set by table.js from the space on screen */
+  --w: 362px;
+  --h: 620px;
+  --pic: 240px;
+  --r: 20px;
+  --warmth: 0;
   color-scheme: dark;
 }
 
@@ -35,60 +50,45 @@
 [hidden] { display: none !important; }
 
 html, body {
-  height: 100%;
   margin: 0;
+  height: 100%;
+  overflow: hidden;
   overscroll-behavior: none;
   background: var(--sky);
-  color: var(--text);
-  font-family: var(--font);
-  -webkit-font-smoothing: antialiased;
-  -webkit-text-size-adjust: 100%;
-  -webkit-tap-highlight-color: transparent;
 }
 
 body {
   position: fixed;
   inset: 0;
-  overflow: hidden;
-  transition: background-color 900ms ease;
-}
-
-p { margin: 0; }
-
-/* Weather and ambient effects (src/ui/fx.js), behind everything else */
-.fx {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.shake { animation: shake 480ms ease-out; }
-
-@keyframes shake {
-  0%, 100% { transform: translate(0, 0); }
-  20% { transform: translate(-4px, 2px); }
-  40% { transform: translate(4px, -2px); }
-  60% { transform: translate(-3px, -2px); }
-  80% { transform: translate(3px, 2px); }
+  color: var(--text);
+  font: 500 16px/1.4 var(--read);
+  -webkit-font-smoothing: antialiased;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 button {
   font: inherit;
   color: inherit;
+  cursor: pointer;
   touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* Pictures (content/art). Colour art is an image; one-colour glyphs are masks
-   painted in the current text colour, so they follow each era's colours. */
-img.art {
-  display: block;
-  -webkit-user-drag: none;
-  user-select: none;
-}
+:focus { outline: none; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 
+p, h1, h2, h3 { margin: 0; }
+
+img.art { display: block; -webkit-user-drag: none; user-select: none; }
+img.art.broken { visibility: hidden; }
+
+/* One-colour glyphs (content/art/ui) are masks painted in the text colour */
 .glyph {
   display: inline-block;
   flex: none;
@@ -98,547 +98,997 @@ img.art {
   -webkit-mask: var(--art) center / contain no-repeat;
   mask: var(--art) center / contain no-repeat;
 }
+.glyph.missing { opacity: 0.4; }
 
-.app {
-  height: 100vh;
-  height: 100dvh;
-  max-width: 480px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
-  gap: 8px;
-  padding: calc(env(safe-area-inset-top) + 10px) 14px calc(env(safe-area-inset-bottom) + 10px);
-  position: relative;
-  z-index: 1;
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-/* 1. Context: the inventor, the era, and the problem */
-
-.context {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 48px;
-}
-
-.context .who { flex: 1; min-width: 0; }
-.context .line { font-size: calc(1rem * var(--scale)); line-height: 1.25; text-shadow: var(--lift); }
-.context .line strong { font-weight: 800; }
-.context .sep, .context #era { color: var(--muted); }
-.context .problem {
-  margin-top: 2px;
-  font-size: calc(0.86rem * var(--scale));
-  line-height: 1.3;
-  color: var(--muted);
-  text-shadow: var(--lift);
-}
-
-.menu-btn, .close-btn {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 48px;
-  height: 48px;
-  border: 0;
-  border-radius: 14px;
-  background: var(--panel);
-  cursor: pointer;
-}
-
-.menu-btn .glyph { width: 26px; height: 26px; }
-.close-btn { width: 44px; height: 44px; border-radius: 12px; }
-.close-btn .glyph { width: 22px; height: 22px; }
-
-button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-
-/* The play area. The card sits at the bottom, under the thumb, with the
-   situation just above it, so reading and choosing happen in one place; any
-   spare room opens up under the header. Danger and the phase of the life are
-   tracked but not shown (Sevaan, Sep 26). cq units measure the play area. */
-
-.play {
-  container-type: size;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: 10px;
-  min-height: 0;
-}
-
-.play[hidden], .context[hidden] { display: none; }
-
-/* 2. The situation. It keeps its full height and the picture shrinks to make
-   room for it (fitCard in app.js); only when even a small picture wouldn't
-   leave room does it scroll. */
-.situation {
-  flex: 0 0 auto;
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  display: grid;
-  align-content: start;
-  gap: 7px;
-  padding-bottom: 2px;
-}
-
-/* After a choice: the answer that was chosen, above what came of it */
-.situation .kicker {
-  font-size: calc(0.95rem * var(--scale));
-  font-weight: 800;
-  line-height: 1.35;
-  color: var(--accent);
-  text-shadow: var(--lift);
-}
-
-.situation .kicker:empty, .situation .helper:empty, .callbacks:empty { display: none; }
-
-/* A callback: one short narrator line when an earlier life's choice returns */
-.callbacks { display: grid; gap: 6px; }
-.callback {
-  padding: 6px 12px;
-  border-left: 3px solid var(--accent);
-  border-radius: 2px 10px 10px 2px;
-  background: color-mix(in srgb, var(--accent) 14%, transparent);
-  font-size: calc(0.95rem * var(--scale));
-  line-height: 1.4;
-}
-
-/* The first two cards' one-line help */
-.situation .helper {
-  font-size: calc(0.88rem * var(--scale));
-  line-height: 1.4;
-  color: var(--muted);
-  text-shadow: var(--lift);
-}
-
-/* A proposal: The Archive's lead-in, then each project's title and pitch */
-.situation .text .lead { display: block; margin-bottom: 10px; font-size: calc(0.98rem * var(--scale)); color: var(--muted); }
-.situation .text .offer-heading { display: block; margin-bottom: 8px; font-weight: 800; }
-.situation .text .offer { display: block; }
-.situation .text .offer + .offer { margin-top: 10px; }
-.situation .text .offer b { display: block; font-weight: 800; color: var(--accent); }
-.situation .text .question { display: block; margin-top: 10px; font-weight: 700; }
-
-.speaker {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  min-height: 30px;
-  font-size: calc(0.9rem * var(--scale));
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  text-shadow: var(--lift);
-}
-
-.speaker:not(.has) { display: none; }
-
-/* A small portrait of whoever is talking: a crop of their card, around the face */
-.face {
-  position: relative;
-  flex: none;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  overflow: hidden;
-  background: var(--panel);
-}
-
-/* The crop centres the face: portraits put the eyes about 45% of the way down */
-.face img {
+.sr-only {
   position: absolute;
-  width: 250%;
-  left: -75%;
-  top: -92%;
-}
-
-.situation .text {
-  font-size: calc(1.2rem * var(--scale));
-  font-weight: 500;
-  line-height: 1.38;
-  text-wrap: pretty;
-}
-
-/* 3. The stage: the card, at the foot of the play area */
-.stage {
-  flex: none;
-  display: flex;
-  flex-direction: column;
-}
-
-/* The card: the object on its workbench, with the two answers along its
-   foot. Tap an answer, or drag the card: that side's answer comes up across
-   the top of the picture, and letting go past the line chooses it. The whole
-   card moves. */
-.card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  border-radius: 20px;
+  width: 1px;
+  height: 1px;
   overflow: hidden;
-  background: var(--panel);
-  box-shadow: 0 6px 0 rgb(0 0 0 / 30%);
-  touch-action: none;
-  -webkit-touch-callout: none; /* no "Save Image" menu on a long press */
-  cursor: grab;
-  will-change: transform;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
-.card:active { cursor: grabbing; }
-.card:not(.deciding) { cursor: default; }
+/* ---- The sky: the era's colour, darker and cooler toward the top, and
+   firelight that rises behind the deck as the idea catches. The weather
+   (src/ui/fx.js) draws over it. */
 
-/* The picture: square when there's room, shorter when there isn't, and the
-   first thing to give up room (fitCard in app.js sets its height). The art
-   is drawn on a 4:3 frame, and workbenches paint past every edge of it, so
-   any shape from about 2:1 to square still looks finished. The pictures
-   never take the touch themselves: the card does. */
-.bench {
-  position: relative;
-  flex: none;
-  height: 100cqw;
-  overflow: hidden;
+.sky {
+  position: fixed;
+  inset: 0;
   pointer-events: none;
+  background: linear-gradient(to bottom,
+    color-mix(in srgb, var(--night) 72%, var(--sky)) 0%,
+    color-mix(in srgb, var(--night) 30%, var(--sky)) 42%,
+    var(--sky) 78%);
 }
 
-.bench .layer, .bench .marks img {
+.glow {
   position: absolute;
+  left: -40%;
+  right: -40%;
+  bottom: -28%;
+  height: 86%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 30%, transparent), transparent);
+  opacity: var(--warmth);
+  transition: opacity 1.8s ease;
+}
+
+.fx {
+  position: fixed;
   inset: 0;
   width: 100%;
   height: 100%;
-}
-
-.card.bump { animation: bump 420ms var(--ease-out); }
-.card.enter { animation: card-in 300ms var(--ease-out); }
-.card.nudge { animation: nudge 620ms ease-in-out; }
-
-@keyframes bump {
-  35% { transform: scale(1.025); }
-}
-@keyframes card-in {
-  from { transform: translateY(24px) scale(0.94); opacity: 0; }
-}
-@keyframes nudge {
-  25% { transform: translateX(-14px) rotate(-2.5deg); }
-  60% { transform: translateX(12px) rotate(2deg); }
-}
-
-/* The answer being looked at, across the top of the card, flush to the edge
-   that stays on screen. It turns to the accent colour once letting go would
-   choose it. */
-.peek {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  z-index: 2;
-  display: grid;
-  gap: 5px;
-  padding: 14px 18px 15px;
-  background: color-mix(in srgb, var(--ink) 93%, transparent);
-  color: var(--card);
-  opacity: 0;
-  transition: opacity 80ms linear, background-color 120ms linear, color 120ms linear;
   pointer-events: none;
 }
 
-.peek.left { justify-items: end; text-align: right; }
-.peek.right { justify-items: start; text-align: left; }
-.peek .label { display: flex; align-items: center; gap: 9px; font-size: calc(1.12rem * var(--scale)); font-weight: 800; line-height: 1.25; text-wrap: balance; }
-.peek .desc { font-size: calc(0.92rem * var(--scale)); line-height: 1.35; opacity: 0.86; }
-.peek .glyph { width: 20px; height: 20px; }
-.peek .peek.armed { background: var(--accent); color: var(--ink); }
-.peek.armed .desc { opacity: 1; }
-.peek.armed .tag { background: color-mix(in srgb, var(--ink) 16%, transparent); }
+/* ---- The frame: who and when over the deck, and the deck in the middle */
 
-.hand {
-  position: absolute;
-  bottom: 18%;
-  left: 50%;
-  z-index: 3;
-  width: 52px;
-  height: 52px;
-  pointer-events: none;
-  opacity: 0;
-  transform: translateX(-50%);
-  filter: drop-shadow(0 3px 0 rgb(0 0 0 / 25%));
-}
-
-.hand.show { animation: hand 1.8s ease-in-out 500ms infinite; }
-.hand.once { animation: hand 1.8s ease-in-out 1; }
-
-@keyframes hand {
-  0%, 100% { opacity: 0; transform: translateX(-50%); }
-  10% { opacity: 1; }
-  28% { transform: translateX(-170%); opacity: 1; }
-  52% { transform: translateX(70%); opacity: 1; }
-  66% { opacity: 0; transform: translateX(-50%); }
-}
-
-.card.wiggle { animation: wiggle 1.8s ease-in-out 500ms infinite; }
-
-@keyframes wiggle {
-  0%, 62%, 100% { transform: rotate(0); }
-  18% { transform: translateX(-12px) rotate(-3deg); }
-  40% { transform: translateX(12px) rotate(3deg); }
-}
-
-/* The two answers: the card's two halves, each flush to its own side. The
-   label sits at the top and the description at the foot, so the small text
-   lines up across both halves whatever the labels do. */
-.choices {
-  flex: none;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  border-top: 2px solid var(--rule);
-}
-
-.choice {
+.app {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 10px;
-  min-height: 88px;
-  padding: 12px 14px 13px;
-  border: 0;
-  background: transparent;
-  text-align: left;
-  cursor: pointer;
-  transition: background-color 120ms linear;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
-.choice.right { align-items: flex-end; text-align: right; border-left: 2px solid var(--rule); }
-.choice .top { display: grid; gap: 6px; justify-items: start; }
-.choice.right .top { justify-items: end; }
-.choice .label { font-size: calc(1rem * var(--scale)); font-weight: 800; line-height: 1.25; text-wrap: balance; }
-.choice .foot { font-size: calc(0.84rem * var(--scale)); line-height: 1.3; color: var(--muted); text-wrap: balance; }
-
-.choice .tag {
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-size: calc(0.76rem * var(--scale));
-  font-weight: 800;
-  line-height: 1.35;
-  background: color-mix(in srgb, var(--accent) 24%, transparent);
-}
-
-.choice.hot { background: color-mix(in srgb, var(--accent) 26%, transparent); }
-.choice.pressed { background: color-mix(in srgb, var(--accent) 40%, transparent); }
-.choice:focus-visible { outline-offset: -4px; }
-
-/* After a choice, one Continue takes the answers' place */
-.next {
+.top {
   flex: none;
-  min-height: 60px;
-  padding: 12px 16px;
-  border: 0;
-  border-top: 2px solid var(--rule);
-  background: color-mix(in srgb, var(--accent) 22%, transparent);
-  font-size: calc(1rem * var(--scale));
-  font-weight: 800;
-  cursor: pointer;
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) 72px;
+  align-items: center;
+  height: 54px;
+  padding: 2px 10px 0;
 }
-.next[hidden], .choices[hidden] { display: none; }
-.next:focus-visible { outline-offset: -4px; }
 
-/* A workbench state with no drawing yet: its description from the script,
-   set on the bench like an exhibit label (spec 16: deliberate, never a
-   broken picture) */
+.menu-btn {
+  justify-self: start;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-left: -4px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text-soft);
+}
+.menu-btn .glyph { width: 24px; height: 24px; }
+.menu-btn:active { color: var(--text); background: color-mix(in srgb, var(--text) 10%, transparent); }
+
+.context { min-width: 0; text-align: center; }
+.context strong, .context .era {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.context strong { font: 700 calc(15px * var(--scale))/1.2 var(--read); color: var(--text); letter-spacing: 0.01em; }
+.context .era { margin-top: 1px; font: 600 calc(13px * var(--scale))/1.25 var(--read); color: var(--text-soft); }
+
+.pips {
+  justify-self: end;
+  display: flex;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* One pip per decision, drawn as tiny cards */
+.pip {
+  width: 8px;
+  height: 11px;
+  border-radius: 2.5px;
+  background: color-mix(in srgb, var(--text) 22%, transparent);
+  transition: background-color 0.3s, transform 0.35s cubic-bezier(0.3, 1.7, 0.5, 1);
+}
+.pip.done { background: var(--text-soft); }
+.pip.now { background: var(--accent); transform: translateY(-1px) scale(1.2); }
+
+.table {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  padding: 2px 0 14px;
+}
+
+.deck {
+  position: relative;
+  width: var(--w);
+  height: calc(var(--h) + 26px);
+}
+.deck::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  top: 22px;
+  height: calc(var(--h) - 20px);
+  border-radius: var(--r);
+  box-shadow: 0 18px 40px -12px rgb(0 0 0 / 62%), 0 6px 14px -6px rgb(0 0 0 / 40%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.deck.laid::before { opacity: 1; }
+
+/* ---- A card: two faces on a flipper, over its two shadows. The outer
+   element swings on a point below the card; the flipper turns it over. */
+
+.card {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--w);
+  height: var(--h);
+  transform-origin: 50% 150%;
+  perspective: 1400px;
+  touch-action: none;
+  will-change: transform;
+}
+.card.top { cursor: grab; }
+.card.top.held { cursor: grabbing; }
+
+.shade {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r);
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+.shade.far { box-shadow: 0 24px 44px -12px rgb(0 0 0 / 62%), 0 10px 18px -8px rgb(0 0 0 / 34%); opacity: 0; }
+.shade.near { box-shadow: 0 1px 1.5px rgb(0 0 0 / 42%), 0 0 0 1px rgb(0 0 0 / 22%); }
+
+.flipper {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  will-change: transform;
+  transition: scale 90ms ease-out;
+}
+.card.held .flipper { scale: 0.985; }
+
+.face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--r);
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--paper);
+  color: var(--ink);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.face.front { transform: rotateY(0deg); }   /* Safari hides a back face only on a 3D-transformed element */
+.face.back { transform: rotateY(180deg); }
+
+/* Paper: a soft light from the upper left (the art's light), a fine grain,
+   and a very subtle inner border */
+.face::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(130% 75% at 10% 0%, rgb(255 255 255 / 22%), transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.3' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .2 0 0 0 0 .12 0 0 0 0 .05 0 0 0 1.2 -.55'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: auto, 160px 160px;
+  opacity: 0.32;
+  pointer-events: none;
+}
+.sheet {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.sheet::after {
+  content: '';
+  position: absolute;
+  inset: 7px 7px 5px;
+  border-radius: 14px 14px 5px 5px;
+  box-shadow: inset 0 0 0 1px var(--hair);
+  pointer-events: none;
+}
+
+/* The words under the picture: centred in the space it leaves, as card
+   games set short rules text in a fixed box. When even a small picture
+   leaves too little room (a long card at a large text size), they scroll. */
+.words {
+  flex: 0 1 auto;
+  min-height: 0;
+  margin: auto 0;
+  padding-bottom: 14px;
+}
+/* Only words that don't fit scroll (table.js marks them), so everywhere
+   else a touch on the words moves the card, as on the rest of it */
+.words.scrolls {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  scrollbar-width: none;
+}
+.words::-webkit-scrollbar { display: none; }
+.words.more {
+  -webkit-mask: linear-gradient(to bottom, #000 calc(100% - 34px), transparent);
+  mask: linear-gradient(to bottom, #000 calc(100% - 34px), transparent);
+}
+
+/* ---- The workbench picture, inset at the top. The art bleeds past its
+   frame, so any shape from about 2:1 to 4:3 looks finished. On a life's
+   cards it's the same height on every card (--pic); elsewhere it takes
+   what the words leave. */
+
+.pic {
+  position: relative;
+  flex: none;
+  height: var(--pic);
+  margin: 12px 12px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--panel);
+}
+.pic.flex { flex: 1 1 0; height: auto; min-height: 84px; max-height: 232px; }
+.pic { container-type: size; }
+/* The art bleeds to about 2:1. A picture squeezed wider than that (a long
+   card at a large text size) crops the drawing to its workbench instead */
+@container (min-aspect-ratio: 12 / 5) {
+  .pic img[data-depth], .candidate > img { object-fit: cover; object-position: 50% 76%; }
+}
+.pic img[data-depth] {
+  position: absolute;
+  inset: -6px;
+  width: calc(100% + 12px);
+  height: calc(100% + 12px);
+  display: block;
+  pointer-events: none;
+  will-change: transform;
+}
+.pic::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 2px 0 rgb(0 0 0 / 26%), inset 0 0 0 1px rgb(0 0 0 / 22%);
+  pointer-events: none;
+}
+
+/* A state with no drawing yet: its description from the script, set on the
+   bench like an exhibit label (never a broken picture) */
 .label-card {
   position: absolute;
   left: 50%;
   top: 50%;
   z-index: 1;
-  transform: translate(-50%, -50%);
   width: max-content;
-  max-width: 78%;
-  padding: 12px 16px 13px;
+  max-width: 80%;
+  translate: -50% -50%;
+  padding: 10px 14px 11px;
   border-radius: 10px;
-  background: var(--card);
+  background: var(--paper);
   color: var(--ink);
-  box-shadow: 0 4px 0 rgb(0 0 0 / 28%);
-  font-size: calc(0.98rem * var(--scale));
-  font-weight: 700;
-  line-height: 1.3;
+  box-shadow: 0 3px 0 rgb(0 0 0 / 28%);
+  font: 700 calc(15.5px * var(--scale))/1.3 var(--read);
   text-align: center;
   text-wrap: balance;
 }
-.label-card[hidden], .label-card:empty { display: none; }
-.label-card .candidate { display: flex; align-items: center; gap: 10px; text-align: left; font-weight: 800; }
-.label-card .candidate + .candidate { margin-top: 10px; }
-.label-card .candidate small { font-weight: 600; opacity: 0.8; }
+.label-card:empty { display: none; }
 
-/* Portraits: drawn ones, and silhouettes for everyone not drawn yet */
-svg.silhouette { display: block; width: 100%; height: 100%; }
-.portrait { position: relative; overflow: hidden; background: var(--panel); flex: none; }
-.portrait img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.portrait.large { width: 118px; height: 148px; border-radius: 18px; box-shadow: 0 5px 0 rgb(0 0 0 / 28%); }
-.portrait.small { width: 44px; height: 44px; border-radius: 50%; }
-.portrait.small img { width: 250%; height: auto; left: -75%; top: -92%; }
+/* ---- A decision's face */
 
-/* Between lives: the exhibit, the inheritance, a new era, the end */
-
-/* The screen takes the place of the object and the answers; the menu stays
-   reachable above it */
-.screen {
-  grid-row: 2;
-  grid-column: 1;
-  min-height: 0;
+.who {
   display: flex;
-  flex-direction: column;
-  padding: 4px 4px 8px;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: none;
-  text-align: center;
-  cursor: pointer;
-}
-
-.between .context .who { visibility: hidden; }
-
-.screen::-webkit-scrollbar { display: none; }
-.screen[hidden] { display: none; }
-
-/* Centred when it fits; when it doesn't, it starts at the top and scrolls */
-.screen-in {
-  margin-block: auto;
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 12px;
-  animation: fade-in 400ms ease;
+  gap: 10px;
+  margin: 14px 22px 0;
 }
-
-
-/* The completed object, on a museum plinth */
-.exhibit {
+.face-crop {
   position: relative;
-  width: min(84vw, 330px);
-  aspect-ratio: 4 / 3;
-  border-radius: 18px;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
   overflow: hidden;
   background: var(--panel);
-  box-shadow: 0 6px 0 rgb(0 0 0 / 30%);
+  box-shadow: 0 0 0 2px var(--paper), 0 0 0 3px var(--hair);
+}
+.face-crop img { position: absolute; width: 250%; left: -75%; top: -92%; max-width: none; }
+.face-crop svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.who .name {
+  font: 700 calc(18px * var(--scale))/1 var(--show);
+  font-variation-settings: 'SOFT' 50;
+  letter-spacing: 0.01em;
+}
+.who .rule { flex: 1; height: 1px; background: var(--hair); }
+
+.text {
+  margin: 9px 22px 0;
+  font: 500 var(--story)/1.42 var(--read);
+  text-wrap: pretty;
 }
 
-.exhibit img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hint {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  margin: 12px 22px 0;
+  color: var(--ink-soft);
+  font: 600 calc(15px * var(--scale))/1.35 var(--read);
+}
+.hint svg { flex: none; width: 30px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-/* The label beside the exhibit: what you made, how you died, what people did */
-.placard {
-  width: min(88vw, 360px);
+/* The two answers: tear-off tabs along the lower edge, inside the inner
+   border, with a perforation above them and between them */
+.tabs {
+  position: relative;
+  flex: none;
   display: grid;
-  gap: 8px;
-  padding: 16px 18px 18px;
-  border-radius: 16px;
-  background: var(--card);
-  color: var(--ink);
-  text-align: left;
+  grid-template-columns: 1fr 1fr;
+  margin: 0;
+  border-radius: 0 0 var(--r) var(--r);
+  background: var(--tab);
+  box-shadow: inset 0 1.5px 0 rgb(0 0 0 / 5%);
+}
+.tabs::before,
+.tabs:not(.one)::after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+}
+.tabs::before {
+  left: 7px;
+  right: 7px;
+  top: -2px;
+  height: 4px;
+  background: radial-gradient(circle, var(--perf) 1.3px, transparent 1.8px) 0 50% / 8px 4px repeat-x;
+}
+.tabs:not(.one)::after {
+  left: calc(50% - 2px);
+  top: 8px;
+  bottom: 8px;
+  width: 4px;
+  background: radial-gradient(circle, var(--perf) 1.3px, transparent 1.8px) 50% 0 / 4px 8px repeat-y;
 }
 
-.placard .name { font-size: calc(1.8rem * var(--scale)); font-weight: 800; line-height: 1.05; }
-.placard .made { font-size: calc(1.15rem * var(--scale)); font-weight: 800; line-height: 1.3; }
-.placard .ended { font-size: calc(1rem * var(--scale)); line-height: 1.4; }
-.placard .legacy { font-size: calc(1rem * var(--scale)); line-height: 1.4; padding-top: 8px; border-top: 2px solid color-mix(in srgb, var(--ink) 15%, transparent); }
-
-
-.tag {
-  display: inline-block;
-  white-space: nowrap;
-  padding: 5px 12px;
-  border-radius: 999px;
-  font-size: calc(0.82rem * var(--scale));
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  background: color-mix(in srgb, var(--text) 18%, transparent);
-}
-
-
-
-.screen .kicker {
-  font-size: calc(0.8rem * var(--scale));
-  font-weight: 800;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--muted);
-  text-shadow: var(--lift);
-}
-
-.screen .statement {
-  max-width: 19em;
-  font-size: calc(1.45rem * var(--scale));
-  font-weight: 600;
-  line-height: 1.34;
-  text-wrap: balance;
-}
-
-.big {
-  font-size: calc(2rem * var(--scale));
-  font-weight: 800;
-  line-height: 1.1;
-}
-
-
-.screen .scene {
-  max-width: 20em;
-  font-size: calc(1.15rem * var(--scale));
-  font-weight: 500;
-  line-height: 1.4;
-  text-wrap: balance;
-}
-
-/* The words hold still; a small arrow after them blinks */
-
-
-/* The buttons that move a screen along: large, with their own words */
-.screen-actions { display: grid; gap: 10px; width: min(100%, 340px); margin-top: 8px; }
-.btn-screen {
-  min-height: 54px;
-  padding: 12px 18px;
+.tab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 74px;
+  margin: 0;
+  padding: 12px 12px 15px;
   border: 0;
-  border-radius: 14px;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  font: 700 calc(18px * var(--scale))/1.22 var(--read);
+  text-align: left;
+  overflow: hidden;
+  isolation: isolate;
+}
+.tab:focus-visible { outline-offset: -5px; }
+.tab.left { border-bottom-left-radius: var(--r); }
+.tab.right { justify-content: flex-end; text-align: right; border-bottom-right-radius: var(--r); }
+.tab .label { text-wrap: balance; }
+.tab .hold { white-space: nowrap; }
+.tab .arrow {
+  display: inline-block;
+  width: 17px;
+  height: 17px;
+  vertical-align: -2.5px;
+  transition: translate 140ms ease-out;
+}
+.tab.left .arrow { margin-right: 4px; }
+.tab.right .arrow { margin-left: 4px; }
+.tab::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgb(0 0 0 / 8%);
+  opacity: 0;
+  transition: opacity 90ms ease-out;
+}
+.tab:active::before { opacity: 1; transition: none; }
+
+/* The ember fill that grows with the drag, from the perforation outward */
+.tab .fill {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: 100% 50%;
+  will-change: transform;
+}
+.tab.right .fill { transform-origin: 0 50%; }
+.tab.left.lit .arrow { translate: -3px 0; }
+.tab.right.lit .arrow { translate: 3px 0; }
+
+/* A single tab across the foot: Continue, and the special cards' actions */
+.tabs.one { grid-template-columns: 1fr; background: none; box-shadow: none; }
+.tab.wide {
+  justify-content: center;
+  gap: 8px;
+  min-height: 60px;
+  border-radius: 0 0 var(--r) var(--r);
+  background: var(--tab);
+  font-weight: 800;
+  text-align: center;
+}
+.tab.wide .arrow { margin: 0; }
+.tab.go { background: var(--accent); }
+.tab.gold { background: var(--gilt); color: #2a1c0a; }
+.tab.mourn { background: var(--mourn); color: var(--paper); }
+.tab.mourn::before { background: rgb(255 255 255 / 10%); }
+
+/* Two actions that aren't a decision (the credits) */
+.tabs.acts .tab { min-height: 64px; font-weight: 800; }
+.tabs.acts .tab.go { gap: 6px; }
+
+/* The stamp: the answer being chosen, hovering down toward the top of the
+   card as you drag, and thumping onto it once letting go would choose */
+.stamp {
+  position: absolute;
+  top: 22px;
+  left: 18px;
+  z-index: 4;
+  max-width: 58%;
+  opacity: 0;
+  pointer-events: none;
+  transform-origin: 20% 50%;
+  will-change: transform, opacity;
+}
+.stamp.on-right { left: auto; right: 18px; transform-origin: 80% 50%; }
+.stamp-in {
+  display: block;
+  padding: 7px 11px 8px;
+  border: 2.5px solid var(--accent);
+  border-radius: 9px;
+  background: var(--paper);
+  color: var(--ink);
+  font: 700 calc(18px * var(--scale))/1.14 var(--show);
+  font-variation-settings: 'SOFT' 50;
+  text-wrap: balance;
+  box-shadow: 0 16px 24px -10px rgb(0 0 0 / 60%);
+}
+.stamp.on-right .stamp-in { text-align: right; }
+.stamp.inked .stamp-in {
+  background: var(--accent);
+  border-color: var(--ember-edge);
+  box-shadow: 0 1px 0 rgb(0 0 0 / 30%);
+  animation: thunk 220ms cubic-bezier(0.3, 1.9, 0.5, 1);
+}
+@keyframes thunk { from { scale: 1.12; } }
+
+/* ---- A result: the back of the card, kraft paper with a double rule */
+
+.face.back.result { background: var(--kraft); }
+.face.result .sheet::after { box-shadow: inset 0 0 0 1px var(--hair), inset 0 0 0 4px var(--kraft), inset 0 0 0 5px var(--hair); }
+.face.result .words { margin: 0; padding-bottom: 4px; }
+.spare {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  margin: 16px 16px 14px;
+  container-type: size;
+}
+.spare .field {
+  position: absolute;
+  inset: 0;
+  border-radius: 9px;
+  background:
+    repeating-linear-gradient(45deg, transparent 0 11px, rgb(60 36 16 / 8%) 11px 12.5px),
+    repeating-linear-gradient(-45deg, transparent 0 11px, rgb(60 36 16 / 8%) 11px 12.5px);
+  -webkit-mask: radial-gradient(closest-side, #000 55%, transparent);
+  mask: radial-gradient(closest-side, #000 55%, transparent);
+}
+.spare .emblem {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 54px;
+  height: 54px;
+  translate: -50% -50%;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--kraft);
+  box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--ink) 26%, transparent), 0 0 0 6px var(--kraft), 0 0 0 7px color-mix(in srgb, var(--ink) 14%, transparent);
+}
+.spare .emblem svg { width: 62%; height: 62%; }
+@container (max-height: 56px) { .spare .field { display: none; } }
+@container (max-height: 100px) { .spare .emblem { display: none; } }
+
+.chosen {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 16px 22px 0;
+  font: 700 calc(23px * var(--scale))/1.16 var(--show);
+  font-variation-settings: 'SOFT' 50;
+  text-wrap: balance;
+}
+.chosen .mark {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-top: -1px;
+  border-radius: 50%;
   background: var(--accent);
   color: var(--ink);
-  font-size: calc(1.02rem * var(--scale));
-  font-weight: 800;
-  cursor: pointer;
-  box-shadow: 0 4px 0 rgb(0 0 0 / 28%);
+  box-shadow: 0 1.5px 0 var(--ember-edge);
 }
-.btn-screen.quiet { background: var(--panel); color: var(--text); }
+.chosen .mark svg { width: 18px; height: 18px; }
 
-.title-screen .game-title { margin: 0; font-size: calc(2.6rem * var(--scale)); font-weight: 800; line-height: 1.05; letter-spacing: 0.01em; }
-.title-screen .tagline { max-width: 20em; font-size: calc(1.1rem * var(--scale)); line-height: 1.4; color: var(--muted); text-wrap: balance; }
+/* When an earlier life's choice comes back: a slip of paper pinned under
+   the result */
+.callback {
+  margin: 12px 18px 0;
+  padding: 9px 12px 10px;
+  border-left: 3px solid var(--accent);
+  border-radius: 3px 10px 10px 3px;
+  background: color-mix(in srgb, var(--paper) 70%, var(--kraft));
+  font: 600 calc(16px * var(--scale))/1.4 var(--read);
+  text-wrap: pretty;
+}
 
-.arrival .name { font-size: calc(1.9rem * var(--scale)); font-weight: 800; line-height: 1.1; }
-.arrival .role { font-size: calc(1rem * var(--scale)); color: var(--muted); margin-top: -6px; }
-.arrival .want { max-width: 22em; padding: 10px 14px; border-radius: 12px; background: color-mix(in srgb, var(--accent) 16%, transparent); font-size: calc(1.02rem * var(--scale)); font-weight: 700; line-height: 1.4; }
-.arrival .want span { color: var(--accent); }
+.face.result .tab.on { background: color-mix(in srgb, var(--kraft) 86%, var(--ink)); }
 
-.reveal .first { font-size: calc(1rem * var(--scale)); font-weight: 700; color: var(--accent); }
+/* ---- The deck's backs: kraft with a diamond lattice and a spark */
 
-.ending .dots { display: flex; gap: 6px; justify-content: center; }
-.ending .dots span { width: 7px; height: 7px; border-radius: 50%; background: color-mix(in srgb, var(--text) 30%, transparent); }
-.ending .dots span.on { background: var(--text); }
+.back-art {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background:
+    repeating-linear-gradient(45deg, transparent 0 11px, rgb(60 36 16 / 9%) 11px 12.5px),
+    repeating-linear-gradient(-45deg, transparent 0 11px, rgb(60 36 16 / 9%) 11px 12.5px),
+    var(--kraft);
+}
+.back-art::before {
+  content: '';
+  position: absolute;
+  inset: 9px;
+  border-radius: 13px;
+  box-shadow: 0 0 0 9px var(--kraft), inset 0 0 0 1.5px color-mix(in srgb, var(--ink) 30%, transparent), inset 0 0 0 5px var(--kraft), inset 0 0 0 6px color-mix(in srgb, var(--ink) 18%, transparent);
+}
+.back-art .emblem {
+  position: relative;
+  width: 34%;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--kraft);
+  box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--ink) 30%, transparent), 0 0 0 7px var(--kraft), 0 0 0 8px color-mix(in srgb, var(--ink) 18%, transparent);
+}
+.back-art .emblem svg { width: 64%; height: 64%; }
 
-.credits .big + .scene { margin-top: -4px; }
+.v-gilt .back-art { background: repeating-linear-gradient(45deg, transparent 0 11px, rgb(120 70 10 / 12%) 11px 12.5px), repeating-linear-gradient(-45deg, transparent 0 11px, rgb(120 70 10 / 12%) 11px 12.5px), var(--kraft); }
+.v-gilt .back-art::after,
+.face.reveal .gilt {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--gilt-lo), inset 0 0 0 8px var(--gilt), inset 0 0 0 10px var(--gilt-hi), inset 0 0 0 11px var(--gilt-lo);
+  pointer-events: none;
+}
 
-@keyframes fade-in { from { opacity: 0; } }
+.v-mourn .back-art { background: repeating-linear-gradient(45deg, transparent 0 11px, rgb(255 240 210 / 6%) 11px 12.5px), repeating-linear-gradient(-45deg, transparent 0 11px, rgb(255 240 210 / 6%) 11px 12.5px), var(--mourn); }
+.v-mourn .back-art::before { box-shadow: 0 0 0 9px var(--mourn), inset 0 0 0 1.5px color-mix(in srgb, var(--paper) 45%, transparent); }
+.v-mourn .back-art .emblem { background: var(--mourn); box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--paper) 45%, transparent), 0 0 0 7px var(--mourn), 0 0 0 8px color-mix(in srgb, var(--paper) 25%, transparent); }
 
-/* Menu panel */
+/* People without a drawing yet: a silhouette in a colour of its own */
+svg.silhouette { display: block; }
+
+/* ---- The character card */
+
+.face.arrival { text-align: center; }
+.portrait {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 90px;
+  max-height: 250px;
+  margin: 12px 12px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #607595;
+}
+.portrait img, .portrait svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.portrait img { object-fit: cover; object-position: 50% 26%; }
+.portrait::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 2px 0 rgb(0 0 0 / 22%), inset 0 0 0 1px rgb(0 0 0 / 22%);
+}
+.chip {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+  max-width: calc(100% - 20px);
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  font: 700 calc(13px * var(--scale))/1.1 var(--read);
+  letter-spacing: 0.02em;
+  box-shadow: 0 1.5px 0 rgb(0 0 0 / 25%);
+}
+.plate {
+  position: relative;
+  align-self: center;
+  max-width: calc(100% - 40px);
+  margin: -26px 0 0;
+  padding: 9px 24px 7px;
+  border-radius: 14px 14px 0 0;
+  background: var(--paper);
+  font: 800 calc(38px * var(--scale))/1 var(--show);
+  font-variation-settings: 'SOFT' 100;
+  letter-spacing: 0.005em;
+  text-wrap: balance;
+}
+.role {
+  margin: 2px 22px 0;
+  color: var(--ink-soft);
+  font: 600 calc(16px * var(--scale))/1.3 var(--read);
+}
+.face.arrival .words { margin: 0; padding-bottom: 0; }
+.face.arrival .text { margin-top: 12px; text-align: left; }
+.want {
+  margin: 12px 14px 18px;
+  padding: 10px 13px 11px;
+  border-radius: 11px;
+  background: var(--kraft);
+  font: 700 calc(18px * var(--scale))/1.3 var(--read);
+  text-align: left;
+}
+.want .pre {
+  display: block;
+  margin-bottom: 3px;
+  font: 800 calc(12.5px * var(--scale))/1.2 var(--read);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ---- The reveal: gilt edges, and one pass of light along them */
+
+.face.reveal { text-align: center; }
+.face.reveal .gilt::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 11px;
+  background: linear-gradient(115deg, transparent 38%, rgb(255 250 230 / 85%) 50%, transparent 62%) no-repeat;
+  background-size: 300% 100%;
+  background-position: 100% 0;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  opacity: 0;
+}
+.card.shine .face.reveal .gilt::after { animation: sheen 1300ms ease-in-out 120ms 1 both; }
+@keyframes sheen {
+  0% { background-position: 100% 0; opacity: 1; }
+  100% { background-position: 0% 0; opacity: 1; }
+}
+.kicker {
+  margin: 28px 26px 0;
+  font: 700 calc(22px * var(--scale))/1.15 var(--show);
+  font-variation-settings: 'SOFT' 60;
+  text-wrap: balance;
+}
+.face.reveal .pic { margin: 14px 22px 0; }
+.face.reveal .words { margin: 0; padding-bottom: 12px; }
+.invention {
+  margin: 16px 24px 0;
+  font: 800 calc(29px * var(--scale))/1.08 var(--show);
+  font-variation-settings: 'SOFT' 100;
+  text-wrap: balance;
+}
+.face.reveal .text { margin: 8px 26px 0; text-align: center; text-wrap: balance; }
+.first {
+  margin: 10px 26px 0;
+  font: 700 calc(17px * var(--scale))/1.3 var(--show);
+  font-variation-settings: 'SOFT' 60;
+  color: var(--ink-soft);
+}
+.face.reveal .tabs { margin: auto 15px 15px; border-radius: 3px 3px 8px 8px; }
+.face.reveal .tab.wide { border-radius: 3px 3px 8px 8px; }
+
+/* ---- The epitaph: a memorial card with a dark border */
+
+.face.epitaph { text-align: center; }
+.face.epitaph::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 13px var(--mourn), inset 0 0 0 16px var(--paper), inset 0 0 0 17px var(--mourn);
+}
+.cameo {
+  position: relative;
+  flex: 0 1000 130px; /* gives up its room before the words would have to scroll */
+  align-self: center;
+  width: auto;
+  height: 130px;
+  min-height: 64px;
+  aspect-ratio: 104 / 130;
+  margin-top: 34px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #607595;
+  box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--mourn);
+}
+.cameo img { position: absolute; width: 176%; left: -38%; top: -26%; max-width: none; pointer-events: none; }
+.cameo svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.face.epitaph .words { margin: 0; padding: 0 0 12px; }
+.face.epitaph .name {
+  margin: 16px 26px 0;
+  font: 800 calc(34px * var(--scale))/1 var(--show);
+  font-variation-settings: 'SOFT' 100;
+}
+.invented {
+  margin: 8px 30px 0;
+  font: 700 calc(19px * var(--scale))/1.25 var(--show);
+  font-variation-settings: 'SOFT' 60;
+  text-wrap: balance;
+}
+.orn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 14px 0 2px;
+}
+.orn::before, .orn::after { content: ''; width: 42px; height: 1px; background: color-mix(in srgb, var(--ink) 35%, transparent); }
+.orn i { width: 6px; height: 6px; rotate: 45deg; background: var(--ink); }
+.face.epitaph .text { margin: 10px 30px 0; text-align: center; text-wrap: balance; }
+.face.epitaph .legacy { font-weight: 700; }
+.face.epitaph .tabs { margin: auto 21px 21px; border-radius: 2px; }
+.face.epitaph .tabs::before { left: 2px; right: 2px; }
+.face.epitaph .tab.wide { border-radius: 2px; }
+
+/* ---- The Archive: its lead-in, the proposals and the redirect */
+
+.archive-art {
+  flex: 1 1 0;
+  min-height: 84px;
+  max-height: 200px;
+  margin: 12px 12px 0;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--panel);
+}
+.archive-art svg { width: min(34%, 110px); height: auto; aspect-ratio: 1; border-radius: 18px; box-shadow: 0 3px 0 rgb(0 0 0 / 30%); }
+.face.transition .words { margin: 0 0 auto; }
+
+/* A project: its first workbench, with the inventor who'd take it up */
+.candidate { position: absolute; inset: 0; overflow: hidden; }
+.candidate > img { position: absolute; inset: -6px; width: calc(100% + 12px); height: calc(100% + 12px); pointer-events: none; }
+.twin .candidate.l { right: 50%; }
+.twin .candidate.r { left: 50%; box-shadow: inset 2px 0 0 rgb(0 0 0 / 30%); }
+.candidate .person {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100% - 20px);
+  padding: 4px 12px 4px 4px;
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 1.5px 0 rgb(0 0 0 / 25%);
+}
+.candidate .person .face-crop { width: 34px; height: 34px; box-shadow: none; }
+.candidate .about { min-width: 0; text-align: left; }
+.candidate .about b, .candidate .about small { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.candidate .about b { font: 700 calc(14px * var(--scale))/1.2 var(--read); }
+.candidate .about small { font: 600 calc(12.5px * var(--scale))/1.2 var(--read); color: var(--ink-soft); }
+.twin .candidate .about small { display: none; }
+.twin .candidate.r .person { left: auto; right: 10px; }
+
+.offer-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 10px 22px 0;
+  font: 700 calc(24px * var(--scale))/1.12 var(--show);
+  font-variation-settings: 'SOFT' 60;
+  text-wrap: balance;
+}
+.offer-title .mark { flex: none; display: grid; place-items: center; width: 24px; height: 24px; margin-top: 1px; border-radius: 50%; background: var(--accent); color: var(--ink); }
+.offer-title .mark svg { width: 15px; height: 15px; }
+.question { margin: 10px 22px 0; font: 700 var(--story)/1.35 var(--read); }
+.lead { display: flex; align-items: center; gap: 10px; margin: 14px 22px 0; font: 700 calc(17px * var(--scale))/1.3 var(--read); }
+.lead .face-crop { width: 32px; height: 32px; }
+/* The last proposal: two projects, each named on its half of the picture
+   and pointing to its own tab */
+.route .text { margin-top: 8px; font-size: calc(18px * var(--scale)); }
+.route.r .text { text-align: right; }
+.candidate .person.named { gap: 6px; padding: 5px 11px; font: 700 calc(14px * var(--scale))/1.2 var(--read); white-space: normal; text-wrap: balance; }
+.candidate .person.named b { font-weight: 800; }
+.candidate .person.named .mark { flex: none; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); }
+.candidate .person.named .mark svg { width: 13px; height: 13px; }
+.twin .candidate .person.named { max-width: calc(100% - 14px); left: 7px; bottom: 7px; }
+.twin .candidate.r .person.named { left: auto; right: 7px; }
+/* A project set aside, on the back of its card */
+.pic.set-aside .candidate > img { filter: saturate(0.45) brightness(0.8); }
+.face.result .pic.flex { flex: 0 1 auto; height: calc(var(--w) * 0.42); }
+
+/* ---- The ending's panels, the framing, the credits and the title */
+
+.emblem-top {
+  flex: none;
+  align-self: center;
+  width: 64px;
+  height: 64px;
+  margin-top: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--kraft);
+  box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--ink) 26%, transparent), 0 0 0 7px var(--paper), 0 0 0 8px color-mix(in srgb, var(--ink) 14%, transparent);
+}
+.emblem-top.big { width: 84px; height: 84px; margin-top: 38px; }
+.emblem-top svg { width: 60%; height: 60%; }
+
+.face.ending, .face.intro, .face.credits, .face.title { text-align: center; }
+.face.ending .words { padding: 16px 0; }
+.face.ending .kicker { margin: 0 26px 12px; font: 800 calc(13px * var(--scale))/1.25 var(--read); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); }
+.statement {
+  margin: 0 26px;
+  font: 600 calc(22px * var(--scale))/1.38 var(--read);
+  text-wrap: balance;
+}
+.face.intro .statement { font: 700 calc(27px * var(--scale))/1.24 var(--show); font-variation-settings: 'SOFT' 80; }
+.face.ending .tabs, .face.intro .tabs { margin: 0; }
+
+.game-title {
+  margin: 0 22px;
+  font: 800 calc(40px * var(--scale))/1.04 var(--show);
+  font-variation-settings: 'SOFT' 100;
+  letter-spacing: 0.005em;
+  text-wrap: balance;
+}
+.face.credits .game-title { font-size: calc(34px * var(--scale)); }
+.face.credits .text, .tagline { margin: 12px 26px 0; text-wrap: balance; }
+.tagline { font: 600 calc(19px * var(--scale))/1.38 var(--read); }
+.note { margin: 14px 24px 0; padding: 10px 12px; border-radius: 10px; background: color-mix(in srgb, var(--paper) 55%, transparent); font: 600 calc(15px * var(--scale))/1.4 var(--read); }
+.links { display: flex; justify-content: center; align-items: center; gap: 6px; margin: 16px 20px 0; color: var(--ink-soft); }
+.link {
+  min-height: 44px;
+  padding: 0 8px;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: 700 calc(15px * var(--scale))/1.2 var(--read);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+/* The title: the deck's own back, with the name printed on it */
+.face.title { background: var(--kraft); }
+.title-art {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    repeating-linear-gradient(45deg, transparent 0 11px, rgb(60 36 16 / 8%) 11px 12.5px),
+    repeating-linear-gradient(-45deg, transparent 0 11px, rgb(60 36 16 / 8%) 11px 12.5px);
+  -webkit-mask: radial-gradient(120% 70% at 50% 45%, transparent 38%, #000 80%);
+  mask: radial-gradient(120% 70% at 50% 45%, transparent 38%, #000 80%);
+}
+.face.title .sheet::after { box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--ink) 30%, transparent), inset 0 0 0 5px var(--kraft), inset 0 0 0 6px color-mix(in srgb, var(--ink) 18%, transparent); }
+.face.title .emblem-top { box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--ink) 30%, transparent), 0 0 0 7px var(--kraft), 0 0 0 8px color-mix(in srgb, var(--ink) 18%, transparent); }
+.face.title .tabs { margin: 0; }
+
+/* ---- Short screens (Safari with its toolbars): tighter, never smaller than 18px */
+
+.short { --story: calc(18px * var(--scale)); }
+.short .who { margin-top: 11px; }
+.short .text { margin-top: 7px; }
+.short .tab { min-height: 64px; padding-top: 10px; padding-bottom: 12px; }
+.short .tab.wide { min-height: 54px; }
+.short .chosen { margin-top: 13px; font-size: calc(22px * var(--scale)); }
+.short .plate { font-size: calc(34px * var(--scale)); }
+.short .want { margin-top: 10px; margin-bottom: 13px; padding-top: 8px; padding-bottom: 9px; }
+.short .kicker { margin-top: 22px; }
+.short .invention { margin-top: 12px; font-size: calc(27px * var(--scale)); }
+.short .cameo { flex-basis: 104px; height: 104px; margin-top: 28px; }
+.short .face.epitaph .name { margin-top: 12px; font-size: calc(31px * var(--scale)); }
+.short .orn { margin-top: 10px; }
+.short .face.epitaph .text { margin-top: 8px; }
+.short .emblem-top { margin-top: 22px; }
+.short .emblem-top.big { width: 70px; height: 70px; margin-top: 26px; }
+.short .statement { font-size: calc(20px * var(--scale)); }
+.short .face.intro .statement { font-size: calc(24px * var(--scale)); }
+.short .game-title { font-size: calc(36px * var(--scale)); }
+.short .callback { margin-top: 9px; }
+
+/* Too long for the card even with a small picture: the words scroll, and
+   the result's spare room goes */
+.tight .spare { display: none; }
+.tight .face.result .words { flex: 1 1 auto; }
+
+/* ---- The menu: Your history and Settings, on a sheet of the same paper */
 
 .panel {
   position: fixed;
   inset: 0;
   z-index: 20;
-  background: var(--bg);
-  display: grid;
-  grid-template-rows: auto auto 1fr;
-  max-width: 480px;
-  margin: 0 auto;
-  padding: calc(env(safe-area-inset-top) + 10px) 16px calc(env(safe-area-inset-bottom) + 10px);
-  animation: fade-in 200ms ease;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding-top: calc(env(safe-area-inset-top) + 14px);
+  background: rgb(0 0 0 / 46%);
+  animation: fade-in 180ms ease;
+  touch-action: auto;
 }
-
-.panel[hidden] { display: none; }
+.panel-in {
+  width: min(100%, 480px);
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  padding: 12px 16px calc(env(safe-area-inset-bottom) + 10px);
+  border-radius: 20px 20px 0 0;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 -12px 34px rgb(0 0 0 / 42%);
+  animation: sheet-up 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@keyframes sheet-up { from { translate: 0 40px; opacity: 0; } }
+@keyframes fade-in { from { opacity: 0; } }
 
 .panel-head {
   display: flex;
@@ -646,46 +1096,47 @@ svg.silhouette { display: block; width: 100%; height: 100%; }
   justify-content: space-between;
   min-height: 48px;
 }
-
-.panel-head h2 { margin: 0; font-size: calc(1.25rem * var(--scale)); letter-spacing: 0.02em; }
-
-.tabs {
+.panel-head h2 { font: 800 calc(24px * var(--scale))/1.1 var(--show); font-variation-settings: 'SOFT' 80; }
+.close-btn {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
-  margin: 6px 0 10px;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--ink) 9%, transparent);
+  color: var(--ink);
 }
+.close-btn .glyph { width: 20px; height: 20px; }
 
-.tabs button {
+.panel-tabs { display: grid; gap: 6px; margin: 6px 0 12px; }
+.panel-tabs button {
   min-height: 44px;
   border: 0;
   border-radius: 12px;
-  background: var(--panel);
-  font-size: calc(0.86rem * var(--scale));
-  font-weight: 800;
-  cursor: pointer;
+  background: color-mix(in srgb, var(--ink) 9%, transparent);
+  color: var(--ink);
+  font: 800 calc(15px * var(--scale))/1.2 var(--read);
 }
-
-.tabs button[aria-selected="true"] { background: var(--accent); color: var(--ink); }
+.panel-tabs button[aria-selected="true"] { background: var(--accent); }
 
 .panel-body {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
+  touch-action: pan-y;
   user-select: text;
   -webkit-user-select: text;
   padding-bottom: 20px;
 }
-
 .panel-body h3 {
   margin: 20px 0 8px;
-  font-size: calc(0.82rem * var(--scale));
+  font: 800 calc(13px * var(--scale))/1.2 var(--read);
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--ink-soft);
 }
-
-.panel-body .summary { color: var(--muted); font-size: calc(0.95rem * var(--scale)); margin: 4px 0 0; line-height: 1.4; }
+.panel-body .summary { margin: 4px 0 0; color: var(--ink-soft); font: 600 calc(16px * var(--scale))/1.4 var(--read); }
 
 .item {
   display: grid;
@@ -694,28 +1145,24 @@ svg.silhouette { display: block; width: 100%; height: 100%; }
   padding: 12px 14px;
   margin-bottom: 8px;
   border-radius: 14px;
-  background: var(--panel);
-  font-size: calc(1rem * var(--scale));
-  line-height: 1.4;
+  background: var(--tab);
+  font: 500 calc(16px * var(--scale))/1.4 var(--read);
 }
-
-.item .pic { grid-row: span 3; align-self: center; position: relative; width: 64px; height: 48px; border-radius: 8px; overflow: hidden; background: color-mix(in srgb, var(--text) 8%, transparent); }
+.item .pic { grid-row: span 3; align-self: center; position: relative; width: 64px; height: 48px; margin: 0; border-radius: 8px; overflow: hidden; background: var(--panel); flex: none; }
 .item .pic img { position: absolute; inset: 0; width: 100%; height: 100%; }
 .item .title { font-weight: 800; }
-.item .body { color: var(--muted); text-wrap: pretty; }
-.item .link { font-size: calc(0.86rem * var(--scale)); color: var(--muted); }
-.item .link b { color: var(--text); }
-
+.item .body { color: var(--ink-soft); text-wrap: pretty; }
+.item .link { min-height: 0; padding: 0; font-size: calc(14px * var(--scale)); color: var(--ink-soft); text-decoration: none; }
 
 details.item.life { display: block; }
 details.item.life summary { display: flex; align-items: center; gap: 14px; cursor: pointer; list-style: none; }
 details.item.life summary::-webkit-details-marker { display: none; }
 details.item.life .about { min-width: 0; }
-details.item.life .by { font-size: calc(0.88rem * var(--scale)); color: var(--muted); }
+details.item.life .by { font-size: calc(14px * var(--scale)); color: var(--ink-soft); }
 details.item.life[open] summary { margin-bottom: 8px; }
 details.item.life .body, details.item.life .link { margin-top: 6px; }
-ol.chosen { margin: 10px 0 0; padding-left: 20px; font-size: calc(0.9rem * var(--scale)); line-height: 1.45; }
-ol.chosen li span { text-transform: capitalize; color: var(--muted); }
+ol.chosen { margin: 10px 0 0; padding-left: 20px; font-size: calc(14.5px * var(--scale)); line-height: 1.45; }
+ol.chosen li span { text-transform: capitalize; color: var(--ink-soft); }
 ol.chosen li span::after { content: ':'; }
 
 .row {
@@ -723,66 +1170,74 @@ ol.chosen li span::after { content: ':'; }
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 12px 14px;
+  padding: 10px 12px 10px 14px;
   margin-bottom: 8px;
   border-radius: 14px;
-  background: var(--panel);
-  font-size: calc(0.95rem * var(--scale));
+  background: var(--tab);
+  font: 700 calc(15.5px * var(--scale))/1.3 var(--read);
 }
-
 .seg { display: flex; gap: 4px; }
-
 .seg button, .btn {
-  min-height: 40px;
+  min-height: 44px;
   min-width: 44px;
   padding: 0 14px;
   border: 0;
   border-radius: 10px;
-  background: color-mix(in srgb, var(--text) 14%, transparent);
-  font-weight: 800;
-  cursor: pointer;
+  background: color-mix(in srgb, var(--ink) 10%, transparent);
+  color: var(--ink);
+  font: 800 calc(15px * var(--scale))/1 var(--read);
 }
-
-.seg button[aria-pressed="true"] { background: var(--accent); color: var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--accent); }
 .btn.danger { background: #8e2f24; color: #fff; }
 
 textarea.save-box {
   width: 100%;
   min-height: 90px;
   margin-top: 8px;
+  padding: 10px;
   border: 0;
   border-radius: 10px;
-  padding: 10px;
-  background: color-mix(in srgb, var(--text) 10%, transparent);
-  color: var(--text);
+  background: color-mix(in srgb, var(--ink) 8%, transparent);
+  color: var(--ink);
   font: 0.75rem ui-monospace, Menlo, monospace;
 }
 
-.fine { color: var(--muted); font-size: calc(0.88rem * var(--scale)); line-height: 1.45; }
-.panel a { color: var(--text); font-weight: 700; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.fine { color: var(--ink-soft); font: 500 calc(14.5px * var(--scale))/1.45 var(--read); }
+.panel a { color: var(--ink); font-weight: 700; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
 
-/* A picture that didn't load shows as a question mark, or not at all */
-.glyph.missing { opacity: 0.4; }
-img.art.broken { visibility: hidden; }
+.dev-actions { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.dev-actions select { min-height: 44px; max-width: 100%; border-radius: 10px; }
+.dev { font: 0.72rem/1.4 ui-monospace, Menlo, monospace; white-space: pre-wrap; word-break: break-word; }
 
-/* Banner and errors */
+.dev-btn {
+  position: fixed;
+  left: 8px;
+  bottom: calc(env(safe-area-inset-bottom) + 6px);
+  z-index: 19;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 10px;
+  background: #000a;
+  color: #fff;
+  font: 800 0.7rem ui-monospace, Menlo, monospace;
+  letter-spacing: 0.08em;
+}
+
+/* ---- Banner and errors */
 
 .banner {
   position: fixed;
   top: calc(env(safe-area-inset-top) + 8px);
   left: 50%;
-  transform: translateX(-50%);
   z-index: 30;
   max-width: min(92vw, 440px);
+  translate: -50% 0;
   padding: 10px 14px;
   border-radius: 12px;
   background: var(--text);
   color: var(--bg);
-  font-size: 0.9rem;
-  line-height: 1.35;
+  font: 600 0.92rem/1.35 var(--read);
 }
-
-.banner[hidden] { display: none; }
 
 .errors {
   padding: 16px;
@@ -793,42 +1248,10 @@ img.art.broken { visibility: hidden; }
   -webkit-user-select: text;
 }
 
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-}
+.noscript { padding: 40px 24px; font-size: 19px; text-align: center; }
 
-.noscript { padding: 24px; text-align: center; }
-
-/* Dev panel */
-
-.dev-btn {
-  position: fixed;
-  right: 10px;
-  bottom: calc(env(safe-area-inset-bottom) + 132px);
-  z-index: 25;
-  padding: 8px 10px;
-  border: 0;
-  border-radius: 10px;
-  background: #000a;
-  color: #fff;
-  font: 800 0.7rem ui-monospace, Menlo, monospace;
-  letter-spacing: 0.08em;
-}
-
-.dev {
-  font: 0.72rem/1.4 ui-monospace, Menlo, monospace;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-.dev-actions { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
-
-/* Reduced motion: no sliding, wiggling or popping; quick changes instead */
+/* ---- Reduced motion: the cards fade instead of flying (table.js), and
+   nothing else slides, wiggles or pops */
 
 .reduce-motion *, .reduce-motion *::before, .reduce-motion *::after {
   animation-duration: 1ms !important;
@@ -836,22 +1259,10 @@ img.art.broken { visibility: hidden; }
   transition-duration: 1ms !important;
 }
 
-.reduce-motion .hand.show, .reduce-motion .hand.once { animation: none; opacity: 1; }
-
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 1ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 1ms !important;
   }
-}
-
-/* Short phones: tighter spacing, so the answers never leave the screen */
-@media (max-height: 700px) {
-  .portrait.large { width: 84px; height: 104px; border-radius: 14px; }
-  .screen-in { gap: 10px; }
-  .app { gap: 6px; }
-  .play { gap: 8px; }
-  .choice { min-height: 80px; padding: 10px 12px 11px; }
-  .situation .text { font-size: calc(1.1rem * var(--scale)); }
 }
