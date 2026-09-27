@@ -29,7 +29,7 @@ Read `spec.md` before doing anything: it is the source of truth (v1.0, Sep 26, 2
 
 ## Writing scenes
 
-Comedy first, from conflicting reasonable desires (spec §14). Budgets from spec §14.4: a scene 20–45 words, answers 2–8, results 5–20, an epitaph 15–40; the checker warns past them. Every callback is gated by something that actually happened, and the epitaph's joke agrees with the recorded events. The old cast carries over as roles (see "Decisions since the spec" in design-notes.md): the cousin is the practical assistant, the elder the patron, the neighbours the rival, the Naysayer the skeptic, and the stranger the time-machine setup. `content/README.md` is the writer's guide to the tables and cell syntax.
+Comedy first, from conflicting reasonable desires (spec §14). Budgets from spec §14.4: a scene 20–45 words, answers 2–8, results 5–20, an epitaph 15–40; the checker warns past them. Every callback is gated by something that actually happened, and the epitaph's joke agrees with the recorded events. The old cast carries over as roles (see "Decisions since the spec" in design-notes.md): the cousin is the practical assistant, the elder the patron, the neighbours the rival, the Naysayer the skeptic, and the stranger the time-machine setup. `content/README.md` is the writer's guide to the tables and cell syntax. `tools/script.html` reads the whole game back as a script, in play order, live from the content (with a Markdown download).
 
 ## Working agreement
 

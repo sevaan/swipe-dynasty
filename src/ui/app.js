@@ -489,7 +489,7 @@ function settingsHTML() {
     <button class="btn danger" type="button" data-act="reset">Start a new timeline</button>
     <h3>About</h3>
     <p class="fine">One Bright Idea · Milestone 1 · build ${esc(buildStamp())} · content ${esc(content.hash)} · seed ${esc(state.seed)} · saves in ${esc(saves?.kind || 'nowhere')}<br>
-    ${DEV ? '<a href="./">Leave dev mode</a>' : '<a href="?dev">Dev mode</a>'} · <a href="tools/art.html">Art</a> · <a href="tools/fx.html">Weather</a></p>`;
+    ${DEV ? '<a href="./">Leave dev mode</a>' : '<a href="?dev">Dev mode</a>'} · <a href="tools/script.html">Script</a> · <a href="tools/art.html">Art</a> · <a href="tools/fx.html">Weather</a></p>`;
 }
 
 function devHTML() {

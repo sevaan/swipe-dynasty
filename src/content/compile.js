@@ -274,7 +274,7 @@ export function compileContent(files, options = {}) {
     if (!content.projects[project]) err(P.failures, line, 'project', `No project "${v.project}"`);
     content.failures[id] = {
       id, project, name: v.name, epitaph: v.epitaph, inherit: v.inherit,
-      cond: conds(v.conditions, P.failures, line, 'conditions'), look: v.look ? normId(v.look) : null, line,
+      cond: conds(v.conditions, P.failures, line, 'conditions'), look: v.look ? normId(v.look) : null, notes: v.notes || '', line,
     };
     content.failureOrder.push(id);
   }
@@ -287,7 +287,7 @@ export function compileContent(files, options = {}) {
     if (!DEATH_KINDS.includes(kind)) err(P.deaths, line, 'kind', `Kind must be danger or natural, not "${v.kind}"`);
     const project = v.project ? normId(v.project) : null;
     if (project && !content.projects[project]) err(P.deaths, line, 'project', `No project "${v.project}"`);
-    content.deaths[id] = { id, kind, project, text: v.text, cond: conds(v.conditions, P.deaths, line, 'conditions'), weight: numberOr(v.weight, 1), line };
+    content.deaths[id] = { id, kind, project, text: v.text, cond: conds(v.conditions, P.deaths, line, 'conditions'), weight: numberOr(v.weight, 1), notes: v.notes || '', line };
     content.deathOrder.push(id);
   }
 
@@ -357,7 +357,7 @@ export function compileContent(files, options = {}) {
     }
     content.scenes[id] = {
       id, phase, project, speaker, text: v.text, options, cond, shows,
-      weight: numberOr(v.weight, 1), weather, src: { file: path, line },
+      weight: numberOr(v.weight, 1), weather, src: { file: path, line }, notes: v.notes || '',
     };
     content.sceneOrder.push(id);
   }
