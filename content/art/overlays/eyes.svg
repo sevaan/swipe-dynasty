@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240">
+  <!-- Overlay: a sabre-tooth cat at the edge of the firelight -->
+  <!-- its head half out of the dark: ears, two eyes, and the two long teeth -->
+  <path fill="#0f0a08" opacity=".72" d="M30 60L36 38L50 54Q64 49 78 54L92 38L98 60Q106 76 96 92Q84 104 64 104Q44 104 32 92Q22 76 30 60Z"/>
+  <path fill="#000" opacity=".18" d="M64 49Q78 49 78 54L92 38L98 60Q106 76 96 92Q84 104 64 104Z"/>
+  <g fill="#e8d25a">
+    <path d="M40 70Q49 63 58 70Q49 77 40 70Z"/>
+    <path d="M70 70Q79 63 88 70Q79 77 70 70Z"/>
+  </g>
+  <g fill="#0f0a08"><path d="M49 64.5Q51.2 70 49 75.5Q46.8 70 49 64.5Z"/><path d="M79 64.5Q81.2 70 79 75.5Q76.8 70 79 64.5Z"/></g>
+  <g fill="#efe2c2">
+    <path d="M52 92Q55 91 58 92L56 116Q55 119 54 116Z"/>
+    <path d="M70 92Q73 91 76 92L74 116Q73 119 72 116Z"/>
+  </g>
+  <path fill="#000" opacity=".12" d="M55 92L58 92L56 116Q55 119 54 116ZM73 92L76 92L74 116Q73 119 72 116Z"/>
+</svg>

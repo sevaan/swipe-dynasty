@@ -1,13 +1,15 @@
 // The campaign in content/script.md (its sections 3–7): an authored history
-// of independent inventors. Each life plays exactly six cards. The fourth
-// commits its one invention and the sixth picks its legacy; nothing ends a
-// life early. After the fourteenth life, the player's interests rank five
+// of independent inventors. Most lives play six cards: the fourth commits
+// the life's one invention and the sixth picks its legacy. The first four
+// are short Stone Age lives of three: the second commits the invention, and
+// the third, a danger card, ends the life and picks both its legacy and its
+// obituary. Nothing else ends a life early. After the fourteenth life, the player's interests rank five
 // future projects, and the chosen route runs four more lives to its ending.
 // No page code here: the browser, the tests and the simulator all play
 // exactly this, one atomic step per action.
 
 export const SCHEMA = 1;
-export const CONTENT_VERSION = 'obi-script-1.0';
+export const CONTENT_VERSION = 'obi-script-1.1';
 export const AFFINITY_ORDER = ['S', 'D', 'R', 'A', 'U'];
 const MAX_EXPOSURE = 9;
 const RISK_AT = 2;
@@ -22,7 +24,7 @@ export function newHistory(C) {
     chapterId: C.shared[0], cardIndex: 0, view: 'intro',
     choices: {}, // card id (and OFFER.n, REDIRECT.U3) -> 'left' | 'right'
     inventions: {}, // invention id -> { chapterId, inventorName, committedAtCard }
-    legacies: {}, // chapter id -> the card-six side
+    legacies: {}, // chapter id -> the last card's side
     lives: [], // chapter ids, in the order they were finished
     obituaries: {}, // chapter id -> 'natural' | 'risk'
     lifeExposure: 0,
@@ -94,11 +96,11 @@ export function act(prev, C, action) {
       state.choices[card.id] = action.side;
       state.lifeExposure = Math.max(0, Math.min(MAX_EXPOSURE, state.lifeExposure + (opt.danger || 0)));
       for (const [k, v] of Object.entries(opt.affinity || {})) state.affinity[k] = (state.affinity[k] || 0) + v;
-      if (state.cardIndex === 3 && !state.inventions[chapter.invention.id]) {
+      if (state.cardIndex === chapter.proofIndex && !state.inventions[chapter.invention.id]) {
         state.inventions[chapter.invention.id] = { chapterId: chapter.id, inventorName: chapter.inventor.name, committedAtCard: card.id };
         events.push({ type: 'invention', id: chapter.invention.id });
       }
-      if (state.cardIndex === 5) state.legacies[chapter.id] = action.side;
+      if (state.cardIndex === chapter.lastIndex) state.legacies[chapter.id] = action.side;
       state.pendingResultCard = card.id;
       state.view = 'result';
       events.push({ type: 'choice', card: card.id, side: action.side });
@@ -150,16 +152,17 @@ export function act(prev, C, action) {
             const to = C.redirect[side].transition;
             if (C.chapters[to].route !== state.route) { state.route = C.chapters[to].route; state.redirectedFromUnmaking = true; }
             enterChapter(state, C, to, events);
-          } else if (state.cardIndex === 3) {
+          } else if (state.cardIndex === chapter.proofIndex) {
             state.view = 'reveal';
-          } else if (state.cardIndex === 5) {
+          } else if (state.cardIndex === chapter.lastIndex) {
             state.lives.push(chapter.id);
             if (chapter.final) {
               state.view = 'ending';
               state.endingPanelIndex = 0;
               events.push({ type: 'route-complete', route: state.route });
             } else {
-              state.obituaries[chapter.id] = chapter.id !== C.shared[0] && state.lifeExposure >= RISK_AT && chapter.death.risk ? 'risk' : 'natural';
+              // A short life's death is its danger card's answer; a full life's, its exposure
+              state.obituaries[chapter.id] = chapter.short ? state.legacies[chapter.id] : chapter.id !== C.shared[0] && state.lifeExposure >= RISK_AT && chapter.death.risk ? 'risk' : 'natural';
               state.view = 'epitaph';
             }
           } else {
@@ -169,7 +172,7 @@ export function act(prev, C, action) {
           break;
         }
         case 'reveal':
-          state.cardIndex = 4;
+          state.cardIndex = chapter.proofIndex + 1;
           state.view = 'choice';
           break;
         case 'epitaph': {
@@ -218,6 +221,12 @@ export function act(prev, C, action) {
   const out = { state, events };
   if (checkpoint) out.checkpoint = clone(state);
   return out;
+}
+
+// How a life ended: a short life by its danger card, a full one by its exposure
+function obituaryOf(state, chapter) {
+  if (chapter.short) return chapter.death[state.legacies[chapter.id]] || chapter.death.left;
+  return state.obituaries[chapter.id] === 'risk' ? chapter.death.risk : chapter.death.natural;
 }
 
 // The arrival and era, with any authored override (R1 after the U3 redirect)
@@ -280,18 +289,17 @@ export function view(state, C) {
     }
     case 'reveal':
       out.first = Object.keys(state.inventions).length === 1;
-      out.bench = bench(3);
+      out.bench = bench(chapter.proofIndex);
       break;
     case 'epitaph': {
-      const which = state.obituaries[chapter.id] || 'natural';
       out.epitaph = {
         name: chapter.inventor.name,
         invention: chapter.invention.name,
-        death: which === 'risk' ? chapter.death.risk : chapter.death.natural,
+        death: obituaryOf(state, chapter),
         legacy: chapter.legacy[state.legacies[chapter.id]] || '',
         next: C.redirect && chapter.id === C.redirect.after ? 'redirect' : nextChapter(state, C) ? 'chapter' : 'proposals',
       };
-      out.bench = bench(5);
+      out.bench = bench(chapter.lastIndex);
       break;
     }
     case 'proposal': {
@@ -342,7 +350,7 @@ export function history(state, C) {
       invention: { name: c.invention.name, description: c.invention.description },
       legacy: state.legacies[id] ? c.legacy[state.legacies[id]] : '',
       status: !done ? 'living' : c.final ? 'continues' : 'ended',
-      death: done && !c.final ? (state.obituaries[id] === 'risk' ? c.death.risk : c.death.natural) : '',
+      death: done && !c.final ? obituaryOf(state, c) : '',
       choices: c.cards.filter((cd) => state.choices[cd.id]).map((cd) => ({ card: cd.id, kind: cd.kind, side: state.choices[cd.id], label: cd[state.choices[cd.id]].label })),
     };
   });
@@ -356,12 +364,44 @@ export function reconcile(saved, C) {
   const state = clone(saved);
   if (state.chapterId && !C.chapters[state.chapterId]) return { state: null, problem: 'Your save refers to a life that is no longer in the script, so a new history begins.' };
   if (state.route && !C.routes[state.route]) return { state: null, problem: 'Your save refers to a future that is no longer in the script, so a new history begins.' };
-  const chapter = state.chapterId ? C.chapters[state.chapterId] : null;
-  if (chapter && ['choice', 'result'].includes(state.view) && state.pendingResultCard && !C.cards[state.pendingResultCard] && !state.pendingResultCard.startsWith('OFFER.') && state.pendingResultCard !== C.redirect?.id) {
-    state.view = 'arrival'; state.cardIndex = 0; state.pendingResultCard = null;
+  // Answers to cards the script no longer has are dropped, and a finished
+  // life keeps its legacy as its last card's answer (lives can get shorter:
+  // the Stone Age lives went from six cards to three)
+  for (const id of Object.keys(state.choices)) {
+    const m = /^([A-Z]\d+)\.\d+$/.exec(id);
+    if (m && C.chapters[m[1]] && !C.cards[id]) delete state.choices[id];
   }
+  for (const [id, side] of Object.entries(state.legacies)) {
+    const ch = C.chapters[id];
+    if (ch) state.choices[ch.cards[ch.lastIndex].id] = side;
+  }
+  // The life in progress restarts at its arrival if the saved moment no longer fits it
+  const chapter = state.chapterId ? C.chapters[state.chapterId] : null;
+  if (chapter && ['choice', 'result', 'reveal', 'epitaph'].includes(state.view) && !fits(state, C, chapter)) restartLife(state, chapter);
   state.content = C.hash;
   return { state, problem: null };
+}
+
+// A saved moment still makes sense: its card exists, a result belongs to an
+// answered card, and nothing past the proof is played without the invention
+function fits(state, C, chapter) {
+  const i = state.cardIndex;
+  if (state.view === 'reveal') return i === chapter.proofIndex && !!state.inventions[chapter.invention.id];
+  if (state.view === 'epitaph') return state.lives.includes(chapter.id);
+  if (state.view === 'result' && (state.pendingResultCard?.startsWith('OFFER.') || state.pendingResultCard === C.redirect?.id)) return true;
+  const card = chapter.cards[i];
+  if (!card) return false;
+  if (i > chapter.proofIndex && !state.inventions[chapter.invention.id]) return false;
+  if (state.view === 'result') return state.pendingResultCard === card.id && !!state.choices[card.id];
+  return !state.choices[card.id];
+}
+
+function restartLife(state, chapter) {
+  for (const cd of chapter.cards) delete state.choices[cd.id];
+  delete state.legacies[chapter.id];
+  delete state.obituaries[chapter.id];
+  state.lives = state.lives.filter((l) => l !== chapter.id);
+  Object.assign(state, { view: 'arrival', cardIndex: 0, pendingResultCard: null, lifeExposure: 0 });
 }
 
 // How far through this history the player is, for the header and History

@@ -11,8 +11,8 @@ const cardAt = (s) => C.chapters[s.chapterId].cards[s.cardIndex];
 test('the script reads with no errors, in the size this edition promises', () => {
   assert.deepEqual(real.errors, []);
   assert.equal(C.chapterOrder.length, 34);
-  assert.equal(Object.keys(C.cards).length, 204);
-  assert.equal(Object.values(C.cards).filter((c) => c.left && c.right).length, 204);
+  assert.equal(Object.keys(C.cards).length, 192);
+  assert.equal(Object.values(C.cards).filter((c) => c.left && c.right).length, 192);
   assert.equal(Object.keys(C.inventions).length, 34);
   assert.equal(C.callbacks.length, 28);
   assert.deepEqual(C.routeOrder, ['simulation', 'departure', 'retirement', 'reply', 'unmaking']);
@@ -21,13 +21,19 @@ test('the script reads with no errors, in the size this edition promises', () =>
     assert.ok(r.ending.variants.left && r.ending.variants.right, r.id);
   }
   assert.equal(C.redirect.id, 'REDIRECT.U3');
+  // The four Stone Age lives are short: an opening, the proof and a danger card
+  const short = ['C01', 'C02', 'C03', 'C04'];
   for (const c of Object.values(C.chapters)) {
-    assert.equal(c.cards.length, 6, c.id);
-    assert.equal(c.bench.length, 6, c.id);
+    const n = short.includes(c.id) ? 3 : 6;
+    assert.equal(c.cards.length, n, c.id);
+    assert.equal(c.bench.length, n, c.id);
+    assert.equal(c.short, n === 3, c.id);
+    assert.deepEqual(c.cards.map((cd) => cd.kind), n === 3 ? ['opening', 'proof', 'danger'] : ['opening', 'experiment', 'complication', 'proof', 'adoption', 'legacy'], c.id);
+    if (c.short) assert.ok(c.death.left && c.death.right, `${c.id} has an obituary for each danger answer`);
     for (const card of c.cards) assert.ok(c.cast[card.speaker], `${card.id} speaker`);
   }
   // Maximum interests come from the content, not a copy of these numbers
-  assert.deepEqual(C.maxAffinity, { S: 15, D: 11, R: 14, A: 12, U: 4 });
+  assert.deepEqual(C.maxAffinity, { S: 14, D: 9, R: 11, A: 10, U: 4 });
 });
 
 test('both sides of the first card work; a stale or doubled choice does nothing', () => {
@@ -49,8 +55,8 @@ test('both sides of the first card work; a stale or doubled choice does nothing'
 });
 
 test('one choice applies its effects once, and a reload on the result repeats nothing', () => {
-  // C01.5 right adds D affinity; C01.4 commits the invention
-  let s = drive(fresh(), always('right'), { until: (x) => x.view === 'result' && x.pendingResultCard === 'C01.5' }).state;
+  // C01.3 right adds D affinity; C01.2 commits the invention
+  let s = drive(fresh(), always('right'), { until: (x) => x.view === 'result' && x.pendingResultCard === 'C01.3' }).state;
   assert.equal(s.affinity.D, 1);
   const saved = JSON.parse(JSON.stringify(s));
   const { state: loaded } = reconcile(saved, C);
@@ -62,53 +68,68 @@ test('one choice applies its effects once, and a reload on the result repeats no
   assert.equal(Object.keys(s.inventions).length, 1);
 });
 
-test('card four commits exactly one invention and shows the reveal; card six writes the legacy', () => {
-  let s = drive(fresh(), always('left'), { until: (x) => x.view === 'result' && x.pendingResultCard === 'C01.4' }).state;
+test('the proof card commits exactly one invention and shows the reveal; the last card writes the legacy', () => {
+  // A short Stone Age life: card two is the proof, card three the danger that ends it
+  let s = drive(fresh(), always('left'), { until: (x) => x.view === 'result' && x.pendingResultCard === 'C01.2' }).state;
   assert.deepEqual(Object.keys(s.inventions), ['c01-invention']);
   s = step(s, { type: 'continue' }).state;
   assert.equal(s.view, 'reveal');
   assert.equal(view(s, C).first, true);
   s = step(s, { type: 'continue' }).state;
   assert.equal(s.view, 'choice');
-  assert.equal(cardAt(s).id, 'C01.5');
+  assert.equal(cardAt(s).id, 'C01.3');
   s = drive(s, always('right'), { until: (x) => x.view === 'epitaph' }).state;
   assert.equal(s.legacies.C01, 'right');
   assert.equal(view(s, C).epitaph.legacy, C.chapters.C01.legacy.right);
   assert.deepEqual(Object.keys(s.inventions), ['c01-invention']);
+  // A full life: card four is the proof, card six the legacy
+  s = drive(fresh(), always('left'), { until: (x) => x.view === 'result' && x.pendingResultCard === 'C05.4' }).state;
+  assert.ok(s.inventions['c05-invention'] || s.inventions[C.chapters.C05.invention.id]);
+  s = step(s, { type: 'continue' }).state;
+  assert.equal(s.view, 'reveal');
+  s = step(s, { type: 'continue' }).state;
+  assert.equal(cardAt(s).id, 'C05.5');
+  s = drive(s, always('right'), { until: (x) => x.view === 'epitaph' }).state;
+  assert.equal(view(s, C).epitaph.legacy, C.chapters.C05.legacy.right);
 });
 
-test('all six cards play whatever the exposure; exposure of 2 or more changes only the obituary', () => {
-  // C02 has a reachable risk obituary; take every option that adds exposure
+test('every card plays whatever the exposure; exposure of 2 or more changes only the obituary', () => {
+  // C06 has a reachable risk obituary; take every option that adds exposure
   const risky = (id) => (C.cards[id].right.danger > C.cards[id].left.danger ? 'right' : 'left');
-  let s = drive(fresh(), ({ kind, id }) => (kind === 'card' ? risky(id) : 'left'), { until: (x) => x.view === 'epitaph' && x.chapterId === 'C02' }).state;
+  let s = drive(fresh(), ({ kind, id }) => (kind === 'card' ? risky(id) : 'left'), { until: (x) => x.view === 'epitaph' && x.chapterId === 'C06' }).state;
   assert.ok(s.lifeExposure >= 2, `exposure ${s.lifeExposure}`);
-  assert.equal(C.chapters.C02.cards.filter((c) => s.choices[c.id]).length, 6);
-  assert.equal(view(s, C).epitaph.death, C.chapters.C02.death.risk);
+  assert.equal(C.chapters.C06.cards.filter((c) => s.choices[c.id]).length, 6);
+  assert.equal(view(s, C).epitaph.death, C.chapters.C06.death.risk);
   // The careful route closes naturally
   const safe = (id) => (C.cards[id].right.danger < C.cards[id].left.danger ? 'right' : 'left');
-  s = drive(fresh(), ({ kind, id }) => (kind === 'card' ? safe(id) : 'left'), { until: (x) => x.view === 'epitaph' && x.chapterId === 'C02' }).state;
-  assert.equal(view(s, C).epitaph.death, C.chapters.C02.death.natural);
-  // C01 always closes naturally
-  s = drive(fresh(), always('right'), { until: (x) => x.view === 'epitaph' }).state;
-  assert.equal(view(s, C).epitaph.death, C.chapters.C01.death.natural);
+  s = drive(fresh(), ({ kind, id }) => (kind === 'card' ? safe(id) : 'left'), { until: (x) => x.view === 'epitaph' && x.chapterId === 'C06' }).state;
+  assert.equal(view(s, C).epitaph.death, C.chapters.C06.death.natural);
+  // A short Stone Age life ends on its danger card, and its answer is the obituary
+  for (const side of ['left', 'right']) {
+    s = drive(fresh(), always(side), { until: (x) => x.view === 'epitaph' && x.chapterId === 'C02' }).state;
+    assert.equal(C.chapters.C02.cards.filter((c) => s.choices[c.id]).length, 3);
+    assert.equal(view(s, C).epitaph.death, C.chapters.C02.death[side]);
+    assert.equal(view(s, C).epitaph.legacy, C.chapters.C02.legacy[side]);
+  }
 });
 
-test('every one of the 64 answer combinations completes every chapter', () => {
+test('every answer combination completes every chapter (64 for six cards, 8 for three)', () => {
   for (const id of C.chapterOrder) {
     const chapter = C.chapters[id];
-    for (let bits = 0; bits < 64; bits++) {
+    const n = chapter.cards.length;
+    for (let bits = 0; bits < 2 ** n; bits++) {
       let s = newHistory(C);
       Object.assign(s, { chapterId: id, view: 'arrival', route: chapter.route });
       s = step(s, { type: 'continue' }).state;
-      for (let k = 0; k < 6; k++) {
+      for (let k = 0; k < n; k++) {
         const side = (bits >> k) & 1 ? 'right' : 'left';
         s = step(s, { type: 'choose', card: `${id}.${k + 1}`, side }).state;
         s = step(s, { type: 'continue' }).state; // the result
-        if (k === 3) { assert.equal(s.view, 'reveal', `${id} reveal`); s = step(s, { type: 'continue' }).state; }
+        if (k === chapter.proofIndex) { assert.equal(s.view, 'reveal', `${id} reveal`); s = step(s, { type: 'continue' }).state; }
       }
       assert.equal(Object.keys(s.inventions).length, 1, `${id} ${bits}`);
       assert.ok(s.inventions[chapter.invention.id], `${id} ${bits}`);
-      assert.equal(s.legacies[id], (bits >> 5) & 1 ? 'right' : 'left');
+      assert.equal(s.legacies[id], (bits >> (n - 1)) & 1 ? 'right' : 'left');
       assert.equal(s.view, chapter.final ? 'ending' : 'epitaph', `${id} ${bits}`);
     }
   }
@@ -138,11 +159,11 @@ test('proposals are ranked by normalized interest, with stable ties', () => {
   const s = newHistory(C);
   // No interests at all: the stable order S, D, R, A, U
   assert.deepEqual(rankRoutes(s, C), ['simulation', 'departure', 'retirement', 'reply', 'unmaking']);
-  // One point of U out of 4 beats three points of S out of 15
+  // One point of U out of 4 beats three points of S out of 14
   s.affinity = { S: 3, D: 0, R: 0, A: 0, U: 1 };
   assert.deepEqual(rankRoutes(s, C).slice(0, 2), ['unmaking', 'simulation']);
   // A tie keeps the stable order
-  s.affinity = { S: 0, D: 11, R: 14, A: 0, U: 0 };
+  s.affinity = { S: 0, D: C.maxAffinity.D, R: C.maxAffinity.R, A: 0, U: 0 };
   assert.deepEqual(rankRoutes(s, C).slice(0, 2), ['departure', 'retirement']);
 });
 
@@ -230,10 +251,32 @@ test('the history lists what was actually made and chosen, and nothing unplayed'
   const s = drive(fresh(), always('left'), { until: (x) => x.view === 'arrival' && x.chapterId === 'C03' }).state;
   const h = history(s, C);
   assert.deepEqual(h.map((l) => l.chapter), ['C01', 'C02']);
-  assert.equal(h[0].choices.length, 6);
+  assert.equal(h[0].choices.length, 3);
+  assert.equal(h[0].death, C.chapters.C01.death.left);
   assert.equal(h[0].legacy, C.chapters.C01.legacy.left);
   assert.equal(h[0].status, 'ended');
   assert.equal(history(newHistory(C), C).length, 0);
+});
+
+test('a save from when the Stone Age lives had six cards still loads sensibly', () => {
+  // Finished C01 on its old sixth card, and partway through C02's old fifth card
+  const s = fresh();
+  Object.assign(s, {
+    turn: 40, view: 'choice', chapterId: 'C02', cardIndex: 4, lives: ['C01'],
+    choices: { 'C01.1': 'left', 'C01.2': 'left', 'C01.3': 'left', 'C01.4': 'left', 'C01.5': 'left', 'C01.6': 'right', 'C02.1': 'left', 'C02.2': 'left', 'C02.3': 'left', 'C02.4': 'left' },
+    inventions: { 'c01-invention': { chapterId: 'C01' }, 'c02-invention': { chapterId: 'C02' } },
+    legacies: { C01: 'right' }, obituaries: { C01: 'natural' },
+  });
+  const { state: loaded } = reconcile(JSON.parse(JSON.stringify(s)), C);
+  // The finished life keeps its legacy as its new last card's answer, so its callbacks still hold
+  assert.equal(loaded.choices['C01.3'], 'right');
+  assert.ok(!('C01.4' in loaded.choices) && !('C01.6' in loaded.choices));
+  // The life in progress no longer has a fifth card, so it starts again from its arrival
+  assert.equal(loaded.chapterId, 'C02');
+  assert.equal(loaded.view, 'arrival');
+  assert.ok(!('C02.1' in loaded.choices));
+  const played = drive(loaded, always('left'), { until: (x) => x.view === 'arrival' && x.chapterId === 'C03' }).state;
+  assert.deepEqual(played.lives, ['C01', 'C02']);
 });
 
 test('an old or foreign save starts a new history instead of being misread', () => {

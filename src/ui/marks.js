@@ -12,9 +12,10 @@ export const swipeIcon = '<svg viewBox="0 0 30 20" aria-hidden="true"><path d="M
 export const book = '<svg class="book" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" fill="var(--panel)"/><path d="M20 13c-3-2-7-3-11-3v17c4 0 8 1 11 3z" fill="var(--accent)"/><path d="M20 13c3-2 7-3 11-3v17c-4 0-8 1-11 3z" fill="var(--text)" opacity=".85"/></svg>';
 
 // The back of every card in the deck: kraft with a diamond lattice and the
-// spark. The reveal's is gilt, the epitaph's is mourning black.
+// spark. The reveal's is gilt, a short life's danger card is red, and the
+// epitaph's is mourning black.
 export function backArt(variant) {
-  const fill = variant === 'gilt' ? 'var(--gilt)' : variant === 'mourn' ? 'var(--paper)' : 'var(--accent)';
-  const core = variant === 'mourn' ? 'var(--mourn)' : 'var(--paper)';
+  const fill = variant === 'gilt' ? 'var(--gilt)' : variant === 'mourn' || variant === 'danger' ? 'var(--paper)' : 'var(--accent)';
+  const core = variant === 'mourn' ? 'var(--mourn)' : variant === 'danger' ? 'var(--danger)' : 'var(--paper)';
   return `<div class="back-art" aria-hidden="true"><div class="emblem">${spark(fill, core)}</div></div>`;
 }

@@ -80,7 +80,8 @@ export function buildContent(files, { art = null } = {}) {
   };
   for (const [ch, states] of Object.entries(world.art)) {
     if (!C.chapters[ch]) { err(W, 0, `art.${ch}`, `${ch} isn't a chapter in the script`); continue; }
-    if (states.length !== 6) err(W, 0, `art.${ch}`, `${ch} has ${states.length} drawn states; the script has 6`);
+    const want = C.chapters[ch].bench.length;
+    if (states.length !== want) err(W, 0, `art.${ch}`, `${ch} has ${states.length} drawn states; the script has ${want}`);
     states.forEach((st, i) => {
       lookOK(st, `art.${ch}[${i}]`, ch);
       for (const side of ['left', 'right']) if (st[side]) lookOK(st[side], `art.${ch}[${i}].${side}`, ch);

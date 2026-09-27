@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240">
+  <!-- Overlay: something big has been at the food -->
+  <!-- four fresh claw gouges raked down the wall, pointed at both ends -->
+  <g fill="#e2cfaa">
+    <path d="M198 40Q234 72 238 124Q214 86 198 40Z"/>
+    <path d="M216 36Q252 66 254 118Q232 80 216 36Z"/>
+    <path d="M234 38Q266 64 268 110Q248 76 234 38Z"/>
+    <path d="M252 46Q276 64 276 98Q262 74 252 46Z"/>
+  </g>
+  <g fill="#4a2c1c" opacity=".75">
+    <path d="M204 50Q229 76 233 114Q216 86 204 50Z"/>
+    <path d="M222 46Q247 70 249 108Q234 82 222 46Z"/>
+    <path d="M240 48Q261 68 263 100Q250 78 240 48Z"/>
+  </g>
+</svg>

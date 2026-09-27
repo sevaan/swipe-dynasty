@@ -91,7 +91,17 @@ This is an authored story campaign, not a survival-balancing game. Both choices 
 
 After each choice show its written result. Commit state once, then show applicable callback lines. Continue to the next card only when the player dismisses the result. After card four’s result and callbacks, show the invention reveal before card five. After card six’s result and callbacks, conclude the life. Normal lives receive an epitaph; final route chapters go directly to their endings with the inventor still alive.
 
-**All six cards always play.** Do not terminate a life early, skip its adoption, randomize its scenes or simulate unplayed choices. The hazard figures below select an obituary variant after the life, not a mid-card death. This rule supersedes the prototype’s danger threshold and any accidental death-system implication in inherited tooling.
+### Short Stone Age lives (Sep 27, Sevaan)
+
+The first four lives, C01–C04, are short, so the player sees how each choice carries into the next life quickly. Stone Age lives were short, and dangerous. Each plays three cards:
+
+1. **Opening:** meet the inventor, another person and a practical problem.
+2. **Proof:** demonstrate and permanently commit the single chapter invention. The invention reveal follows this card.
+3. **Danger:** the Stone Age ends the life: a sabre-tooth cat, a mudslide, a bear, a wild aurochs. Both answers are deaths. The chosen answer is the inventor’s last act, and it picks both the legacy and the obituary (`If card three was left/right`, `Obituary if card three was left/right`).
+
+From C05 on, every life plays the six-card rhythm above.
+
+**Every card of a life always plays.** Do not terminate a life early (beyond the danger card that closes a short life), skip its adoption, randomize its scenes or simulate unplayed choices. The hazard figures below select an obituary variant after a six-card life, not a mid-card death. This rule supersedes the prototype’s danger threshold and any accidental death-system implication in inherited tooling.
 
 ### Experimental exposure (`danger` field)
 
@@ -116,7 +126,7 @@ For a normal chapter, show:
 - Inventor’s full name.
 - `Invented {invention.name}.`
 - The selected natural/risk death sentence exactly as authored.
-- `legacy.left` or `legacy.right`, selected by that chapter’s **card six** choice.
+- `legacy.left` or `legacy.right`, selected by that chapter’s **last card** choice (card six, or card three in a short life).
 - A small image of the completed invention and the next-chapter action label **“Someone takes it further”**.
 
 Card five is recorded independently and may trigger a callback. It does not override card six. Where the two differ, card six describes a final act or priority rather than erasing card five’s history. Render both in the museum’s expanded choice record.
@@ -312,10 +322,10 @@ interface Chapter {
   inventor: { name: string; role: string; want: string };
   cast: { id: string; name: string; description: string }[];
   invention: { id: string; name: string; description: string };
-  bench: string[]; // exactly six
-  cards: Card[]; // exactly six
+  bench: string[]; // one per card: six, or three in a short life
+  cards: Card[]; // six, or three in a short life (C01–C04)
   legacy: { left: string; right: string };
-  death: { natural: string; risk: string };
+  death: { natural: string; risk: string } | { left: string; right: string }; // a short life's death is its danger card's answer
 }
 ```
 
@@ -370,11 +380,8 @@ A way to make fire on purpose: the right pair of stones, dry grass to catch the 
 ### Workbench progression
 
 1. Two distinct stones; grass
-2. A dark flint edge and mineral nodule
-3. Fine dry fibres beneath a spark
-4. A small protected flame
-5. Two hearths or an ember carrier
-6. A pair of stones beside a warm hand
+2. A small protected flame
+3. Eyes beyond the firelight
 
 ### C01.1 — Opening
 
@@ -391,37 +398,7 @@ A way to make fire on purpose: the right pair of stones, dry grass to catch the 
 **Effects:** experimental exposure unchanged.
 
 
-### C01.2 — Experiment
-
-**Speaker:** Iri (`iri`)
-
-**Situation:** Most stones just chip. But one gold-flecked lump makes bright sparks when you strike it against a sharp flint. Iri sorts your pile into stones that work and stones that only hurt your hands.
-
-**Left: Keep the pair that sparks best**  
-**Result:** You keep the sharp flint and the gold-flecked lump. The useless stones become something to sit on.  
-**Effects:** experimental exposure unchanged.
-
-**Right: Test every pair, one by one**  
-**Result:** By sunset you know exactly which pair works. Iri now has an opinion about every stone in the valley.  
-**Effects:** experimental exposure unchanged.
-
-
-### C01.3 — Complication
-
-**Speaker:** Iri (`iri`)
-
-**Situation:** The grass glows, then goes out. Iri blows on it hard and nearly scatters the whole pile. It’s getting colder.
-
-**Left: Blow on it gently**  
-**Result:** You blow softly and the glow spreads. Iri watches it the way a hungry person watches dinner cook.  
-**Effects:** experimental exposure unchanged.
-
-**Right: Build a wind shelter first**  
-**Result:** You stack stones into a low wall to block the wind. Behind it, the next ember has time to grow into a flame.  
-**Effects:** experimental exposure unchanged.
-
-
-### C01.4 — Proof
+### C01.2 — Proof
 
 **Speaker:** Iri (`iri`)
 
@@ -435,48 +412,34 @@ A way to make fire on purpose: the right pair of stones, dry grass to catch the 
 **Result:** Iri complains about your explanation, fixes your grip, and makes fire anyway. It works even when you’re not the one holding the stones.  
 **Effects:** experimental exposure unchanged.
 
-**Proof rule:** Either choice permanently commits `c01-invention` after its result transaction. Show the invention reveal before C01.5.
+**Proof rule:** Either choice permanently commits `c01-invention` after its result transaction. Show the invention reveal before C01.3.
 
 
-### C01.5 — Adoption
-
-**Speaker:** Iri (`iri`)
-
-**Situation:** The others show up with wood, food and excuses for not helping earlier. One child has never been warm after dark before. They sit very close to the fire.
-
-**Left: Teach someone to build a fire**  
-**Result:** By nightfall, two fires are burning. You can’t watch both, and you don’t have to: someone else knows how now.  
-**Effects:** experimental exposure unchanged; A affinity +1.
-
-**Right: Make a way to carry embers**  
-**Result:** You make a lined bark carrier for hot embers. Someone carries the warmth into the dark to fetch a friend who stayed home.  
-**Effects:** experimental exposure unchanged; D affinity +1.
-
-
-### C01.6 — Legacy
+### C01.3 — Danger
 
 **Speaker:** Iri (`iri`)
 
-**Situation:** Iri isn’t shivering anymore. Just outside the firelight, someone is practising the striking motion with empty hands. There’s time tonight to teach one more thing.
+**Situation:** Eyes shine at the edge of the firelight. A sabre-tooth cat steps in, slow and hungry. Everyone freezes. You won’t survive this, but there’s time for one last thing.
 
-**Left: Show how to relight it**  
-**Result:** You put out a small flame, then bring it back. The person watching starts copying your hands.  
+**Left: Put the stones in someone’s hands**  
+**Result:** You press the two stones into the nearest hands and show the strike one last time. Then the cat reaches you.  
 **Effects:** experimental exposure unchanged; S affinity +1.
 
-**Right: Show how to carry it**  
-**Result:** You wrap up an ember and walk into the dark together. Behind you, the first fire shrinks to a small, steady light.  
+**Right: Grab a burning branch**  
+**Result:** You wave the burning branch, and the cat backs away into the dark. You chase it much too far. The branch goes out.  
 **Effects:** experimental exposure unchanged; D affinity +1.
+
+**Danger rule:** Both answers end the life. The chosen answer picks the legacy and the obituary below.
 
 ### Closing record
 
-**If card six was left:** Aru taught people how to relight a fire that went out. The lesson spread farther than the heat ever could.
+**If card three was left:** Aru taught people how to relight a fire that went out. The lesson spread farther than the heat ever could.
 
-**If card six was right:** Aru found a way to carry fire. People could leave the hearth and still stay warm.
+**If card three was right:** Aru found a way to carry fire. People could leave the hearth and still stay warm.
 
-**Natural obituary:** Aru died many winters later. That evening, someone else tended the fire.
+**Obituary if card three was left:** Aru was killed by a sabre-tooth cat, still young, like most people then. The fire kept burning.
 
-**Risk obituary:** Not reachable from this authored chapter. Use the natural obituary; do not add random hazards.
-
+**Obituary if card three was right:** Aru was killed by a sabre-tooth cat, out in the dark with a branch that had gone out. After that, nobody chased anything at night.
 
 ## C02 — Something That Holds
 
@@ -498,11 +461,8 @@ Clay that’s shaped, dried and fired until it’s hard enough to hold water.
 ### Workbench progression
 
 1. Leaking basket
-2. Clay lining or clay bowl
-3. Cracked trial pieces
-4. Intact fired vessel
-5. Household pots or communal jar
-6. A measuring notch on a pot
+2. A pot that holds water
+3. The clay bank giving way
 
 ### C02.1 — Opening
 
@@ -519,41 +479,11 @@ Clay that’s shaped, dried and fired until it’s hard enough to hold water.
 **Effects:** experimental exposure unchanged.
 
 
-### C02.2 — Experiment
+### C02.2 — Proof
 
 **Speaker:** Ves (`ves`)
 
-**Situation:** Dried clay seems hard, but rain turns it back into mud. Then you notice a piece that fell near your fire. It has changed colour, and water won’t soften it.
-
-**Left: Heat small test pieces**  
-**Result:** You set small clay pieces at different distances from the fire. Ves scratches a mark on each one, and a warning next to the hottest.  
-**Effects:** experimental exposure unchanged.
-
-**Right: Build a small stone oven**  
-**Result:** The stones trap the heat. It singes your eyebrows, but the clay inside comes out hard.  
-**Effects:** experimental exposure +1.
-
-
-### C02.3 — Complication
-
-**Speaker:** Ves (`ves`)
-
-**Situation:** Your first pot cracks apart. The thick bottom stayed wet while the thin top dried too fast. Ves says you’ve invented two pots with no bottoms.
-
-**Left: Dry it more evenly**  
-**Result:** You dry the next pot slowly in the shade, turning it for days. Ves waits, still carrying water the old way.  
-**Effects:** experimental exposure unchanged.
-
-**Right: Make the walls the same thickness**  
-**Result:** You reshape the pot until the walls are even. It looks plainer, but it doesn’t crack.  
-**Effects:** experimental exposure +1.
-
-
-### C02.4 — Proof
-
-**Speaker:** Ves (`ves`)
-
-**Situation:** The next pot rings when you tap it. You fill it with water at sunset. At sunrise the water is still there, and Ves has brought a friend to see it.
+**Situation:** Rain keeps turning your dried clay back into mud. Then a pot falls into the fire and comes out hard, a different colour, and ringing when you tap it. You fill it at sunset. At sunrise, the water is still there.
 
 **Left: Carry it home**  
 **Result:** Ves gets home with dry feet and a full pot. For once, all the water makes it.  
@@ -563,48 +493,34 @@ Clay that’s shaped, dried and fired until it’s hard enough to hold water.
 **Result:** The water level barely drops. You scratch a line at the waterline, and realise a pot can measure things too.  
 **Effects:** experimental exposure unchanged.
 
-**Proof rule:** Either choice permanently commits `c02-invention` after its result transaction. Show the invention reveal before C02.5.
+**Proof rule:** Either choice permanently commits `c02-invention` after its result transaction. Show the invention reveal before C02.3.
 
 
-### C02.5 — Adoption
-
-**Speaker:** Ves (`ves`)
-
-**Situation:** Now everyone wants a pot. Your oven can make lots of small ones for families, or one huge jar for the whole village to share. Either way, people will need to gather firewood.
-
-**Left: Make pots for every home**  
-**Result:** Every home gets its own pot, each a slightly different shape. One family asks for a lid. Another family asks the first to stop asking for things.  
-**Effects:** experimental exposure unchanged; R affinity +1.
-
-**Right: Make one big jar to share**  
-**Result:** The big jar fills up. People gather around it to chat, and start the first argument about whose turn it is to clean it.  
-**Effects:** experimental exposure unchanged; A affinity +1.
-
-
-### C02.6 — Legacy
+### C02.3 — Danger
 
 **Speaker:** Ves (`ves`)
 
-**Situation:** Ves can finally carry a whole day’s water in one trip. Someone asks if a pot could store grain too. You look at the damp inside and aren’t sure.
+**Situation:** You’re digging clay under the riverbank when it gives way. Rocks and mud pour over you. You won’t get out, but Ves is close enough to hear you. There’s time to say one thing about the pots.
 
-**Left: Leave a pattern others can copy**  
-**Result:** You scratch the pot’s measurements into a clay tile. Years later, someone mistakes the tile for a very disappointing plate.  
+**Left: Tell Ves how to make them**  
+**Result:** You gasp out the steps: how thick, how long to dry, how hot the fire. Ves repeats them back, word for word.  
 **Effects:** experimental exposure unchanged; S affinity +1.
 
-**Right: Leave one great jar for everyone**  
-**Result:** You make one last giant jar for the village. People use it long after you’re gone, and keep finding new things to put in it.  
+**Right: Tell Ves to make one big jar**  
+**Result:** You tell Ves to make one giant jar for the whole village. Ves promises, and begs you to stop talking and breathe.  
 **Effects:** experimental exposure unchanged; R affinity +1.
+
+**Danger rule:** Both answers end the life. The chosen answer picks the legacy and the obituary below.
 
 ### Closing record
 
-**If card six was left:** Bel left a simple pot anyone could copy. No two copies matched, but they all held water.
+**If card three was left:** Bel left a simple pot anyone could copy. No two copies matched, but they all held water.
 
-**If card six was right:** Bel left a giant jar everyone could share. Soon people had to agree whose water was whose.
+**If card three was right:** Bel left a giant jar everyone could share. Soon people had to agree whose water was whose.
 
-**Natural obituary:** Bel lived long enough to complain about newer pots. They were lighter, which Bel found suspicious.
+**Obituary if card three was left:** Bel was buried by a mudslide while digging clay. Ves made the next pot exactly the way Bel said.
 
-**Risk obituary (exposure ≥ 2):** Years of working beside hot ovens shortened Bel’s life. Ves kept the best pots and built a safer oven.
-
+**Obituary if card three was right:** Bel was buried by a mudslide while digging clay. Ves kept the promise, and the village got its giant jar.
 
 ## C03 — Dinner, Later
 
@@ -626,11 +542,8 @@ Food that’s dried or salted, then sealed in dry pots so it lasts for months.
 ### Workbench progression
 
 1. Mouldy grain in a pot
-2. Thin strips or salt bed
-3. Covered drying rack
-4. Dry sealed stores
-5. Shared pantry or journey packs
-6. Winter jar with a return mark
+2. Dry sealed stores
+3. Claw marks by the stores
 
 ### C03.1 — Opening
 
@@ -647,37 +560,7 @@ Food that’s dried or salted, then sealed in dry pots so it lasts for months.
 **Effects:** experimental exposure unchanged.
 
 
-### C03.2 — Experiment
-
-**Speaker:** Ada (`ada`)
-
-**Situation:** Food dried in the open air lasts longer. But birds have noticed, and they keep stealing pieces. This food is for Tal, not the birds.
-
-**Left: Cover the drying rack**  
-**Result:** A loose woven cover lets air in and keeps beaks out. The birds peck at it for a while, then give up.  
-**Effects:** experimental exposure unchanged.
-
-**Right: Dry it above gentle smoke**  
-**Result:** The smoke keeps birds away and adds flavour. But the rack gets too hot, and you move it just before your dinner catches fire.  
-**Effects:** experimental exposure +1.
-
-
-### C03.3 — Complication
-
-**Speaker:** Ada (`ada`)
-
-**Situation:** A sealed jar smells even worse than an open one. Ada breaks up the food inside, and it’s still damp. The jar isn’t the problem. The wet food is.
-
-**Left: Dry the food before sealing**  
-**Result:** You let the next batch dry all the way before sealing it. It’s less exciting than inventing a better lid, but it works.  
-**Effects:** experimental exposure unchanged.
-
-**Right: Salt, drain, then store it**  
-**Result:** You salt the food, pour off the salty water, then pack it. This time the lid seals in good food, not a wet mess.  
-**Effects:** experimental exposure unchanged.
-
-
-### C03.4 — Proof
+### C03.2 — Proof
 
 **Speaker:** Tal (`tal`)
 
@@ -691,48 +574,34 @@ Food that’s dried or salted, then sealed in dry pots so it lasts for months.
 **Result:** Ada compares the stored food with fresh food. You note the differences and throw out the spoiled test batches without tasting them.  
 **Effects:** experimental exposure unchanged.
 
-**Proof rule:** Either choice permanently commits `c03-invention` after its result transaction. Show the invention reveal before C03.5.
+**Proof rule:** Either choice permanently commits `c03-invention` after its result transaction. Show the invention reveal before C03.3.
 
 
-### C03.5 — Adoption
+### C03.3 — Danger
 
 **Speaker:** Ada (`ada`)
 
-**Situation:** The method works. Before next winter, there’s time for one plan: teach the village and fill a shared pantry, or pack food for travellers. Ada wants both, eventually.
+**Situation:** A bear has smelled the stored food. It tears through the drying racks toward the jars, and you’re the only one close enough to stop it. You won’t walk away from this, but you can save one thing.
 
-**Left: Teach everyone and share the food**  
-**Result:** Families bring food and learn how to preserve it. People who had nothing to bring get fed too. Nobody has to earn a winter meal.  
+**Left: Save the village’s winter jars**  
+**Result:** You drag the winter jars into the cave and wedge the entrance shut with stones. The bear can’t get in. You’re still outside.  
 **Effects:** experimental exposure unchanged; R affinity +1.
 
-**Right: Pack food for travellers like Tal**  
-**Result:** Tal leaves with food that will last the trip. Along the way, people ask about the empty jars, and Tal explains how the food was kept.  
+**Right: Save the packs for Tal’s journey**  
+**Result:** You throw Tal’s travel packs across the stream, where the bear can’t follow. It follows you instead.  
 **Effects:** experimental exposure unchanged; D affinity +1.
 
-
-### C03.6 — Legacy
-
-**Speaker:** Tal (`tal`)
-
-**Situation:** Tal lays a smooth stone beside the first winter jar. The stone comes from farther away than you’ve ever walked. Your food made Tal’s trip home possible.
-
-**Left: Save food for the whole village**  
-**Result:** Soon there are many jars like it. Children grow up thinking winter meals are normal. That’s exactly what you wanted.  
-**Effects:** experimental exposure unchanged; R affinity +1.
-
-**Right: Save food for the next journey**  
-**Result:** You mark a jar with the day of Tal’s next trip. Now Tal’s promise to return comes with food for the road.  
-**Effects:** experimental exposure unchanged; D affinity +1.
+**Danger rule:** Both answers end the life. The chosen answer picks the legacy and the obituary below.
 
 ### Closing record
 
-**If card six was left:** Neri left a winter pantry that everyone refilled together. The village learned to plan past tomorrow.
+**If card three was left:** Neri left a winter pantry that everyone refilled together. The village learned to plan past tomorrow.
 
-**If card six was right:** Neri left packs of food for travellers. Long journeys became something you could prepare for.
+**If card three was right:** Neri left packs of food for travellers. Long journeys became something you could prepare for.
 
-**Natural obituary:** Neri welcomed Tal home many times. At the last meal, nobody mentioned how afraid everyone once was of winter.
+**Obituary if card three was left:** Neri was killed by a bear that wanted the village’s food. It never got any.
 
-**Risk obituary:** Not reachable from this authored chapter. Use the natural obituary; do not add random hazards.
-
+**Obituary if card three was right:** Neri was killed by a bear beside the stream. Tal set off on time, with food for the whole trip.
 
 ## C04 — Next Season
 
@@ -754,11 +623,8 @@ Choosing good seeds, planting them, caring for the crop, and saving seed for nex
 ### Workbench progression
 
 1. Seeds on a path
-2. Two small test gardens
-3. Water channel or scrap-covered soil
-4. Harvest with reserved seed
-5. Shared plots or seeds to test
-6. Seed pouch and planting record
+2. Harvest with reserved seed
+3. A wild aurochs in the field
 
 ### C04.1 — Opening
 
@@ -775,37 +641,7 @@ Choosing good seeds, planting them, caring for the crop, and saving seed for nex
 **Effects:** experimental exposure unchanged.
 
 
-### C04.2 — Experiment
-
-**Speaker:** Oma (`oma`)
-
-**Situation:** Oma’s animals have always grazed where you planted. Everyone knew it, though nobody ever said so. Now your neat rows are in the way. The plants are doing very well.
-
-**Left: Share the land by season**  
-**Result:** You and Oma agree on a season for crops and a season for animals. It’s not perfect, but now everyone knows the rule.  
-**Effects:** experimental exposure unchanged.
-
-**Right: Choose a smaller unused patch**  
-**Result:** You move to a smaller, unused patch. The harvest will be smaller, but you spend your time comparing seeds, not arguing over land.  
-**Effects:** experimental exposure unchanged.
-
-
-### C04.3 — Complication
-
-**Speaker:** Sen (`sen`)
-
-**Situation:** The rain doesn’t come, but the plants near where you wash stay greener. Sen says the crops need water more than they need you talking to them.
-
-**Left: Build a shallow water channel**  
-**Result:** You dig a channel to lead water to the roots. It works too well. Sen blocks it just before the field floods.  
-**Effects:** experimental exposure +1.
-
-**Right: Cover the soil with plant scraps**  
-**Result:** The soil under the scraps stays damp longer. It looks messy. You explain, very confidently, that the mess is on purpose.  
-**Effects:** experimental exposure unchanged.
-
-
-### C04.4 — Proof
+### C04.2 — Proof
 
 **Speaker:** Sen (`sen`)
 
@@ -819,48 +655,34 @@ Choosing good seeds, planting them, caring for the crop, and saving seed for nex
 **Result:** You keep several kinds of seed apart. Next season each kind grows differently, which teaches you more than one lucky crop could.  
 **Effects:** experimental exposure unchanged.
 
-**Proof rule:** Either choice permanently commits `c04-invention` after its result transaction. Show the invention reveal before C04.5.
+**Proof rule:** Either choice permanently commits `c04-invention` after its result transaction. Show the invention reveal before C04.3.
 
 
-### C04.5 — Adoption
-
-**Speaker:** Oma (`oma`)
-
-**Situation:** Other families want land and seed. You can set up shared plots, or hand out different seeds to test in different places. Oma offers to keep the animals out either way.
-
-**Left: Share plots and planting knowledge**  
-**Result:** People work beside one another. Sen teaches from a stool at the field edge, where the best arguments now happen.  
-**Effects:** experimental exposure unchanged; R affinity +1.
-
-**Right: Hand out different seeds to test**  
-**Result:** Each kind of seed does best in different ground. People bring back seeds to compare, sometimes with every kind mixed up in one sack.  
-**Effects:** experimental exposure unchanged; S affinity +1.
-
-
-### C04.6 — Legacy
+### C04.3 — Danger
 
 **Speaker:** Sen (`sen`)
 
-**Situation:** The old gathering path is still there. But this season, nobody in your household had to walk it hungry. Sen asks what you should leave for the next people who farm here.
+**Situation:** At harvest, a wild aurochs charges through the field, bigger than any animal you’ve seen. You push Sen out of its way. It doesn’t miss you. Sen kneels beside you and asks what to do with the seeds.
 
-**Left: Leave a shared planting calendar**  
-**Result:** The calendar follows the seasons, not whoever is in charge. Nobody can control the rain, but now people get ready before it comes.  
+**Left: Share them with every family**  
+**Result:** You tell Sen to give seed to every family and farm the fields together. Sen says you’re giving orders even now. You are.  
 **Effects:** experimental exposure unchanged; R affinity +1.
 
-**Right: Leave seeds and simple drawings**  
-**Result:** Simple drawings and matching tokens show which seed is which. Future farmers get several kinds to try, though a lot still needs explaining out loud.  
+**Right: Keep each kind apart and marked**  
+**Result:** You tell Sen to keep each kind of seed apart, with a drawing on every pouch. Sen starts drawing before you’ve finished.  
 **Effects:** experimental exposure unchanged; S affinity +1.
+
+**Danger rule:** Both answers end the life. The chosen answer picks the legacy and the obituary below.
 
 ### Closing record
 
-**If card six was left:** Eda left fields that several families farmed together. The harvest became everyone’s job, and everyone had opinions.
+**If card three was left:** Eda left fields that several families farmed together. The harvest became everyone’s job, and everyone had opinions.
 
-**If card six was right:** Eda left several kinds of seed, with drawings and matching tokens. One bad season could no longer ruin everything.
+**If card three was right:** Eda left several kinds of seed, with drawings and matching tokens. One bad season could no longer ruin everything.
 
-**Natural obituary:** Eda died after a harvest they no longer had to travel for. Sen’s seed markings stayed in use.
+**Obituary if card three was left:** Eda was killed by a wild aurochs at harvest time. That winter, every family had seed to plant.
 
-**Risk obituary:** Not reachable from this authored chapter. Use the natural obituary; do not add random hazards.
-
+**Obituary if card three was right:** Eda was killed by a wild aurochs at harvest time. Sen’s seed drawings stayed in use for generations.
 
 ## C05 — Someone Must Remember
 
@@ -4897,25 +4719,25 @@ Every row is exact additional result copy. No matching prior side means no line.
 ### Callback 01
 
 **After:** `C02.1`  
-**Only if:** `C01.6 = right`  
+**Only if:** `C01.3 = right`  
 **Text:** This village got its first fire from an ember someone carried all the way here. Carrying things is still the hard part.
 
 ### Callback 02
 
 **After:** `C03.1`  
-**Only if:** `C02.5 = right`  
+**Only if:** `C02.3 = right`  
 **Text:** The big shared jar held everyone’s food. When some of it rotted, all of it rotted. Your first test uses a very small pot.
 
 ### Callback 03
 
-**After:** `C04.4`  
-**Only if:** `C03.5 = left`  
+**After:** `C04.2`  
+**Only if:** `C03.3 = left`  
 **Text:** Because the village shares its stored food, you can save these seeds without anyone going hungry.
 
 ### Callback 04
 
 **After:** `C05.1`  
-**Only if:** `C04.6 = right`  
+**Only if:** `C04.3 = right`  
 **Text:** The old seed pouch with picture labels is here. The labels show which seeds survived, but not everything their maker knew.
 
 ### Callback 05
@@ -4993,7 +4815,7 @@ Every row is exact additional result copy. No matching prior side means no line.
 ### Callback 17
 
 **After:** `D2.2`  
-**Only if:** `C03.5 = left`  
+**Only if:** `C03.3 = left`  
 **Text:** Samir reads about an old shared pantry that fed a whole village. He copies the idea: an emergency food supply anyone can use without asking first.
 
 ### Callback 18
@@ -5068,7 +4890,7 @@ Every row is exact additional result copy. No matching prior side means no line.
 
 ## Content integrity gates
 
-- Exactly 34 chapter IDs, 204 card IDs and 34 invention IDs, all unique. Exactly six cards and six bench states per chapter. Exactly two written options per card.
+- Exactly 34 chapter IDs, 192 card IDs and 34 invention IDs, all unique. Six cards and six bench states per chapter, except the four short lives (C01–C04), which have three of each. Exactly two written options per card.
 - Every speaker resolves to that chapter’s cast; global `archive` resolves separately. A repeated supporting name never reuses another chapter’s portrait state or relationship automatically.
 - Every listed prerequisite exists; the shared sequence and each route terminate. The U3 fork is the only cross-route transition in a live campaign.
 - Every callback target and source exists; verify both the true and false case. Never show a callback based on an unchosen side.
@@ -5085,9 +4907,9 @@ Use the repository’s actual test runner. Do not invent evidence of tests that 
 
 1. Both sides of C01.1 work by tap and keyboard; a cancelled swipe commits nothing.
 2. One choice produces one result, one set of effects and one persisted side. A duplicate event does nothing. Reload on a result neither doubles affinity nor repeats an invention.
-3. Card four commits exactly one invention and enters reveal; continuing reveal reaches card five. Card six writes the corresponding legacy and enters the correct closing view.
-4. All six cards play regardless of exposure. Exposure >=2 changes the normal obituary only after card six. C01 always closes naturally; terminal chapters always enter endings.
-5. At least one all-left and all-right traversal of every chapter succeeds. Better: enumerate the 64 six-choice combinations per chapter to check completion, invention count and legacy selection.
+3. The proof card (card four, or card two in a short life) commits exactly one invention and enters reveal; continuing reveal reaches the next card. The last card writes the corresponding legacy and enters the correct closing view.
+4. Every card plays regardless of exposure. Exposure >=2 changes the normal obituary only after card six. A short life’s obituary comes from its danger card; terminal chapters always enter endings.
+5. At least one all-left and all-right traversal of every chapter succeeds. Better: enumerate every choice combination per chapter (64 for six cards, 8 for three) to check completion, invention count and legacy selection.
 6. Proposal order uses normalized affinities with stable tie handling. Every route is selectable even from the lowest rank. Reload on an offer preserves order and accepted/deferred state.
 7. Complete one full shared-spine-to-ending run for each route using deterministic fixtures. Each ordinary run has 18 lives and 18 committed inventions. Each final panel uses the actual final choice.
 8. Complete U1–U3, then redirect. R1–R4 run without replaying C01–C14; the resulting history has 21 lives/inventions and no Stillness Engine. The Unmaking ending must not be marked seen.

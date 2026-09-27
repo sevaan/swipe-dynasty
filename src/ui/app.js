@@ -120,11 +120,15 @@ function applySky(age) {
 // ---- Each moment as a card: which deck it's from, where in the deck, and its face
 
 const hasProgress = () => !!state && !(state.view === 'intro' && state.turn === 0);
-const cardPos = (i) => (i < 4 ? i + 1 : i + 2); // the reveal sits between the fourth and fifth decisions
+// A life's deck: the character card, its decisions with the reveal after
+// the proof, and the epitaph. A short Stone Age life's danger card shows red
+// in the stack before it arrives, as the reveal shows gold and the epitaph black.
+const cardPos = (ch, i) => (i <= ch.proofIndex ? i + 1 : i + 2);
 
 function lifeStep(chapterId, pos, extra) {
   const ch = C.chapters[chapterId];
-  const variants = ['plain', 'plain', 'plain', 'plain', 'plain', 'gilt', 'plain', 'plain'];
+  const variants = ['plain', ...ch.cards.map((cd) => (cd.kind === 'danger' ? 'danger' : 'plain'))];
+  variants.splice(ch.proofIndex + 2, 0, 'gilt');
   if (!ch.final) variants.push('mourn'); // a route's last life goes straight to its ending
   return { deck: `life:${chapterId}`, pos, variants, measure: faces.measureLife(chapterId), ...extra };
 }
@@ -158,8 +162,9 @@ function stepFor(v) {
       return lifeStep(id, 0, { kind: 'single', cls: 'arrival', face: faces.arrival(v) });
     case 'choice': {
       const i = state.cardIndex;
-      const card = C.chapters[id].cards[i];
-      return lifeStep(id, cardPos(i), { kind: 'choice', cls: 'choice', face: faces.choice(id, i), labels: { left: card.left.label, right: card.right.label }, hint: v.first === 1 });
+      const ch = C.chapters[id];
+      const card = ch.cards[i];
+      return lifeStep(id, cardPos(ch, i), { kind: 'choice', cls: `choice${card.kind === 'danger' ? ' danger' : ''}`, face: faces.choice(id, i), labels: { left: card.left.label, right: card.right.label }, hint: v.first === 1 });
     }
     case 'result': {
       if (v.offer) {
@@ -170,12 +175,14 @@ function stepFor(v) {
         return { deck: 'redirect', pos: 0, variants: ['plain'], kind: 'result', cls: 'redirect', face: faces.redirectResult(v.result.side), under: faces.redirect(), underCls: 'choice redirect', side: v.result.side };
       }
       const i = state.cardIndex;
-      return lifeStep(id, cardPos(i), { kind: 'result', cls: '', face: faces.result(id, i, v.result.side, v.result.callbacks), under: faces.choice(id, i), underCls: 'choice', side: v.result.side });
+      const ch = C.chapters[id];
+      const danger = ch.cards[i].kind === 'danger';
+      return lifeStep(id, cardPos(ch, i), { kind: 'result', cls: danger ? 'danger' : '', face: faces.result(id, i, v.result.side, v.result.callbacks), under: faces.choice(id, i), underCls: `choice${danger ? ' danger' : ''}`, side: v.result.side });
     }
     case 'reveal':
-      return lifeStep(id, 5, { kind: 'single', cls: 'reveal', face: faces.reveal(v) });
+      return lifeStep(id, C.chapters[id].proofIndex + 2, { kind: 'single', cls: 'reveal', face: faces.reveal(v) });
     case 'epitaph':
-      return lifeStep(id, 8, { kind: 'single', cls: 'epitaph', face: faces.epitaph(v) });
+      return lifeStep(id, C.chapters[id].cards.length + 2, { kind: 'single', cls: 'epitaph', face: faces.epitaph(v) });
     case 'proposal': {
       const p = v.proposal;
       if (p.index === 0 && heardArchive !== state.turn) return { ...proposalStep(p, {}), pos: 0, kind: 'single', cls: 'transition', face: faces.transition(), archive: true };
@@ -194,9 +201,11 @@ function stepFor(v) {
 }
 
 // ---- Around the deck: who and when (the header), how far through the
-// life (six pips), and firelight behind the deck as the idea catches
+// life (a pip per decision), and firelight behind the deck as the idea catches
 
 const WARMTH = { arrival: 0, choice: [0.03, 0.1, 0.18, 0.42, 0.62, 0.7], result: [0.08, 0.14, 0.42, 0.6, 0.78, 0.66], reveal: 1, epitaph: 0.32 };
+// A short life's cards take the six-card life's firelight at the same point in the life
+const warmthAt = (list, i, n) => list[n === 6 ? i : Math.round((i * 5) / (n - 1))];
 
 function chrome(step, v) {
   let who = '';
@@ -210,12 +219,13 @@ function chrome(step, v) {
   } else if (step.deck.startsWith('life:')) {
     who = v.chapter.inventor.name;
     era = v.chapter.era;
-    count = 6;
+    const ch = C.chapters[v.chapter.id];
+    count = ch.cards.length;
     const i = state.cardIndex;
-    if (v.view === 'choice') { done = i; current = i; warmth = WARMTH.choice[i]; }
-    else if (v.view === 'result') { done = i + 1; warmth = WARMTH.result[i]; }
-    else if (v.view === 'reveal') { done = 4; warmth = WARMTH.reveal; }
-    else if (v.view === 'epitaph') { done = 6; warmth = WARMTH.epitaph; }
+    if (v.view === 'choice') { done = i; current = i; warmth = warmthAt(WARMTH.choice, i, count); }
+    else if (v.view === 'result') { done = i + 1; warmth = warmthAt(WARMTH.result, i, count); }
+    else if (v.view === 'reveal') { done = ch.proofIndex + 1; warmth = WARMTH.reveal; }
+    else if (v.view === 'epitaph') { done = count; warmth = WARMTH.epitaph; }
     else warmth = WARMTH.arrival;
   } else if (step.deck === 'proposals') {
     who = C.archive.name;
@@ -375,7 +385,8 @@ function endingsHTML(endings) {
 }
 
 function exhibitThumb(chapterId, age) {
-  const look = faces.lookFor(chapterId, 5, state.legacies[chapterId] || 'left') || faces.lookFor(chapterId, 3, state.choices[`${chapterId}.4`] || 'left');
+  const ch = C.chapters[chapterId];
+  const look = faces.lookFor(chapterId, ch.lastIndex, state.legacies[chapterId] || 'left') || faces.lookFor(chapterId, ch.proofIndex, state.choices[ch.cards[ch.proofIndex].id] || 'left');
   return `<img class="art" src="${esc(artURL('benches', look ? 'exhibit' : age.bench))}" alt="">${look ? `<img class="art" src="${esc(artURL('objects', look.object))}" alt="">` : ''}`;
 }
 

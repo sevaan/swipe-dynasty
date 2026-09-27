@@ -5,7 +5,7 @@ The whole game is three files in this folder:
 | File | What it holds |
 |---|---|
 | `script.md` | The story: every life, card, answer, result, callback, proposal and ending. This is Sevaan's complete script, and the game reads it as it's written. |
-| `world.json` | How each life looks: its era palette and skies, its workbench, which drawings show its six workbench states, and which characters have drawn portraits. |
+| `world.json` | How each life looks: its era palette and skies, its workbench, which drawings show its workbench states (one per card), and which characters have drawn portraits. |
 | `ui.json` | The interface's exact words: the title screen, the helpers, the reveal, the proposals, the credits. |
 
 Edit a file, push to `main`, and the change is live on the phone about a minute later. There's no build step. Before pushing, run `node tools/check.mjs`. It lists errors (the game won't start) and warnings (worth a look), each with its file, line, and the chapter, card or field. If you push content with errors anyway, the game shows the same list instead of starting.
@@ -36,15 +36,16 @@ The rules and notes in the script are for people; the game skips them. What it r
   - `**Arrival:**`
   - `**Single invention:** \`id\` — **Name**`, with the description on the next line.
   - `### Cast`: one line per person, like ``- `iri` — **Iri:** A companion…``. Ids are local to their life.
-  - `### Workbench progression`: six numbered states, one shown before each card.
-- **A card** is a `###` heading like `### C01.1 — Opening`. The six cards must run Opening, Experiment, Complication, Proof, Adoption, Legacy. Each card has:
+  - `### Workbench progression`: numbered states, one shown before each card: six, or three in a short life.
+- **A card** is a `###` heading like `### C01.1 — Opening`. A life's six cards run Opening, Experiment, Complication, Proof, Adoption, Legacy. A short Stone Age life's three run Opening, Proof, Danger. Each card has:
   - `**Speaker:** Name (\`id\`)`: a member of that life's cast.
   - `**Situation:**`
   - `**Left: …**` and `**Right: …**`: the two answers. Under each, `**Result:**` and `**Effects:**`.
 - **Effects** read `experimental exposure unchanged.`, `experimental exposure +1.`, or add an interest: `experimental exposure unchanged; D affinity +1.`. The interests are S (modelling), D (exploration), R (shared provision), A (communication) and U (inner relief).
 - **The closing record** (`### Closing record`) has:
-  - `**If card six was left:**` and `**If card six was right:**`: the legacy line on the epitaph.
+  - `**If card six was left:**` and `**If card six was right:**`: the legacy line on the epitaph. A short life writes `If card three was left/right`.
   - `**Natural obituary:**`, and optionally `**Risk obituary:**`. A risk obituary that starts "Not reachable" is a note, not copy.
+  - A short life has no natural or risk obituary. It has `**Obituary if card three was left:**` and `…right:**`: the death its danger card's answer led to.
   - A route's last life has `**Final-life rule:**` instead of obituaries; its ending follows.
 - **An ending** is `## Ending — Title` inside its route: `**Panel 1:**` to `**Panel 5:**`, then `**After panel five, if S4.6 was left:**` and `…right:**`.
 - **The redirect** is `### REDIRECT.U3 — Title`, with `**When:**`, `**Speaker:**`, `**Situation:**`, and two answers whose `**Transition:**` names the life they go to.
@@ -55,11 +56,12 @@ A line that sits directly under a field, with no blank line between, continues t
 
 ## How a life plays
 
-Every life plays exactly six cards: opening, experiment, complication, proof, adoption, legacy. Nothing ends a life early.
+Most lives play six cards: opening, experiment, complication, proof, adoption, legacy. The first four (C01–C04) are short Stone Age lives of three (Sevaan, Sep 27): opening, proof, and a danger card that ends the life, so the player sees each choice carry into the next life quickly. Nothing else ends a life early.
 
 - **After each answer,** its result shows with any callbacks whose earlier choice matches, then Continue.
-- **Card four** commits the life's one invention and shows the reveal.
-- **Card six** picks the legacy line. Then comes the epitaph: the inventor's name, "Invented …", the obituary, and the legacy.
+- **The proof card** (card four, or card two in a short life) commits the life's one invention and shows the reveal.
+- **The last card** (card six, or the danger card) picks the legacy line; in a short life it picks the obituary too. Then comes the epitaph: the inventor's name, "Invented …", the obituary, and the legacy.
+- **A danger card's** two answers are both deaths, a sabre-tooth cat or a mudslide, say. The choice is the inventor's last act, and it decides what people do with the invention.
 - **Exposure** adds up within a life, from 0 to 9, and is never shown. At 2 or more the risk obituary replaces the natural one, where a life has one.
 
 After the fourteenth life, interests rank the five routes. Each score is divided by the most this script lets that interest reach, so a route with fewer chances to score isn't buried. The Archive offers them one at a time; the last offer shows the final two together. A route runs four lives to its ending. After U3, the redirect can turn Unmaking into Retirement. "Another future" at the end goes back to the proposals, with the shared history as it was.
@@ -67,7 +69,7 @@ After the fourteenth life, interests rank the five routes. Each score is divided
 ## `world.json`
 
 - **`ages`**: each era's `chapters`, its `bench` (a picture in `art/benches/`), its `theme` colours and its `sky` list. Every life must be in exactly one age.
-- **`art`**: drawings for a life's six workbench states, one entry per state:
+- **`art`**: drawings for a life's workbench states, one entry per state (as many as the life has cards):
   - `"object"` is shown before the card: a picture in `art/objects/`, or `{ "from": "C02.1", "left": …, "right": … }` when it depends on an earlier answer.
   - `"marks"` adds overlays from `art/overlays/`.
   - `"left"` and `"right"` are what the workbench changes to after each answer.

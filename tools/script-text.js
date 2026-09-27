@@ -40,7 +40,8 @@ export function scriptText(content) {
     out.push(`**${c.inventor.name}** — ${c.inventor.role} · ${c.era}`, '', `> ${c.arrival}`, '', `You want: ${c.inventor.want}`, '');
     const o = C.overrides[id];
     if (o) out.push(`_After ${o.when.card} = ${o.when.side}, the arrival instead reads:_ ${o.arrival} _(era: ${o.era})_`, '');
-    out.push(`**Invention (card 4):** ${c.invention.name}. ${c.invention.description}`, '');
+    out.push(`**Invention (card ${c.proofIndex + 1}):** ${c.invention.name}. ${c.invention.description}`, '');
+    if (c.short) out.push('_A short Stone Age life: three cards, and the danger card ends it._', '');
     for (const card of c.cards) {
       const who = c.cast[card.speaker];
       out.push(`### ${card.id} — ${card.kind[0].toUpperCase()}${card.kind.slice(1)}`, '', `**${who?.name || card.speaker}:** ${card.text}`, '');
@@ -52,8 +53,10 @@ export function scriptText(content) {
       for (const cb of callbacksFrom(card.id)) out.push(`- _Sets up a callback after ${cb.after} if ${cb.side}._`);
       out.push('');
     }
-    out.push(`**Legacy, card six left:** ${c.legacy.left}`, '', `**Legacy, card six right:** ${c.legacy.right}`, '');
+    const lastWord = c.short ? 'three' : 'six';
+    out.push(`**Legacy, card ${lastWord} left:** ${c.legacy.left}`, '', `**Legacy, card ${lastWord} right:** ${c.legacy.right}`, '');
     if (c.final) out.push('_Final life of the route: no obituary; the ending follows._', '');
+    else if (c.short) out.push(`**Obituary, card three left:** ${c.death.left}`, '', `**Obituary, card three right:** ${c.death.right}`, '');
     else {
       out.push(`**Obituary:** ${c.death.natural}`, '');
       if (c.death.risk) out.push(`**Obituary with experimental exposure 2 or more:** ${c.death.risk}`, '');

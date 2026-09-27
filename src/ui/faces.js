@@ -1,4 +1,4 @@
-// The words and pictures on every card: a life's character card, its six
+// The words and pictures on every card: a life's character card, its
 // decisions and their results, the reveal and the epitaph; the Archive's
 // proposals and the redirect; the ending's panels, the credits, the framing
 // and the title. Only HTML: table.js does the moving. Every word comes from
@@ -86,11 +86,12 @@ export function createFaces({ content, getState }) {
     return `<div class="pic ${cls}" aria-hidden="true">${layers.join('')}${look ? '' : `<div class="label-card">${esc(label)}</div>`}</div>`;
   }
 
-  // The exhibit: the plinth, with the object as it ended up after card four
+  // The exhibit: the plinth, with the object as it ended up after the proof card
   function exhibit(chapterId) {
-    const side = getState()?.choices?.[`${chapterId}.4`] || 'left';
-    const look = lookFor(chapterId, 3, side);
-    const label = C.chapters[chapterId].bench[3] || '';
+    const ch = C.chapters[chapterId];
+    const side = getState()?.choices?.[ch.cards[ch.proofIndex].id] || 'left';
+    const look = lookFor(chapterId, ch.proofIndex, side);
+    const label = ch.bench[ch.proofIndex] || '';
     const layers = [layer(artURL('benches', 'exhibit'), 0)];
     if (look) {
       layers.push(layer(artURL('objects', look.object), 1, ` data-label="${esc(label)}"`));
@@ -227,7 +228,7 @@ export function createFaces({ content, getState }) {
     const ch = C.chapters[chapterId];
     const out = [];
     ch.cards.forEach((card, i) => {
-      out.push({ cls: 'front choice', html: choice(chapterId, i) });
+      out.push({ cls: `front choice${card.kind === 'danger' ? ' danger' : ''}`, html: choice(chapterId, i) });
       const cbs = C.callbacks.filter((cb) => cb.after === card.id).map((cb) => cb.text);
       for (const side of ['left', 'right']) out.push({ cls: 'back result', html: result(chapterId, i, side, cbs) });
     });

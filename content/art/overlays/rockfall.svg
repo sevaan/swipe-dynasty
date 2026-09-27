@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240">
+  <!-- Overlay: the bank gives way -->
+  <!-- stones tumbling from the top, with dust spilling behind them -->
+  <g fill="#a8906f" opacity=".85"><circle cx="118" cy="30" r="15"/><circle cx="138" cy="22" r="18"/><circle cx="160" cy="30" r="14"/><circle cx="206" cy="46" r="12"/><circle cx="222" cy="40" r="15"/><circle cx="96" cy="58" r="10"/></g>
+  <g fill="#bfa888" opacity=".8"><circle cx="150" cy="44" r="11"/><circle cx="238" cy="58" r="9"/><circle cx="82" cy="40" r="8"/></g>
+  <path fill="#7d7266" d="M126 44L148 38L158 56L140 68L122 60Z"/>
+  <path fill="#000" opacity=".12" d="M148 38L158 56L140 68Z"/>
+  <path fill="#8b8074" d="M196 70L214 64L222 80L206 90Z"/>
+  <path fill="#000" opacity=".12" d="M214 64L222 80L206 90Z"/>
+  <path fill="#6f655a" d="M92 84L104 80L110 92L98 98Z"/>
+  <path fill="#000" opacity=".12" d="M104 80L110 92L98 98Z"/>
+  <path fill="#857a6e" d="M170 96L180 94L184 104L174 108Z"/>
+  <path fill="#7d7266" d="M236 104L244 102L247 110L239 113Z"/>
+</svg>

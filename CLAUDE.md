@@ -7,13 +7,13 @@ Read `content/script.md` before doing anything. It's Sevaan's complete game scri
 ## Tech constraints
 
 - Plain HTML, CSS and JavaScript modules. No build step, no dependencies. GitHub Pages serves `main` as-is.
-- Phone first, and every moment is a card (Sevaan chose layout prototype 1, "The Card", Sep 27). A life is a small face-down deck dealt onto the table: the character card, six decisions, the gilt reveal and the black-edged epitaph. `src/ui/table.js` moves the cards and `src/ui/faces.js` draws them; `app.js` turns each engine view into a step (which deck, which place in it, which face).
+- Phone first, and every moment is a card (Sevaan chose layout prototype 1, "The Card", Sep 27). A life is a small face-down deck dealt onto the table: the character card, its decisions (six, or three in a short Stone Age life), the gilt reveal and the black-edged epitaph. A short life's danger card shows red in the stack. `src/ui/table.js` moves the cards and `src/ui/faces.js` draws them; `app.js` turns each engine view into a step (which deck, which place in it, which face).
   - A decision card has the workbench picture on top, the speaker and the words under it, and the two answers as tear-off tabs along its foot. Tap a tab, or drag the card: it swings, the answer's stamp comes down, and past 30% of its width (or on a flick) letting go chooses. The card turns over and the result is printed on its kraft back; tap anywhere or throw it away to move on.
   - The same cards carry the Archive's lead-in and proposals, the Unmaking redirect, an ending's panels, the credits, the framing and the title.
   - On a keyboard, the arrows choose and Enter or Space continues. Experimental exposure (the old "danger") is tracked but never shown.
   - Test touch as well as the mouse: phones capture a finger to whatever it touched first. `?dev` exposes `window.obi` (state, step, busy) for driving the game in tests.
 - The story is `content/script.md`, read by `src/content/script.js`: chapter and card headings and bold field labels are the structure, so a rewrite of the script is a drop-in file swap. `content/world.json` maps each life to an era palette, workbench and drawings; `content/ui.json` holds the interface's exact words. `content/README.md` is the writer's guide. Any slip is reported with its line and chapter, card and field.
-- `src/engine/campaign.js` has no DOM code. The browser, `tools/simulate.mjs` and the tests all run the same engine: six cards per life, all always played; the invention on card four; the legacy on card six; proposals ranked by normalized interest after the shared lives.
+- `src/engine/campaign.js` has no DOM code. The browser, `tools/simulate.mjs` and the tests all run the same engine: every card of a life always plays; the invention on the proof card (card four, or card two); the legacy on the last card; proposals ranked by normalized interest after the shared lives. The first four lives (C01–C04) are short (Sevaan, Sep 27): three cards, the last a danger card that ends the life, picking its legacy and its obituary.
 - The game saves after every choice: a snapshot in IndexedDB (localStorage if that's unavailable), with the one before it kept. Each write checks a revision number, so a stale second tab can't overwrite a newer game. Settings live in localStorage. Export and import in Settings move a save by hand.
 - No emoji anywhere (Sevaan's call). Every picture is flat vector art like Reigns: one SVG per picture in `content/art/`, drawn to the house style in `content/art/README.md`. `tools/art.html` shows them all, and the checker validates them (the canvas size, and no scripts, text or outside links).
 - Text is Atkinson Hyperlegible Next, chosen for legibility; names, headings and the stamp use Fraunces. Keep the readability rules in design-notes.md: nothing players need to read is italic, faded or blinking, story text is at least 18px, and secondary text uses `--ink-soft` on paper or `--text-soft` on the sky (both over 6:1). Every card must fit a 390×664 screen at the default text size; at larger sizes the words scroll inside the card, with a fade at their foot.
@@ -23,7 +23,7 @@ Read `content/script.md` before doing anything. It's Sevaan's complete game scri
 
 - `npm test` (Node 18+, no install needed).
 - `node tools/check.mjs` must show 0 errors.
-- After changing the script, run `node tools/simulate.mjs --runs 500`: an ordinary history is 18 lives and 108 cards, one redirected from Unmaking is 21 and 126, and every route should come up. `tools/script.html` (or `node tools/script.mjs`) reads the whole script back for review, with a filter per route.
+- After changing the script, run `node tools/simulate.mjs --runs 500`: an ordinary history is 18 lives and 96 cards, one redirected from Unmaking is 21 and 114, and every route should come up. `tools/script.html` (or `node tools/script.mjs`) reads the whole script back for review, with a filter per route.
 
 ## Phone workflow
 

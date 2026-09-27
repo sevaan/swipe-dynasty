@@ -6,7 +6,13 @@
 // straight at itself. The browser, the checker and the tests all read the
 // script through this one function.
 
-export const KINDS = ['opening', 'experiment', 'complication', 'proof', 'adoption', 'legacy'];
+// A life's cards in order: the six-card rhythm, and the short Stone Age
+// life (C01–C04) of three, whose danger card ends it (the script's section 3)
+export const SHAPES = {
+  full: ['opening', 'experiment', 'complication', 'proof', 'adoption', 'legacy'],
+  short: ['opening', 'proof', 'danger'],
+};
+export const KINDS = SHAPES.full;
 export const AFFINITY_KEYS = ['S', 'D', 'R', 'A', 'U'];
 export const ARCHIVE = 'archive';
 
@@ -109,7 +115,7 @@ export function parseScript(text, { file = 'content/script.md' } = {}) {
         id, title: m[2], era: '', arrival: '', prerequisite: null, prerequisiteText: '',
         inventor: { name: '', role: '', want: '' }, cast: {}, castOrder: [],
         invention: { id: '', name: '', description: '' }, bench: [], cards: [],
-        legacy: { left: '', right: '' }, death: { natural: '', risk: null }, final: false,
+        legacy: { left: '', right: '' }, death: { natural: '', risk: null, left: '', right: '' }, final: false,
         route: route?.id ?? null, line: n,
       };
       chapters[id] = chapter;
@@ -143,7 +149,6 @@ export function parseScript(text, { file = 'content/script.md' } = {}) {
       const kind = m[3].toLowerCase();
       card = { id: `${m[1]}.${m[2]}`, index, kind, speaker: null, text: '', left: null, right: null, line: n };
       if (chapter.cards[index]) err(n, `Card ${card.id} appears twice`, card.id);
-      if (KINDS[index] !== kind) err(n, `Card ${card.id} should be the ${KINDS[index]} card, not "${m[3]}"`, card.id);
       chapter.cards[index] = card;
       continue;
     }
@@ -287,8 +292,10 @@ export function parseScript(text, { file = 'content/script.md' } = {}) {
             lastField.set = (v) => { chapter.invention.description = (chapter.invention.description ? `${chapter.invention.description} ` : '') + v; expectInventionText = false; };
             break;
           }
-          case 'If card six was left': chapter.legacy.left = value; break;
-          case 'If card six was right': chapter.legacy.right = value; break;
+          case 'If card six was left': case 'If card three was left': chapter.legacy.left = value; break;
+          case 'If card six was right': case 'If card three was right': chapter.legacy.right = value; break;
+          case 'Obituary if card three was left': chapter.death.left = value; break;
+          case 'Obituary if card three was right': chapter.death.right = value; break;
           case 'Natural obituary': chapter.death.natural = value; break;
           case 'Risk obituary': chapter.death.risk = /^Not reachable\b/i.test(value) ? null : value; break;
           case 'Final-life rule': chapter.final = true; break;
@@ -314,17 +321,28 @@ export function parseScript(text, { file = 'content/script.md' } = {}) {
     const need = (value, field) => { if (!value) err(n, `${id} has no ${field}`, id, field); };
     need(c.era, 'Era'); need(c.arrival, 'Arrival'); need(c.inventor.name, 'Inventor name'); need(c.inventor.role, 'Inventor role');
     need(c.inventor.want, 'Personal want'); need(c.invention.id, 'invention id'); need(c.invention.name, 'invention name'); need(c.invention.description, 'invention description');
-    need(c.legacy.left, 'closing record for a left card six'); need(c.legacy.right, 'closing record for a right card six');
-    if (!c.final) need(c.death.natural, 'Natural obituary');
-    if (c.bench.length !== 6) err(n, `${id} has ${c.bench.length} workbench states; it needs exactly 6`, id, 'workbench');
+    // Six cards, or three for a short life
+    const shape = c.cards.length === SHAPES.short.length ? 'short' : 'full';
+    const kinds = SHAPES[shape];
+    c.short = shape === 'short';
+    c.proofIndex = kinds.indexOf('proof');
+    c.lastIndex = kinds.length - 1;
+    const last = c.short ? 'three' : 'six';
+    need(c.legacy.left, `closing record for a left card ${last}`); need(c.legacy.right, `closing record for a right card ${last}`);
+    if (c.short) {
+      need(c.death.left, 'Obituary if card three was left'); need(c.death.right, 'Obituary if card three was right');
+      if (c.route) err(n, `${id} is a short life, but short lives belong to the shared history`, id);
+    } else if (!c.final) need(c.death.natural, 'Natural obituary');
+    if (c.bench.length !== kinds.length) err(n, `${id} has ${c.bench.length} workbench states; it needs exactly ${kinds.length}`, id, 'workbench');
     if (!c.castOrder.length) err(n, `${id} has no cast`, id, 'cast');
     if (c.invention.id) {
       if (inventions[c.invention.id]) err(n, `Invention ${c.invention.id} belongs to both ${inventions[c.invention.id].chapter} and ${id}`, id, 'invention');
       inventions[c.invention.id] = { ...c.invention, chapter: id };
     }
-    for (let k = 0; k < 6; k++) {
+    for (let k = 0; k < kinds.length; k++) {
       const cd = c.cards[k];
-      if (!cd) { err(n, `${id} is missing card ${id}.${k + 1} (${KINDS[k]})`, `${id}.${k + 1}`); continue; }
+      if (!cd) { err(n, `${id} is missing card ${id}.${k + 1} (${kinds[k]})`, `${id}.${k + 1}`); continue; }
+      if (cd.kind !== kinds[k]) err(cd.line, `Card ${cd.id} should be the ${kinds[k]} card, not "${cd.kind}"`, cd.id);
       if (cards[cd.id]) err(cd.line, `Card ${cd.id} appears twice`, cd.id);
       cards[cd.id] = cd;
       if (!cd.text) err(cd.line, `${cd.id} has no Situation`, cd.id, 'Situation');
@@ -365,7 +383,8 @@ export function parseScript(text, { file = 'content/script.md' } = {}) {
     if (!e) { err(n, `Route ${rid} has no ending`, rid, 'Ending'); continue; }
     if (e.panels.filter(Boolean).length !== 5) err(e.line, `The ${rid} ending needs 5 panels, not ${e.panels.filter(Boolean).length}`, rid, 'Ending');
     if (!e.variants.left || !e.variants.right) err(e.line, `The ${rid} ending needs both final-choice variants`, rid, 'Ending');
-    const lastCard = `${r.chapters[r.chapters.length - 1]}.6`;
+    const lastId = r.chapters[r.chapters.length - 1];
+    const lastCard = `${lastId}.${(chapters[lastId]?.lastIndex ?? 5) + 1}`;
     if (e.card && e.card !== lastCard) err(e.line, `The ${rid} ending's variants should follow ${lastCard}, not ${e.card}`, rid, 'Ending');
   }
   for (const c of chapterOrder.map((id) => chapters[id])) {

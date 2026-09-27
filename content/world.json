@@ -336,39 +336,17 @@
         "right": "hearth/fibres-spark"
       },
       {
-        "object": "hearth/flint-nodule",
-        "left": {
-          "object": "hearth/flint-nodule",
-          "marks": [
-            "glint"
-          ]
-        },
-        "right": {
-          "object": "hearth/flint-nodule",
-          "marks": [
-            "glint"
-          ]
-        }
-      },
-      {
-        "object": "hearth/fibres-spark",
-        "left": "hearth/small-flame",
-        "right": "hearth/small-flame"
-      },
-      {
-        "object": "hearth/small-flame",
-        "left": "hearth/small-flame",
-        "right": "hearth/small-flame"
-      },
-      {
         "object": "hearth/small-flame",
         "left": "hearth/two-hearths",
-        "right": "hearth/ember-carrier"
+        "right": "hearth/small-flame"
       },
       {
-        "object": "hearth/stones-warm-hand",
+        "object": "hearth/small-flame",
+        "marks": [
+          "eyes"
+        ],
         "left": "hearth/stones-warm-hand",
-        "right": "hearth/ember-carrier"
+        "right": "hearth/small-flame"
       }
     ],
     "C02": [
@@ -386,42 +364,15 @@
           "left": "vessel/lined-basket",
           "right": "vessel/clay-pot"
         },
-        "left": {
-          "object": "vessel/cracked-pot",
-          "marks": [
-            "smoke"
-          ]
-        },
-        "right": {
-          "object": "vessel/cracked-pot",
-          "marks": [
-            "flames"
-          ]
-        }
-      },
-      {
-        "object": "vessel/cracked-pot",
-        "left": "vessel/clay-pot",
-        "right": "vessel/rim-pot"
-      },
-      {
-        "object": "vessel/fired-pot",
         "left": "vessel/fired-pot",
-        "right": {
-          "object": "vessel/fired-pot",
-          "marks": [
-            "glint"
-          ]
-        }
+        "right": "vessel/notched-pot"
       },
       {
         "object": "vessel/fired-pot",
+        "marks": [
+          "rockfall"
+        ],
         "left": "vessel/household-pots",
-        "right": "vessel/store-jar"
-      },
-      {
-        "object": "vessel/notched-pot",
-        "left": "vessel/notched-pot",
         "right": "vessel/store-jar"
       }
     ],
@@ -441,30 +392,6 @@
         }
       },
       {
-        "object": {
-          "from": "C03.1",
-          "left": "provisions/drying-rack",
-          "right": "provisions/salt-pot"
-        },
-        "left": "provisions/drying-rack",
-        "right": {
-          "object": "provisions/drying-rack",
-          "marks": [
-            "smoke"
-          ]
-        }
-      },
-      {
-        "object": "provisions/drying-rack",
-        "left": "provisions/sealed-jar",
-        "right": {
-          "object": "provisions/salt-pot",
-          "marks": [
-            "salt"
-          ]
-        }
-      },
-      {
         "object": "provisions/sealed-jar",
         "left": {
           "object": "provisions/sealed-jar",
@@ -476,12 +403,10 @@
       },
       {
         "object": "provisions/sealed-jar",
+        "marks": [
+          "claws"
+        ],
         "left": "provisions/larder",
-        "right": "provisions/journey-packs"
-      },
-      {
-        "object": "provisions/marked-jar",
-        "left": "provisions/marked-jar",
         "right": "provisions/journey-packs"
       }
     ]

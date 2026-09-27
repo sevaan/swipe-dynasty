@@ -6,6 +6,14 @@ Sep 25, 2026 · @Sevaan Franks
 
 ## Decisions since the spec
 
+- **Short, dangerous Stone Age lives (Sep 27, Sevaan).** "The first few inventions you have to move through quick so that you get to see quickly the consequences of how things evolve from your choices. And it's Stone Age times so people can be killed by rocks, sabre tooth tigers, whatever."
+  - C01–C04 play three cards: an opening, the proof (the invention, then the reveal), and a danger card: a sabre-tooth cat, a mudslide, a bear, a wild aurochs. Both danger answers are deaths. The chosen one is the inventor's last act, and it picks the legacy and the obituary.
+  - From C05 (writing) on, lives play six cards, as people start living longer.
+  - The deck shows the danger coming: its card is red in the stack, between the gold reveal and the black epitaph. Three new overlays show the danger in the picture: eyes and sabre teeth, falling rocks, claw marks.
+  - This overrides the script's "All six cards always play" for these four lives. The script's own rules (sections 3, 7 and 16) now say so.
+  - A history is 96 decisions instead of 108. The callbacks that remembered these lives' fifth and sixth cards now remember their danger cards.
+  - Saves from before are reconciled. A finished short life keeps its legacy as its danger card's answer, and a life cut short partway through starts again from its arrival.
+
 - **The play screen is The Card (Sep 27, Sevaan).** Sevaan said the layout "just isn't feeling right" and asked for options to feel, not screenshots. Of five playable prototypes of Aru's life (`prototypes/`), Sevaan chose 1, The Card:
   - A life is a small face-down deck of nine cards: the character card, six decisions, the reveal and the epitaph. The deck thins as you play, and the reveal's gold edge and the epitaph's black edge show in the stack before they arrive.
   - A decision card has the workbench picture at the top, the speaker and the situation under it, and the two answers as tear-off tabs along its foot. Tap a tab, or drag the card: it swings on a pivot, the answer stamps down at 30% of its width, and letting go throws it over to show the result on its kraft back. Moving on slides the card away and turns the next one up.
@@ -470,6 +478,8 @@ Meters: Harvest, Village, Priests, The Neighbours.
 ## Graveyard
 
 Discarded, but kept in case something here comes back.
+
+**The six-card Stone Age lives (until Sep 27), cut to three.** C01–C04 lost their experiment, complication, adoption and legacy cards, and their natural obituaries. Among them: the gold-flecked lump and the stones promoted to seating, the wind shelter, Bel's stone oven and the big shared jar's first argument, the birds at the drying rack, Oma's grazing land, and the water channel that nearly flooded the field. The full text is in git history, before the "Short Stone Age lives" commit.
 
 **Four layout prototypes (Sep 27), not chosen; The Card was.** Each still plays Aru's life at `prototypes/`.
 - **The Notebook:** the inventor's journal. Ruled paper with every line on its rule, a taped-in sketch, a pen that ticks and rings your answer as you drag, the result written in a second ink, and real page turns.
